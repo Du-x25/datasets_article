@@ -249,6 +249,7 @@ def figure_model(summary: pd.DataFrame) -> None:
         index=False,
         encoding="utf-8-sig",
     )
+    write_model_latex(frame)
 
     fig, axes = plt.subplots(2, 2, figsize=(7.2, 5.25), constrained_layout=True)
     metrics = (
@@ -298,6 +299,65 @@ def figure_model(summary: pd.DataFrame) -> None:
     plt.close(fig)
 
 
+def write_model_latex(frame: pd.DataFrame) -> None:
+    GENERATED.mkdir(parents=True, exist_ok=True)
+    selected = frame.loc[frame["validation_psnr_Mean"].idxmax()]
+    label = MODEL_LABELS[str(selected["Model"])]
+    macros = [
+        "% Generated from complete three-seed model-family results.",
+        rf"\newcommand{{\SelectedModelFamily}}{{{label}}}",
+        rf"\newcommand{{\SelectedModelInput}}{{{selected['Input']}}}",
+        rf"\newcommand{{\SelectedModelValidationPSNR}}{{{selected['validation_psnr_Mean']:.2f}}}",
+        rf"\newcommand{{\SelectedModelTestPSNR}}{{{selected['PSNR_Mean']:.2f}}}",
+        rf"\newcommand{{\SelectedModelTestSSIM}}{{{selected['SSIM_Mean']:.3f}}}",
+    ]
+    (GENERATED / "model_benchmark_macros.tex").write_text(
+        "\n".join(macros) + "\n", encoding="utf-8"
+    )
+    rows = []
+    for _, row in frame.iterrows():
+        rows.append(
+            f"{MODEL_LABELS[str(row['Model'])]} & {row['Input']} & "
+            f"{latex_pm(row['validation_psnr_Mean'], row['validation_psnr_SD'], 2)} & "
+            f"{latex_pm(row['PSNR_Mean'], row['PSNR_SD'], 2)} & "
+            f"{latex_pm(row['SSIM_Mean'], row['SSIM_SD'], 3)} \\\\"
+        )
+    head = [
+        r"\begin{table}[htbp]",
+        r"\centering",
+        r"\small",
+        r"\begin{tabular}{llrrr}",
+        r"\toprule",
+    ]
+    tail = [r"\bottomrule", r"\end{tabular}", r"\end{table}"]
+    en = [
+        *head[:2],
+        r"\caption{Model-family comparison on representative SWIR inputs. Values are mean $\pm$ sample standard deviation over three seeds; selection uses validation PSNR only.}",
+        r"\label{tab:model-results}",
+        *head[2:],
+        r"Model & Input & Validation PSNR & Test PSNR & Test SSIM \\",
+        r"\midrule",
+        *rows,
+        *tail,
+    ]
+    zh = [
+        *head[:2],
+        r"\caption{代表性SWIR输入上的模型族比较。数值为三个随机种子的均值$\pm$样本标准差，模型配置选择仅依据验证集PSNR。}",
+        r"\label{tab:model-results-zh}",
+        *head[2:],
+        r"模型 & 输入 & 验证PSNR & 测试PSNR & 测试SSIM \\",
+        r"\midrule",
+        *rows,
+        *tail,
+    ]
+    (GENERATED / "model_benchmark_table_en.tex").write_text(
+        "\n".join(en) + "\n", encoding="utf-8"
+    )
+    (GENERATED / "model_benchmark_table_zh.tex").write_text(
+        "\n".join(zh) + "\n", encoding="utf-8"
+    )
+
+
 def figure_scene(summary: pd.DataFrame) -> None:
     frame = summary[summary["Stage"] == "scene"].copy()
     require_complete(frame, 10, "scene")
@@ -311,6 +371,7 @@ def figure_scene(summary: pd.DataFrame) -> None:
         index=False,
         encoding="utf-8-sig",
     )
+    write_scene_latex(frame)
     x = np.arange(len(frame))
     fig, axes = plt.subplots(
         2,
@@ -359,6 +420,64 @@ def figure_scene(summary: pd.DataFrame) -> None:
     )
     save_figure(fig, "fig6_scene_benchmark")
     plt.close(fig)
+
+
+def write_scene_latex(frame: pd.DataFrame) -> None:
+    GENERATED.mkdir(parents=True, exist_ok=True)
+    macros = [
+        "% Generated from complete three-seed leave-one-scene-out results.",
+        rf"\newcommand{{\LOSOModelFamily}}{{{MODEL_LABELS[str(frame.iloc[0]['Model'])]}}}",
+        rf"\newcommand{{\LOSOInput}}{{{frame.iloc[0]['Input']}}}",
+        rf"\newcommand{{\LOSOMeanPSNR}}{{{frame['PSNR_Mean'].mean():.2f}}}",
+        rf"\newcommand{{\LOSOMinPSNR}}{{{frame['PSNR_Mean'].min():.2f}}}",
+        rf"\newcommand{{\LOSOMaxPSNR}}{{{frame['PSNR_Mean'].max():.2f}}}",
+        rf"\newcommand{{\LOSOMeanSSIM}}{{{frame['SSIM_Mean'].mean():.3f}}}",
+    ]
+    (GENERATED / "scene_benchmark_macros.tex").write_text(
+        "\n".join(macros) + "\n", encoding="utf-8"
+    )
+    rows = []
+    for _, row in frame.iterrows():
+        rows.append(
+            f"{row['Test_Scene']} & "
+            f"{latex_pm(row['PSNR_Mean'], row['PSNR_SD'], 2)} & "
+            f"{latex_pm(row['SSIM_Mean'], row['SSIM_SD'], 3)} & "
+            f"{latex_pm(row['CIEDE2000_Mean'], row['CIEDE2000_SD'], 2)} \\\\"
+        )
+    head = [
+        r"\begin{table}[htbp]",
+        r"\centering",
+        r"\small",
+        r"\begin{tabular}{lrrr}",
+        r"\toprule",
+    ]
+    tail = [r"\bottomrule", r"\end{tabular}", r"\end{table}"]
+    en = [
+        *head[:2],
+        r"\caption{Leave-one-scene-out results. Values are mean $\pm$ sample standard deviation over three seeds.}",
+        r"\label{tab:scene-results}",
+        *head[2:],
+        r"Held-out scene & PSNR & SSIM & CIEDE2000 \\",
+        r"\midrule",
+        *rows,
+        *tail,
+    ]
+    zh = [
+        *head[:2],
+        r"\caption{留一场景评估结果。数值为三个随机种子的均值$\pm$样本标准差。}",
+        r"\label{tab:scene-results-zh}",
+        *head[2:],
+        r"留出场景 & PSNR & SSIM & CIEDE2000 \\",
+        r"\midrule",
+        *rows,
+        *tail,
+    ]
+    (GENERATED / "scene_benchmark_table_en.tex").write_text(
+        "\n".join(en) + "\n", encoding="utf-8"
+    )
+    (GENERATED / "scene_benchmark_table_zh.tex").write_text(
+        "\n".join(zh) + "\n", encoding="utf-8"
+    )
 
 
 def parse_args() -> argparse.Namespace:
