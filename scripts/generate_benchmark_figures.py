@@ -14,6 +14,7 @@ import pandas as pd
 REPO = Path(__file__).resolve().parents[1]
 FIGURES = REPO / "figures"
 SOURCE_DATA = FIGURES / "source_data"
+GENERATED = REPO / "generated"
 
 BLUE = "#2F6B8A"
 GOLD = "#D8A03D"
@@ -92,6 +93,68 @@ def metric_panel(
     ax.grid(axis="y", color=GRID, linewidth=0.6, zorder=0)
 
 
+def latex_pm(mean: float, sd: float, digits: int) -> str:
+    return f"${mean:.{digits}f}\\pm{sd:.{digits}f}$"
+
+
+def write_input_latex(frame: pd.DataFrame) -> None:
+    GENERATED.mkdir(parents=True, exist_ok=True)
+    selected = frame.loc[frame["validation_psnr_Mean"].idxmax()]
+    macros = [
+        "% Generated from complete three-seed input results.",
+        rf"\newcommand{{\SelectedInput}}{{{selected['Input']}}}",
+        rf"\newcommand{{\SelectedInputValidationPSNR}}{{{selected['validation_psnr_Mean']:.2f}}}",
+        rf"\newcommand{{\SelectedInputTestPSNR}}{{{selected['PSNR_Mean']:.2f}}}",
+        rf"\newcommand{{\SelectedInputTestSSIM}}{{{selected['SSIM_Mean']:.3f}}}",
+    ]
+    (GENERATED / "input_benchmark_macros.tex").write_text(
+        "\n".join(macros) + "\n", encoding="utf-8"
+    )
+    common_head = [
+        r"\begin{table}[htbp]",
+        r"\centering",
+        r"\small",
+        r"\begin{tabular}{lrrrr}",
+        r"\toprule",
+    ]
+    common_tail = [r"\bottomrule", r"\end{tabular}", r"\end{table}"]
+    rows = []
+    for _, row in frame.iterrows():
+        rows.append(
+            f"{row['Input']} & "
+            f"{latex_pm(row['validation_psnr_Mean'], row['validation_psnr_SD'], 2)} & "
+            f"{latex_pm(row['PSNR_Mean'], row['PSNR_SD'], 2)} & "
+            f"{latex_pm(row['SSIM_Mean'], row['SSIM_SD'], 3)} & "
+            f"{latex_pm(row['CIEDE2000_Mean'], row['CIEDE2000_SD'], 2)} \\\\"
+        )
+    en = [
+        *common_head[:2],
+        r"\caption{Input comparison with a fixed U-Net. Values are mean $\pm$ sample standard deviation over three seeds. Selection uses validation PSNR only.}",
+        r"\label{tab:input-results}",
+        *common_head[2:],
+        r"Input & Validation PSNR & Test PSNR & Test SSIM & Test CIEDE2000 \\",
+        r"\midrule",
+        *rows,
+        *common_tail,
+    ]
+    zh = [
+        *common_head[:2],
+        r"\caption{固定U-Net下的输入比较。数值为三个随机种子的均值$\pm$样本标准差，输入选择仅依据验证集PSNR。}",
+        r"\label{tab:input-results-zh}",
+        *common_head[2:],
+        r"输入 & 验证PSNR & 测试PSNR & 测试SSIM & 测试CIEDE2000 \\",
+        r"\midrule",
+        *rows,
+        *common_tail,
+    ]
+    (GENERATED / "input_benchmark_table_en.tex").write_text(
+        "\n".join(en) + "\n", encoding="utf-8"
+    )
+    (GENERATED / "input_benchmark_table_zh.tex").write_text(
+        "\n".join(zh) + "\n", encoding="utf-8"
+    )
+
+
 def figure_input(summary: pd.DataFrame) -> None:
     frame = summary[summary["Stage"] == "input"].copy()
     require_complete(frame, 7, "input")
@@ -104,6 +167,7 @@ def figure_input(summary: pd.DataFrame) -> None:
         index=False,
         encoding="utf-8-sig",
     )
+    write_input_latex(frame)
     colors = [
         PURPLE if name == "5B" else GOLD if name == "B124" else BLUE
         for name in frame["Input"]
