@@ -1,0 +1,107 @@
+% !TEX program = xelatex
+\documentclass[a4paper,10pt]{article}
+\usepackage[margin=2.05cm]{geometry}
+\usepackage{fontspec}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage[numbers,sort&compress]{natbib}
+\graphicspath{{figures/}}
+\input{generated/dataset_macros.tex}
+\hypersetup{colorlinks=true,linkcolor=black,citecolor=black,urlcolor=blue}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.45em}
+\captionsetup{font=small,labelfont=bf}
+\newcommand{\pending}[1]{\textcolor{red}{[Pending: #1]}}
+
+\title{\textbf{A Scene-Level Paired RGB and Five-Band Short-Wave Infrared Dataset for Cross-Spectral Image Synthesis}}
+\author{Hu Du et al.\\\small Author list and affiliations pending final confirmation}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Paired visible and short-wave infrared (SWIR) imagery supports cross-spectral synthesis, fusion and multimodal perception, but dataset reuse depends on explicit scene identity, channel definitions, spatial correspondence and leakage-safe evaluation. We present M-SWIR-RGB, a scene-level dataset containing \DatasetSceneCount{} paired scenes, each represented by one RGB image and five SWIR-band images. The release therefore contains \DatasetTiffCount{} scene-level TIFF files and a reproducible inventory of \DatasetUsablePatchCount{} non-overlapping $256\times256$ positions after privacy-aware exclusion. All modalities within a scene share common dimensions, file identity is bound by SHA-256, and train, validation and test partitions are separated at the scene level. Automated quality records describe image properties and registration diagnostics without treating feature residuals as manual-checkpoint or geolocation accuracy. A prespecified SWIR-to-RGB benchmark compares individual bands, multiband inputs, three model families and leave-one-scene-out evaluation. The dataset is intended as a compact, auditable resource for studying spectral input value and cross-scene variability rather than as evidence for a new image-generation model.
+\end{abstract}
+
+\textbf{Keywords:} short-wave infrared; RGB; paired dataset; multispectral imaging; cross-spectral synthesis; scene-disjoint evaluation
+
+\section*{Dataset}
+\begin{tabularx}{\textwidth}{>{\bfseries}p{0.26\textwidth}X}
+\toprule
+Dataset title & M-SWIR-RGB: paired RGB and five-band SWIR scene mosaics\\
+Identifier & \pending{public dataset DOI or stable identifier}\\
+Creator & \pending{final creator list}\\
+Publisher and location & \pending{public repository and anonymous review URL}\\
+Dataset license & \pending{author- and institution-approved open license}\\
+\bottomrule
+\end{tabularx}
+
+\section{Summary}
+Visible and SWIR sensors provide complementary observations of the same scene because their spectral response ranges differ. Recent paired resources have demonstrated the value of explicit synchronization, multimodal organization and task-oriented validation for downstream reuse \cite{jin2026}. However, patch-rich image datasets can be misinterpreted when neighbouring crops from the same source scene are treated as independent observations. M-SWIR-RGB therefore organizes data around the source scene, records the relationship between scene-level files and derived patches, and supplies scene-disjoint partitions.
+
+The dataset contains \DatasetSceneCount{} scene units. Each unit has one RGB image and five nominal SWIR channels: B1 (1000--1050\,nm), B2 (1050--1100\,nm), B3 (1225--1275\,nm), B4 (1525--1575\,nm) and B5 (1625--1675\,nm). Figure~\ref{fig:overview} presents all sixty released scene--modality combinations using a documented display transform. The contribution is the combination of paired multiband imagery, explicit scene identity, reproducible quality records, privacy-aware patch definitions and a computational reuse protocol.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{fig1_scene_modality_overview.pdf}
+  \caption{Scene and modality overview. Each row corresponds to one source scene and each column to RGB or one of the five SWIR bands. For display only, every complete image was mapped with one global 1st--99th percentile stretch; no local editing was applied. This panel demonstrates dataset organization and visual diversity, not registration accuracy.}
+  \label{fig:overview}
+\end{figure}
+
+\section{Data Description}
+The scene-level release consists of \DatasetTiffCount{} uncompressed eight-bit TIFF files. RGB images use three channels, whereas B1--B5 are single-channel images. Within each scene, all six modalities have identical width and height. A file manifest records relative path, modality, dimensions, mode, byte size and SHA-256. A scene table records the patch inventory and quality-gate status. Derived task views preserve the source-scene identifier so that users can reproduce scene-disjoint analysis.
+
+Non-overlapping $256\times256$ patches are anchored at the top-left pixel of each scene, and incomplete right or bottom remainders are discarded. Patches intersecting privacy masks are excluded from every split, removing \DatasetPrivacyExcludedCount{} positions. The current fixed partition contains \DatasetFixedTrainCount{} training, \DatasetFixedValidationCount{} validation and \DatasetFixedTestCount{} test positions, while the scene identifiers remain the primary unit of interpretation.
+
+\input{generated/scene_inventory_en.tex}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{fig2_scale_quality_diagnostics.pdf}
+  \caption{Dataset scale and reproducible quality diagnostics. \textbf{a}, Usable non-overlapping patch count by source scene; the accent colour marks a scene with privacy-related exclusions. \textbf{b}, Scene dimensions, with point area proportional to usable patch count. \textbf{c}, automated RGB--B1 held-out feature residuals and corner deviation. These image-derived diagnostics are not manual independent-checkpoint RMSE.}
+  \label{fig:quality}
+\end{figure}
+
+\section{Methods}
+\subsection{Data organization and evidence chain}
+Input observations are treated as read-only. The data pipeline inventories expected files, computes SHA-256 digests, applies the configured scene-processing chain, validates scene-level products, creates privacy-aware patch manifests and exports release metadata. All paper counts are generated from machine-readable manifests. Figure~\ref{fig:pipeline} shows the boundary between data production, computational validation and manuscript evidence.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{fig3_data_evidence_pipeline.pdf}
+  \caption{Data and evidence flow. Read-only paired observations pass through explicit inventory, spatial processing, quality gates and privacy-aware patch construction. Experiment outputs and manuscript values remain bound to data and code manifests.}
+  \label{fig:pipeline}
+\end{figure}
+
+\subsection{Quality control}
+Release gates verify the expected file count, common dimensions within each scene, RGB and SWIR storage modes, distinct B1--B5 hashes, patch geometry, privacy exclusions and split disjointness. Registration features provide a reproducible diagnostic of image correspondence. They are not interpreted as geolocation accuracy or independent manually annotated checkpoint error.
+
+\subsection{Computational validation}
+The primary reuse task maps SWIR inputs to RGB targets. A deterministic GrayRep baseline first replicates a single SWIR channel into three output channels. A fixed U-Net then compares B1--B5, B124 and the five-band input over three seeds. U-Net, ResUNet and a ResNet generator are compared on representative B1, B124 and five-band inputs. Finally, the selected configuration is evaluated in ten leave-one-scene-out folds. Model and epoch selection use validation PSNR only; held-out test metrics never participate in selection. Metrics comprise PSNR, channel-aware SSIM \cite{wang2004}, RGB MAE, CIEDE2000 \cite{sharma2005} and edge consistency. \pending{insert validated benchmark results and figure}
+
+\section{User Notes}
+Users should split by source scene before deriving model inputs. Random patch-level partitioning would mix spatially neighbouring observations across subsets and overstate generalization. Normalization statistics must be estimated from training scenes only. The supplied manifests should be used to exclude privacy-intersecting positions and to verify the exact data snapshot. Automated registration diagnostics are suitable for comparative quality inspection but should not be relabelled as geolocation or manual-checkpoint accuracy.
+
+\section*{Data Availability Statement}
+\pending{Insert repository name, public DOI or reviewer URL, release identifier and dataset citation after upload and download verification.}
+
+\section*{Author Contributions}
+\pending{Confirm CRediT roles for every author.}
+
+\section*{Funding}
+\pending{Confirm funder names, grant numbers and APC funding.}
+
+\section*{Conflicts of Interest}
+The authors declare no conflict of interest. \pending{Confirm with all authors.}
+
+\bibliographystyle{unsrtnat}
+\bibliography{refs}
+\end{document}

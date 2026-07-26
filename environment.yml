@@ -1,0 +1,15 @@
+name: mswir-paper
+channels:
+  - defaults
+dependencies:
+  - python=3.11
+  - pip
+  - pip:
+      - numpy>=1.24,<3
+      - pandas>=2,<3
+      - matplotlib>=3.8,<4
+      - seaborn>=0.13,<1
+      - Pillow>=10,<12
+      - pypdf>=4,<6
+      - PyYAML>=6,<7
+      - pytest>=7,<9

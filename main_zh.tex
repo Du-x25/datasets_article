@@ -1,0 +1,106 @@
+% !TEX program = xelatex
+\documentclass[UTF8,a4paper,10pt]{ctexart}
+\usepackage[margin=2.05cm]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{caption}
+\usepackage[numbers,sort&compress]{natbib}
+\graphicspath{{figures/}}
+\input{generated/dataset_macros.tex}
+\hypersetup{colorlinks=true,linkcolor=black,citecolor=black,urlcolor=blue}
+\setlength{\parindent}{2em}
+\setlength{\parskip}{0.25em}
+\setlength{\emergencystretch}{2em}
+\captionsetup{font=small,labelfont=bf}
+\newcommand{\pending}[1]{\textcolor{red}{[待确认：#1]}}
+
+\title{\textbf{面向跨光谱图像生成的场景级RGB与五波段短波红外配对数据集}}
+\author{杜虎等\\\small 作者顺序与单位待最终确认}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+可见光与短波红外（SWIR）配对影像可用于跨光谱生成、图像融合和多模态感知，但数据复用依赖清晰的场景身份、波段定义、空间对应关系和无泄漏评估。本文介绍M-SWIR-\allowbreak RGB场景级数据集，共包含\DatasetSceneCount{}个配对场景，每个场景由一幅RGB图像和五幅SWIR波段图像组成。数据集包含\DatasetTiffCount{}幅场景级TIFF文件；在排除与隐私区域相交的图块后，可生成\DatasetUsablePatchCount{}个互不重叠的$256\times256$空间位置。每个场景内六种模态具有一致尺寸，文件身份通过SHA-256绑定，训练、验证和测试集合按完整场景隔离。质量记录描述图像属性和自动配准诊断，但不把特征残差解释为人工检查点精度或地理定位精度。预设的SWIR到RGB基准将比较单波段、多波段输入、三类基础模型以及留一场景评估。本数据集旨在为研究光谱输入价值和跨场景差异提供紧凑、可审计的资源，而不是用于证明新的图像生成模型。
+\end{abstract}
+
+\textbf{关键词：}短波红外；RGB；配对数据集；多光谱成像；跨光谱生成；场景隔离评估
+
+\section*{数据集信息}
+\noindent
+\begin{tabularx}{\textwidth}{>{\bfseries}p{0.24\textwidth}X}
+\toprule
+数据集名称 & M-SWIR-\allowbreak RGB：RGB与五波段SWIR场景级配对影像\\
+数据标识符 & \pending{公开数据DOI或稳定标识符}\\
+创建者 & \pending{最终创建者名单}\\
+发布方与位置 & \pending{公共仓库及匿名审稿链接}\\
+数据许可证 & \pending{经作者和单位确认的开放许可证}\\
+\bottomrule
+\end{tabularx}
+
+\section{概要}
+可见光与SWIR传感器因光谱响应范围不同而提供同一场景的互补观测。近期配对数据资源表明，同步关系、多模态组织和面向任务的验证对于数据复用十分重要\cite{jin2026}。然而，当同一源场景中的相邻图块被视为独立观测时，图块数量较多的数据集容易产生错误解释。因此，M-SWIR-\allowbreak RGB以源场景为基本单位，记录场景级文件与图块之间的关系，并提供场景隔离的数据划分。
+
+数据集包含\DatasetSceneCount{}个场景单元。每个单元包含一幅RGB图像，以及B1（1000--1050\,nm）、B2（1050--1100\,nm）、B3（1225--1275\,nm）、B4（1525--1575\,nm）和B5（1625--1675\,nm）五个名义SWIR通道。图~\ref{fig:overview-zh}展示全部六十个场景--模态组合。数据集的主要贡献是将多波段配对影像、明确的场景身份、可复算质量记录、隐私感知图块定义以及计算验证协议组织为同一证据链。
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{fig1_scene_modality_overview.pdf}
+  \caption{场景与模态总览。每一行对应一个源场景，每一列对应RGB或一个SWIR波段。仅为显示需要，每幅完整图像采用一次全局1\%--99\%分位拉伸；未进行局部编辑。本图展示数据组织和视觉差异，不代表配准精度。}
+  \label{fig:overview-zh}
+\end{figure}
+
+\section{数据说明}
+场景级发布内容由\DatasetTiffCount{}幅无压缩八位TIFF文件组成。RGB图像为三通道，B1--B5为单通道；每个场景内六种模态具有完全一致的宽度和高度。文件清单记录相对路径、模态、尺寸、模式、字节数和SHA-256；场景表记录图块数量和质量门槛状态。派生任务始终保留源场景标识，以便用户复现场景隔离分析。
+
+互不重叠的$256\times256$图块从场景左上角锚定，不完整的右侧与底部余量不进入任务。所有与隐私遮挡相交的图块均从各划分中排除，共排除\DatasetPrivacyExcludedCount{}个位置。当前固定划分包含\DatasetFixedTrainCount{}个训练位置、\DatasetFixedValidationCount{}个验证位置和\DatasetFixedTestCount{}个测试位置，但统计解释仍以场景为单位。
+
+\input{generated/scene_inventory_zh.tex}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{fig2_scale_quality_diagnostics.pdf}
+  \caption{数据规模与可复算质量诊断。\textbf{a}，各源场景的有效非重叠图块数量，强调色表示存在隐私排除的场景。\textbf{b}，场景尺寸，点面积与有效图块数成比例。\textbf{c}，RGB--B1自动留出特征残差与角点偏差。这些图像诊断值不是人工独立检查点RMSE。}
+  \label{fig:quality-zh}
+\end{figure}
+
+\section{方法}
+\subsection{数据组织与证据链}
+输入观测始终按只读方式处理。数据流程检查预期文件、计算SHA-256、执行配置化场景处理、验证场景级产品、创建隐私感知图块清单并导出发布元数据。论文中的所有数量均从机器可读清单生成。图~\ref{fig:pipeline-zh}展示数据生产、计算验证与论文证据之间的边界。
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{fig3_data_evidence_pipeline.pdf}
+  \caption{数据与证据流。只读配对观测依次经过来源清单、空间处理、质量门槛和隐私感知图块生成；实验输出与论文数值始终绑定数据和代码清单。}
+  \label{fig:pipeline-zh}
+\end{figure}
+
+\subsection{质量控制}
+发布门槛包括预期文件数、场景内共同尺寸、RGB与SWIR存储模式、B1--B5哈希互异、图块几何、隐私排除以及划分互斥。自动图像特征可作为可复算的对应关系诊断，但不解释为地理定位精度或独立人工检查点误差。
+
+\subsection{计算验证}
+主要复用任务为SWIR到RGB生成。首先使用确定性的GrayRep基线，将单个SWIR通道复制为三通道输出；随后用固定U-Net比较B1--B5、B124和五波段输入，并运行三个随机种子。U-Net、ResUNet和ResNet生成器在B1、B124和五波段输入上进行比较。最后，对选定配置执行十折留一场景评估。模型和epoch仅依据验证集PSNR选择，留出测试指标不参与选择。评估指标包括PSNR、通道感知SSIM\cite{wang2004}、RGB MAE、CIEDE2000\cite{sharma2005}和边缘一致性。\pending{插入经验证的基准结果与图表}
+
+\section{使用说明}
+用户必须先按源场景划分数据，再生成模型输入。随机图块划分会把空间相邻观测分散到不同集合，从而高估泛化能力。归一化统计只能从训练场景估计。用户应使用提供的清单排除隐私相交位置，并验证所用数据快照。自动配准诊断适合比较质量，但不能重新命名为地理定位精度或人工检查点精度。
+
+\section*{数据可用性声明}
+\pending{上传并完成下载复核后，填写仓库名称、公开DOI或审稿链接、发布标识符和正式数据引用。}
+
+\section*{作者贡献}
+\pending{确认每位作者的CRediT贡献。}
+
+\section*{基金项目}
+\pending{确认资助机构、项目编号和版面费来源。}
+
+\section*{利益冲突}
+作者声明不存在利益冲突。\pending{由全体作者确认。}
+
+\bibliographystyle{unsrtnat}
+\bibliography{refs}
+\end{document}
