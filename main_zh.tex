@@ -11,6 +11,7 @@
 \usepackage[numbers,sort&compress]{natbib}
 \graphicspath{{figures/}}
 \input{generated/dataset_macros.tex}
+\input{generated/input_benchmark_macros.tex}
 \hypersetup{colorlinks=true,linkcolor=black,citecolor=black,urlcolor=blue}
 \setlength{\parindent}{2em}
 \setlength{\parskip}{0.25em}
@@ -84,7 +85,23 @@
 发布门槛包括预期文件数、场景内共同尺寸、RGB与SWIR存储模式、B1--B5哈希互异、图块几何、隐私排除以及划分互斥。自动图像特征可作为可复算的对应关系诊断，但不解释为地理定位精度或独立人工检查点误差。
 
 \subsection{计算验证}
-主要复用任务为SWIR到RGB生成。七类派生任务视图共包含\DatasetTaskFileCount{}个文件，其划分归属、数组形状、图像模式和SHA-256身份均通过自动验证。首先使用确定性的GrayRep基线，将单个SWIR通道复制为三通道输出；随后用固定U-Net比较B1--B5、B124和五波段输入，并运行三个随机种子。U-Net、ResUNet和ResNet生成器在B1、B124和五波段输入上进行比较。最后，对选定配置执行十折留一场景评估。模型和epoch仅依据验证集PSNR选择，留出测试指标不参与选择。评估指标包括PSNR、通道感知SSIM\cite{wang2004}、RGB MAE、CIEDE2000\cite{sharma2005}和边缘一致性。\pending{插入经验证的基准结果与图表}
+主要复用任务为SWIR到RGB生成。七类派生任务视图共包含\DatasetTaskFileCount{}个文件，其划分归属、数组形状、图像模式和SHA-256身份均通过自动验证。首先使用确定性的GrayRep基线，将单个SWIR通道复制为三通道输出；随后用固定U-Net比较B1--B5、B124和五波段输入，并运行三个随机种子。U-Net、ResUNet和ResNet生成器在B1、B124和五波段输入上进行比较。最后，对选定配置执行十折留一场景评估。模型和epoch仅依据验证集PSNR选择，留出测试指标不参与选择。评估指标包括PSNR、通道感知SSIM\cite{wang2004}、RGB MAE、CIEDE2000\cite{sharma2005}和边缘一致性。
+
+\subsection{输入层面的技术验证}
+预设的21次输入实验全部完成，每个输入均包含三个随机种子，运行签名互不重复，且最佳epoch均未触及训练边界。最高的平均验证PSNR来自\SelectedInput{}（\SelectedInputValidationPSNR{}\,dB），其次为\InputRunnerUp{}（\InputRunnerUpValidationPSNR{}\,dB）。两者仅相差\InputValidationMargin{}\,dB，小于任一配置的种子间标准差，因此该验证排序更接近性能相当，不能解释为某一输入表示具有普遍优势。
+
+留出测试指标仅用于描述，未反向改变验证排序。B124取得最高的测试PSNR（\BOneTwoFourTestPSNR{}\,dB）和SSIM（\BOneTwoFourTestSSIM{}），同时具有最低的CIEDE2000（\BOneTwoFourTestCIE{}）。训练后的B1模型超过其GrayRep检验基线（\BOneGrayRepPSNR{}\,dB），训练后的B124也超过直接ChannelMap基线（\BOneTwoFourChannelMapPSNR{}\,dB）。验证排序与留出测试排序之间的差异说明有必要继续执行预设的模型族比较和留一场景评估，而不能据此宣称某一种输入在所有场景中最优。
+
+\input{generated/input_benchmark_table_zh.tex}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{fig4_input_benchmark.pdf}
+  \caption{固定U-Net下的输入层面计算验证。\textbf{a}，用于输入排序的验证集PSNR；\textbf{b--d}，留出测试集上的PSNR、SSIM和CIEDE2000。柱高为三个独立随机种子的均值，误差线为样本标准差；测试指标不参与选择。}
+  \label{fig:input-benchmark-zh}
+\end{figure}
+
+\pending{插入经验证的模型族比较和留一场景结果。}
 
 \section{使用说明}
 用户必须先按源场景划分数据，再生成模型输入。随机图块划分会把空间相邻观测分散到不同集合，从而高估泛化能力。归一化统计只能从训练场景估计。用户应使用提供的清单排除隐私相交位置，并验证所用数据快照。自动配准诊断适合比较质量，但不能重新命名为地理定位精度或人工检查点精度。

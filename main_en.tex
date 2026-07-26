@@ -14,6 +14,7 @@
 \usepackage[numbers,sort&compress]{natbib}
 \graphicspath{{figures/}}
 \input{generated/dataset_macros.tex}
+\input{generated/input_benchmark_macros.tex}
 \hypersetup{colorlinks=true,linkcolor=black,citecolor=black,urlcolor=blue}
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0.45em}
@@ -85,7 +86,23 @@ Input observations are treated as read-only. The data pipeline inventories expec
 Release gates verify the expected file count, common dimensions within each scene, RGB and SWIR storage modes, distinct B1--B5 hashes, patch geometry, privacy exclusions and split disjointness. Registration features provide a reproducible diagnostic of image correspondence. They are not interpreted as geolocation accuracy or independent manually annotated checkpoint error.
 
 \subsection{Computational validation}
-The primary reuse task maps SWIR inputs to RGB targets. Seven derived task views contain \DatasetTaskFileCount{} files whose split membership, array shape, image mode and SHA-256 identity passed automated validation. A deterministic GrayRep baseline first replicates a single SWIR channel into three output channels. A fixed U-Net then compares B1--B5, B124 and the five-band input over three seeds. U-Net, ResUNet and a ResNet generator are compared on representative B1, B124 and five-band inputs. Finally, the selected configuration is evaluated in ten leave-one-scene-out folds. Model and epoch selection use validation PSNR only; held-out test metrics never participate in selection. Metrics comprise PSNR, channel-aware SSIM \cite{wang2004}, RGB MAE, CIEDE2000 \cite{sharma2005} and edge consistency. \pending{insert validated benchmark results and figure}
+The primary reuse task maps SWIR inputs to RGB targets. Seven derived task views contain \DatasetTaskFileCount{} files whose split membership, array shape, image mode and SHA-256 identity passed automated validation. A deterministic GrayRep baseline first replicates a single SWIR channel into three output channels. A fixed U-Net then compares B1--B5, B124 and the five-band input over three seeds. U-Net, ResUNet and a ResNet generator are compared on representative B1, B124 and five-band inputs. Finally, the selected configuration is evaluated in ten leave-one-scene-out folds. Model and epoch selection use validation PSNR only; held-out test metrics never participate in selection. Metrics comprise PSNR, channel-aware SSIM \cite{wang2004}, RGB MAE, CIEDE2000 \cite{sharma2005} and edge consistency.
+
+\subsection{Input-level technical validation}
+All 21 prespecified input runs completed with three seeds, unique run signatures and no best epoch at the training boundary. The largest mean validation PSNR was obtained with \SelectedInput{} (\SelectedInputValidationPSNR{}\,dB), followed by \InputRunnerUp{} (\InputRunnerUpValidationPSNR{}\,dB). Their margin was only \InputValidationMargin{}\,dB and was smaller than the between-seed standard deviation of either configuration; the validation ranking therefore indicates near parity rather than a general advantage of one representation.
+
+Held-out test values were reported descriptively and did not alter this ranking. B124 produced the largest test PSNR (\BOneTwoFourTestPSNR{}\,dB) and SSIM (\BOneTwoFourTestSSIM{}), together with the lowest CIEDE2000 (\BOneTwoFourTestCIE{}). The trained B1 model also exceeded its GrayRep sanity baseline (\BOneGrayRepPSNR{}\,dB), while trained B124 exceeded the direct ChannelMap baseline (\BOneTwoFourChannelMapPSNR{}\,dB). The divergence between validation and held-out ordering motivates the prespecified model-family and leave-one-scene-out stages rather than a claim that one input is universally optimal.
+
+\input{generated/input_benchmark_table_en.tex}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{fig4_input_benchmark.pdf}
+  \caption{Input-level computational validation with a fixed U-Net. \textbf{a}, validation PSNR used for input ranking. \textbf{b--d}, held-out test PSNR, SSIM and CIEDE2000, respectively. Bars show means and error bars show sample standard deviations over three independent seeds. Test metrics were not used for selection.}
+  \label{fig:input-benchmark}
+\end{figure}
+
+\pending{Insert the validated model-family and leave-one-scene-out results.}
 
 \section{User Notes}
 Users should split by source scene before deriving model inputs. Random patch-level partitioning would mix spatially neighbouring observations across subsets and overstate generalization. Normalization statistics must be estimated from training scenes only. The supplied manifests should be used to exclude privacy-intersecting positions and to verify the exact data snapshot. Automated registration diagnostics are suitable for comparative quality inspection but should not be relabelled as geolocation or manual-checkpoint accuracy.

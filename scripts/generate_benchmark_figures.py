@@ -97,15 +97,28 @@ def latex_pm(mean: float, sd: float, digits: int) -> str:
     return f"${mean:.{digits}f}\\pm{sd:.{digits}f}$"
 
 
-def write_input_latex(frame: pd.DataFrame) -> None:
+def write_input_latex(frame: pd.DataFrame, baseline: pd.DataFrame) -> None:
     GENERATED.mkdir(parents=True, exist_ok=True)
-    selected = frame.loc[frame["validation_psnr_Mean"].idxmax()]
+    ranked = frame.sort_values("validation_psnr_Mean", ascending=False)
+    selected = ranked.iloc[0]
+    runner_up = ranked.iloc[1]
+    b124 = frame[frame["Input"] == "B124"].iloc[0]
+    b1_baseline = baseline[baseline["Input"] == "B1"].iloc[0]
+    b124_baseline = baseline[baseline["Input"] == "B124"].iloc[0]
     macros = [
         "% Generated from complete three-seed input results.",
         rf"\newcommand{{\SelectedInput}}{{{selected['Input']}}}",
+        rf"\newcommand{{\InputRunnerUp}}{{{runner_up['Input']}}}",
         rf"\newcommand{{\SelectedInputValidationPSNR}}{{{selected['validation_psnr_Mean']:.2f}}}",
+        rf"\newcommand{{\InputRunnerUpValidationPSNR}}{{{runner_up['validation_psnr_Mean']:.2f}}}",
+        rf"\newcommand{{\InputValidationMargin}}{{{selected['validation_psnr_Mean'] - runner_up['validation_psnr_Mean']:.2f}}}",
         rf"\newcommand{{\SelectedInputTestPSNR}}{{{selected['PSNR_Mean']:.2f}}}",
         rf"\newcommand{{\SelectedInputTestSSIM}}{{{selected['SSIM_Mean']:.3f}}}",
+        rf"\newcommand{{\BOneTwoFourTestPSNR}}{{{b124['PSNR_Mean']:.2f}}}",
+        rf"\newcommand{{\BOneTwoFourTestSSIM}}{{{b124['SSIM_Mean']:.3f}}}",
+        rf"\newcommand{{\BOneTwoFourTestCIE}}{{{b124['CIEDE2000_Mean']:.2f}}}",
+        rf"\newcommand{{\BOneGrayRepPSNR}}{{{b1_baseline['PSNR']:.2f}}}",
+        rf"\newcommand{{\BOneTwoFourChannelMapPSNR}}{{{b124_baseline['PSNR']:.2f}}}",
     ]
     (GENERATED / "input_benchmark_macros.tex").write_text(
         "\n".join(macros) + "\n", encoding="utf-8"
@@ -155,7 +168,7 @@ def write_input_latex(frame: pd.DataFrame) -> None:
     )
 
 
-def figure_input(summary: pd.DataFrame) -> None:
+def figure_input(summary: pd.DataFrame, benchmark: Path) -> None:
     frame = summary[summary["Stage"] == "input"].copy()
     require_complete(frame, 7, "input")
     frame["Input"] = pd.Categorical(frame["Input"], INPUT_ORDER, ordered=True)
@@ -167,7 +180,9 @@ def figure_input(summary: pd.DataFrame) -> None:
         index=False,
         encoding="utf-8-sig",
     )
-    write_input_latex(frame)
+    baseline = pd.read_csv(benchmark / "grayrep_sanity.csv")
+    baseline = baseline[baseline["Scope"] == "fixed_C2_C9"].copy()
+    write_input_latex(frame, baseline)
     colors = [
         PURPLE if name == "5B" else GOLD if name == "B124" else BLUE
         for name in frame["Input"]
@@ -360,11 +375,12 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
-    summary_path = args.benchmark_dir.resolve() / "summary_metrics.csv"
+    benchmark = args.benchmark_dir.resolve()
+    summary_path = benchmark / "summary_metrics.csv"
     summary = pd.read_csv(summary_path)
     for stage in args.stages:
         if stage == "input":
-            figure_input(summary)
+            figure_input(summary, benchmark)
         elif stage == "model":
             figure_model(summary)
         else:
