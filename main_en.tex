@@ -11,10 +11,12 @@
 \usepackage{hyperref}
 \usepackage{caption}
 \usepackage{subcaption}
+\usepackage{float}
 \usepackage[numbers,sort&compress]{natbib}
 \graphicspath{{figures/}}
 \input{generated/dataset_macros.tex}
 \input{generated/input_benchmark_macros.tex}
+\input{generated/model_benchmark_macros.tex}
 \hypersetup{colorlinks=true,linkcolor=black,citecolor=black,urlcolor=blue}
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0.45em}
@@ -102,7 +104,21 @@ Held-out test values were reported descriptively and did not alter this ranking.
   \label{fig:input-benchmark}
 \end{figure}
 
-\pending{Insert the validated model-family and leave-one-scene-out results.}
+\subsection{Model-family technical validation}
+The 18 additional model runs completed without missing seeds or training-boundary best epochs and were combined with the nine corresponding U-Net runs from the input study. Validation-only selection identified \SelectedModelFamily{} with \SelectedModelInput{} as the fixed configuration for scene-level evaluation, with a mean validation PSNR of \SelectedModelValidationPSNR{}\,dB. Its descriptive fixed-test PSNR and SSIM were \SelectedModelTestPSNR{}\,dB and \SelectedModelTestSSIM{}, respectively.
+
+The fixed-test ordering differed from the validation ordering. \ModelBestTestFamily{} with \ModelBestTestInput{} produced the largest descriptive test PSNR (\ModelBestTestPSNR{}\,dB) but a validation PSNR of only \ModelBestTestValidationPSNR{}\,dB, and therefore was not selected. This reversal indicates that conclusions drawn from one scene partition are sensitive to scene composition. We consequently retained the validation-selected configuration and used the prespecified leave-one-scene-out study to quantify that variability.
+
+\input{generated/model_benchmark_table_en.tex}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{fig5_model_benchmark.pdf}
+  \caption{Model-family comparison on representative SWIR inputs. \textbf{a}, validation PSNR used for configuration selection. \textbf{b--d}, descriptive held-out test PSNR, SSIM and CIEDE2000. Bars show means and error bars show sample standard deviations over three seeds. The opposing validation and fixed-test rankings were not resolved by selecting on the test set.}
+  \label{fig:model-benchmark}
+\end{figure}
+
+\pending{Insert the validated leave-one-scene-out results.}
 
 \section{User Notes}
 Users should split by source scene before deriving model inputs. Random patch-level partitioning would mix spatially neighbouring observations across subsets and overstate generalization. Normalization statistics must be estimated from training scenes only. The supplied manifests should be used to exclude privacy-intersecting positions and to verify the exact data snapshot. Automated registration diagnostics are suitable for comparative quality inspection but should not be relabelled as geolocation or manual-checkpoint accuracy.

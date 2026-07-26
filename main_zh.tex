@@ -8,10 +8,12 @@
 \usepackage{xcolor}
 \usepackage{hyperref}
 \usepackage{caption}
+\usepackage{float}
 \usepackage[numbers,sort&compress]{natbib}
 \graphicspath{{figures/}}
 \input{generated/dataset_macros.tex}
 \input{generated/input_benchmark_macros.tex}
+\input{generated/model_benchmark_macros.tex}
 \hypersetup{colorlinks=true,linkcolor=black,citecolor=black,urlcolor=blue}
 \setlength{\parindent}{2em}
 \setlength{\parskip}{0.25em}
@@ -101,7 +103,21 @@
   \label{fig:input-benchmark-zh}
 \end{figure}
 
-\pending{插入经验证的模型族比较和留一场景结果。}
+\subsection{模型族技术验证}
+新增的18次模型实验全部完成，不存在随机种子缺失或最佳epoch触及训练边界的问题，并与输入实验中对应的9次U-Net运行合并比较。仅依据验证指标，最终用于场景级评估的固定配置为\SelectedModelFamily{}+\SelectedModelInput{}，平均验证PSNR为\SelectedModelValidationPSNR{}\,dB。其固定留出测试PSNR和SSIM分别为\SelectedModelTestPSNR{}\,dB和\SelectedModelTestSSIM{}。
+
+固定测试排序与验证排序并不一致。\ModelBestTestFamily{}+\ModelBestTestInput{}取得最高的描述性测试PSNR（\ModelBestTestPSNR{}\,dB），但验证PSNR仅为\ModelBestTestValidationPSNR{}\,dB，因此未被选中。该排序反转表明单一场景划分所得结论对场景组成较为敏感。为避免利用测试集重新选择配置，后续仍固定使用验证集选出的配置，并通过预设的留一场景实验量化跨场景变化。
+
+\input{generated/model_benchmark_table_zh.tex}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{fig5_model_benchmark.pdf}
+  \caption{代表性SWIR输入上的模型族比较。\textbf{a}，用于配置选择的验证PSNR；\textbf{b--d}，描述性的留出测试PSNR、SSIM和CIEDE2000。柱高为三个随机种子的均值，误差线为样本标准差。验证排序与固定测试排序相反时，没有使用测试集重新选择配置。}
+  \label{fig:model-benchmark-zh}
+\end{figure}
+
+\pending{插入经验证的留一场景结果。}
 
 \section{使用说明}
 用户必须先按源场景划分数据，再生成模型输入。随机图块划分会把空间相邻观测分散到不同集合，从而高估泛化能力。归一化统计只能从训练场景估计。用户应使用提供的清单排除隐私相交位置，并验证所用数据快照。自动配准诊断适合比较质量，但不能重新命名为地理定位精度或人工检查点精度。

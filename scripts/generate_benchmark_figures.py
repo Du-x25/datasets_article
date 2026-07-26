@@ -302,6 +302,7 @@ def figure_model(summary: pd.DataFrame) -> None:
 def write_model_latex(frame: pd.DataFrame) -> None:
     GENERATED.mkdir(parents=True, exist_ok=True)
     selected = frame.loc[frame["validation_psnr_Mean"].idxmax()]
+    best_test = frame.loc[frame["PSNR_Mean"].idxmax()]
     label = MODEL_LABELS[str(selected["Model"])]
     macros = [
         "% Generated from complete three-seed model-family results.",
@@ -310,6 +311,10 @@ def write_model_latex(frame: pd.DataFrame) -> None:
         rf"\newcommand{{\SelectedModelValidationPSNR}}{{{selected['validation_psnr_Mean']:.2f}}}",
         rf"\newcommand{{\SelectedModelTestPSNR}}{{{selected['PSNR_Mean']:.2f}}}",
         rf"\newcommand{{\SelectedModelTestSSIM}}{{{selected['SSIM_Mean']:.3f}}}",
+        rf"\newcommand{{\ModelBestTestFamily}}{{{MODEL_LABELS[str(best_test['Model'])]}}}",
+        rf"\newcommand{{\ModelBestTestInput}}{{{best_test['Input']}}}",
+        rf"\newcommand{{\ModelBestTestPSNR}}{{{best_test['PSNR_Mean']:.2f}}}",
+        rf"\newcommand{{\ModelBestTestValidationPSNR}}{{{best_test['validation_psnr_Mean']:.2f}}}",
     ]
     (GENERATED / "model_benchmark_macros.tex").write_text(
         "\n".join(macros) + "\n", encoding="utf-8"

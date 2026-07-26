@@ -1,0 +1,21 @@
+\begin{table}[htbp]
+\centering
+\caption{代表性SWIR输入上的模型族比较。数值为三个随机种子的均值$\pm$样本标准差，模型配置选择仅依据验证集PSNR。}
+\label{tab:model-results-zh}
+\small
+\begin{tabular}{llrrr}
+\toprule
+模型 & 输入 & 验证PSNR & 测试PSNR & 测试SSIM \\
+\midrule
+U-Net & B1 & $13.63\pm0.30$ & $10.62\pm0.34$ & $0.360\pm0.010$ \\
+ResUNet & B1 & $12.90\pm0.76$ & $13.33\pm1.13$ & $0.446\pm0.034$ \\
+ResNet & B1 & $13.95\pm0.08$ & $10.10\pm0.41$ & $0.322\pm0.011$ \\
+U-Net & B124 & $13.61\pm0.21$ & $13.22\pm0.25$ & $0.431\pm0.016$ \\
+ResUNet & B124 & $13.34\pm0.07$ & $12.56\pm0.37$ & $0.430\pm0.006$ \\
+ResNet & B124 & $14.11\pm0.19$ & $10.54\pm0.43$ & $0.327\pm0.023$ \\
+U-Net & 5B & $11.62\pm0.98$ & $11.38\pm0.63$ & $0.361\pm0.022$ \\
+ResUNet & 5B & $8.61\pm0.25$ & $13.34\pm0.69$ & $0.415\pm0.017$ \\
+ResNet & 5B & $13.33\pm0.16$ & $9.74\pm0.68$ & $0.301\pm0.022$ \\
+\bottomrule
+\end{tabular}
+\end{table}
