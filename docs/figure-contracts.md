@@ -27,3 +27,39 @@
 - Evidence: repository contracts and validated file relationships.
 - Reviewer risk: do not depict a processing operation that is absent from code or provenance.
 - Exports: SVG, PDF, TIFF at 600 dpi, and PNG preview.
+
+## Figure 4 — SWIR input comparison
+
+- Core conclusion: complete three-seed results quantify how the selected SWIR
+  input representation changes validation and held-out reuse metrics under one
+  fixed U-Net.
+- Archetype: quantitative grid with validation PSNR as the selection panel.
+- Panels: validation PSNR; held-out PSNR; held-out SSIM; held-out CIEDE2000.
+- Statistics: mean and sample standard deviation over three independent seeds;
+  no inferential test is claimed.
+- Source data: `summary_metrics.csv`, exported as
+  `figures/source_data/fig4_input_benchmark.csv`.
+- Reviewer risk: held-out test values are descriptive and never participate in
+  model or input selection.
+- Exports: SVG, PDF, TIFF at 600 dpi, and PNG preview.
+
+## Figure 5 — model-family comparison
+
+- Core conclusion: model-family effects are evaluated separately from input
+  effects on B1, B124 and five-band inputs.
+- Archetype: grouped quantitative grid.
+- Panels: validation PSNR; held-out PSNR; held-out SSIM; held-out CIEDE2000.
+- Statistics: mean and sample standard deviation over three independent seeds.
+- Reviewer risk: U-Net rows originate from the prespecified input stage, while
+  ResUNet and ResNet rows originate from the model stage; all use the same
+  fixed split and training contract.
+
+## Figure 6 — leave-one-scene-out variability
+
+- Core conclusion: reuse performance varies across complete held-out source
+  scenes under a configuration selected without using fold test metrics.
+- Archetype: two-panel robustness profile.
+- Panels: scene-level PSNR and SSIM with three-seed standard deviation.
+- Reviewer risk: the fold corresponding to the fixed validation scene is
+  interpreted descriptively because that scene contributed to configuration
+  selection.
