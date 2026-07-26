@@ -14,6 +14,7 @@
 \input{generated/dataset_macros.tex}
 \input{generated/input_benchmark_macros.tex}
 \input{generated/model_benchmark_macros.tex}
+\input{generated/scene_benchmark_macros.tex}
 \hypersetup{colorlinks=true,linkcolor=black,citecolor=black,urlcolor=blue}
 \setlength{\parindent}{2em}
 \setlength{\parskip}{0.25em}
@@ -29,7 +30,7 @@
 \maketitle
 
 \begin{abstract}
-可见光与短波红外（SWIR）配对影像可用于跨光谱生成、图像融合和多模态感知，但数据复用依赖清晰的场景身份、波段定义、空间对应关系和无泄漏评估。本文介绍M-SWIR-\allowbreak RGB场景级数据集，共包含\DatasetSceneCount{}个配对场景，每个场景由一幅RGB图像和五幅SWIR波段图像组成。数据集包含\DatasetTiffCount{}幅场景级TIFF文件；在排除与隐私区域相交的图块后，可生成\DatasetUsablePatchCount{}个互不重叠的$256\times256$空间位置。每个场景内六种模态具有一致尺寸，文件身份通过SHA-256绑定，训练、验证和测试集合按完整场景隔离。质量记录描述图像属性和自动配准诊断，但不把特征残差解释为人工检查点精度或地理定位精度。预设的SWIR到RGB基准将比较单波段、多波段输入、三类基础模型以及留一场景评估。本数据集旨在为研究光谱输入价值和跨场景差异提供紧凑、可审计的资源，而不是用于证明新的图像生成模型。
+可见光与短波红外（SWIR）配对影像可用于跨光谱生成、图像融合和多模态感知，但数据复用依赖清晰的场景身份、波段定义、空间对应关系和无泄漏评估。本文介绍M-SWIR-\allowbreak RGB场景级数据集，共包含\DatasetSceneCount{}个配对场景，每个场景由一幅RGB图像和五幅SWIR波段图像组成。数据集包含\DatasetTiffCount{}幅场景级TIFF文件；在排除与隐私区域相交的图块后，可生成\DatasetUsablePatchCount{}个互不重叠的$256\times256$空间位置。每个场景内六种模态具有一致尺寸，文件身份通过SHA-256绑定，训练、验证和测试集合按完整场景隔离。质量记录描述图像属性和自动配准诊断，但不把特征残差解释为人工检查点精度或地理定位精度。预设的69次SWIR到RGB实验比较单波段、多波段输入和三类基础模型，并量化跨场景差异：留一场景PSNR均值为\LOSOMeanPSNR{}\,dB，范围为\LOSOMinPSNR{}--\LOSOMaxPSNR{}\,dB。本数据集旨在为研究光谱输入价值和场景依赖性提供紧凑、可审计的资源，而不是用于证明新的图像生成模型。
 \end{abstract}
 
 \textbf{关键词：}短波红外；RGB；配对数据集；多光谱成像；跨光谱生成；场景隔离评估
@@ -87,7 +88,7 @@
 发布门槛包括预期文件数、场景内共同尺寸、RGB与SWIR存储模式、B1--B5哈希互异、图块几何、隐私排除以及划分互斥。自动图像特征可作为可复算的对应关系诊断，但不解释为地理定位精度或独立人工检查点误差。
 
 \subsection{计算验证}
-主要复用任务为SWIR到RGB生成。七类派生任务视图共包含\DatasetTaskFileCount{}个文件，其划分归属、数组形状、图像模式和SHA-256身份均通过自动验证。首先使用确定性的GrayRep基线，将单个SWIR通道复制为三通道输出；随后用固定U-Net比较B1--B5、B124和五波段输入，并运行三个随机种子。U-Net、ResUNet和ResNet生成器在B1、B124和五波段输入上进行比较。最后，对选定配置执行十折留一场景评估。模型和epoch仅依据验证集PSNR选择，留出测试指标不参与选择。评估指标包括PSNR、通道感知SSIM\cite{wang2004}、RGB MAE、CIEDE2000\cite{sharma2005}和边缘一致性。
+主要复用任务为SWIR到RGB生成。七类派生任务视图共包含\DatasetTaskFileCount{}个文件，其划分归属、数组形状、图像模式和SHA-256身份均通过自动验证。首先使用确定性的GrayRep基线，将单个SWIR通道复制为三通道输出；随后用固定U-Net比较B1--B5、B124和五波段输入，并运行三个随机种子。U-Net、ResUNet和ResNet生成器在B1、B124和五波段输入上进行比较。最后，对选定配置执行十折留一场景评估。全部69次训练均以三个随机种子为组完成，且最佳epoch均未触及训练边界。模型和epoch仅依据验证集PSNR选择，留出测试指标不参与选择。评估指标包括PSNR、通道感知SSIM\cite{wang2004}、RGB MAE、CIEDE2000\cite{sharma2005}和边缘一致性。
 
 \subsection{输入层面的技术验证}
 预设的21次输入实验全部完成，每个输入均包含三个随机种子，运行签名互不重复，且最佳epoch均未触及训练边界。最高的平均验证PSNR来自\SelectedInput{}（\SelectedInputValidationPSNR{}\,dB），其次为\InputRunnerUp{}（\InputRunnerUpValidationPSNR{}\,dB）。两者仅相差\InputValidationMargin{}\,dB，小于任一配置的种子间标准差，因此该验证排序更接近性能相当，不能解释为某一输入表示具有普遍优势。
@@ -117,7 +118,19 @@
   \label{fig:model-benchmark-zh}
 \end{figure}
 
-\pending{插入经验证的留一场景结果。}
+\subsection{跨场景技术验证}
+在十折留一场景评估开始前，依据验证集选出的\LOSOModelFamily{}+\LOSOInput{}配置已经固定。十个留出场景的PSNR平均值为\LOSOMeanPSNR{}\,dB，SSIM平均值为\LOSOMeanSSIM{}。场景级PSNR从\LOSOMinPSNR{}变化到\LOSOMaxPSNR{}\,dB，跨度超过7\,dB，明显大于多数场景内部的随机种子波动（表~\ref{tab:scene-results-zh}）。SSIM变化也没有简单复现PSNR排序，说明场景难度不能只由单一失真指标概括。
+
+这些结果完成了面向数据复用的技术验证：任务能够学习，实验代码可重复生成三个随机种子的统计结果，同时源场景身份会显著影响报告值。十折结果仅作描述，不用于宣称模型优越性。其中一折与配置选择阶段使用的场景角色重合，因此同样仅作描述；任何留出场景结果都没有反向用于修改已固定的模型或输入。后续使用者应报告逐场景结果或场景层面的不确定性，而不应只给出汇总后的图块平均值。
+
+\input{generated/scene_benchmark_table_zh.tex}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{fig6_scene_benchmark.pdf}
+  \caption{固定验证集选出的\LOSOModelFamily{}+\LOSOInput{}配置后进行留一场景评估所得的跨场景差异。\textbf{a}，留出场景PSNR；\textbf{b}，留出场景SSIM。点表示三个随机种子的均值，误差线表示样本标准差，虚线表示十个场景的非加权平均值。所有留出结果仅作描述，不参与配置选择。}
+  \label{fig:scene-benchmark-zh}
+\end{figure}
 
 \section{使用说明}
 用户必须先按源场景划分数据，再生成模型输入。随机图块划分会把空间相邻观测分散到不同集合，从而高估泛化能力。归一化统计只能从训练场景估计。用户应使用提供的清单排除隐私相交位置，并验证所用数据快照。自动配准诊断适合比较质量，但不能重新命名为地理定位精度或人工检查点精度。

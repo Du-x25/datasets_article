@@ -17,15 +17,16 @@ five-band SWIR dataset.
 ```powershell
 conda activate mswir-paper
 python scripts\generate_dataset_figures.py
+python scripts\generate_benchmark_figures.py --benchmark-dir D:\A_projects\swir_rgb_dataset_benchmark\artifacts\benchmarks\m_swir_v3
 ```
 
 ## Build manuscripts
 
 ```powershell
-python C:\Users\dx254\.codex\plugins\cache\openai-bundled\latex\0.2.4\skills\latex-compile\scripts\compile_latex.py main_en.tex --compiler texlive --engine xelatex --output-directory build\en
-python C:\Users\dx254\.codex\plugins\cache\openai-bundled\latex\0.2.4\skills\latex-compile\scripts\compile_latex.py main_zh.tex --compiler texlive --engine xelatex --output-directory build\zh
+python C:\Users\dx254\.codex\plugins\cache\openai-bundled\latex\0.2.4\scripts\compile_latex.py main_en.tex --compiler texlive --engine xelatex --output-directory build\en
+python C:\Users\dx254\.codex\plugins\cache\openai-bundled\latex\0.2.4\scripts\compile_latex.py main_zh.tex --compiler texlive --engine xelatex --output-directory build\zh
 ```
 
 Dataset DOI, public repository URL, license, final authorship, funding, and
-completed benchmark values remain explicit submission gates.
-
+author confirmation remain explicit submission gates. The manuscript benchmark
+values are generated from the audited 69-run result bundle.

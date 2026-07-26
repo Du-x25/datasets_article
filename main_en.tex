@@ -17,6 +17,7 @@
 \input{generated/dataset_macros.tex}
 \input{generated/input_benchmark_macros.tex}
 \input{generated/model_benchmark_macros.tex}
+\input{generated/scene_benchmark_macros.tex}
 \hypersetup{colorlinks=true,linkcolor=black,citecolor=black,urlcolor=blue}
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0.45em}
@@ -31,7 +32,7 @@
 \maketitle
 
 \begin{abstract}
-Paired visible and short-wave infrared (SWIR) imagery supports cross-spectral synthesis, fusion and multimodal perception, but dataset reuse depends on explicit scene identity, channel definitions, spatial correspondence and leakage-safe evaluation. We present M-SWIR-RGB, a scene-level dataset containing \DatasetSceneCount{} paired scenes, each represented by one RGB image and five SWIR-band images. The release therefore contains \DatasetTiffCount{} scene-level TIFF files and a reproducible inventory of \DatasetUsablePatchCount{} non-overlapping $256\times256$ positions after privacy-aware exclusion. All modalities within a scene share common dimensions, file identity is bound by SHA-256, and train, validation and test partitions are separated at the scene level. Automated quality records describe image properties and registration diagnostics without treating feature residuals as manual-checkpoint or geolocation accuracy. A prespecified SWIR-to-RGB benchmark compares individual bands, multiband inputs, three model families and leave-one-scene-out evaluation. The dataset is intended as a compact, auditable resource for studying spectral input value and cross-scene variability rather than as evidence for a new image-generation model.
+Paired visible and short-wave infrared (SWIR) imagery supports cross-spectral synthesis, fusion and multimodal perception, but dataset reuse depends on explicit scene identity, channel definitions, spatial correspondence and leakage-safe evaluation. We present M-SWIR-RGB, a scene-level dataset containing \DatasetSceneCount{} paired scenes, each represented by one RGB image and five SWIR-band images. The release therefore contains \DatasetTiffCount{} scene-level TIFF files and a reproducible inventory of \DatasetUsablePatchCount{} non-overlapping $256\times256$ positions after privacy-aware exclusion. All modalities within a scene share common dimensions, file identity is bound by SHA-256, and train, validation and test partitions are separated at the scene level. Automated quality records describe image properties and registration diagnostics without treating feature residuals as manual-checkpoint or geolocation accuracy. A prespecified 69-run SWIR-to-RGB benchmark compares individual bands, multiband inputs and three model families, then quantifies cross-scene variability: leave-one-scene-out PSNR averaged \LOSOMeanPSNR{}\,dB and ranged from \LOSOMinPSNR{} to \LOSOMaxPSNR{}\,dB. The dataset is intended as a compact, auditable resource for studying spectral input value and scene dependence rather than as evidence for a new image-generation model.
 \end{abstract}
 
 \textbf{Keywords:} short-wave infrared; RGB; paired dataset; multispectral imaging; cross-spectral synthesis; scene-disjoint evaluation
@@ -88,7 +89,7 @@ Input observations are treated as read-only. The data pipeline inventories expec
 Release gates verify the expected file count, common dimensions within each scene, RGB and SWIR storage modes, distinct B1--B5 hashes, patch geometry, privacy exclusions and split disjointness. Registration features provide a reproducible diagnostic of image correspondence. They are not interpreted as geolocation accuracy or independent manually annotated checkpoint error.
 
 \subsection{Computational validation}
-The primary reuse task maps SWIR inputs to RGB targets. Seven derived task views contain \DatasetTaskFileCount{} files whose split membership, array shape, image mode and SHA-256 identity passed automated validation. A deterministic GrayRep baseline first replicates a single SWIR channel into three output channels. A fixed U-Net then compares B1--B5, B124 and the five-band input over three seeds. U-Net, ResUNet and a ResNet generator are compared on representative B1, B124 and five-band inputs. Finally, the selected configuration is evaluated in ten leave-one-scene-out folds. Model and epoch selection use validation PSNR only; held-out test metrics never participate in selection. Metrics comprise PSNR, channel-aware SSIM \cite{wang2004}, RGB MAE, CIEDE2000 \cite{sharma2005} and edge consistency.
+The primary reuse task maps SWIR inputs to RGB targets. Seven derived task views contain \DatasetTaskFileCount{} files whose split membership, array shape, image mode and SHA-256 identity passed automated validation. A deterministic GrayRep baseline first replicates a single SWIR channel into three output channels. A fixed U-Net then compares B1--B5, B124 and the five-band input over three seeds. U-Net, ResUNet and a ResNet generator are compared on representative B1, B124 and five-band inputs. Finally, the selected configuration is evaluated in ten leave-one-scene-out folds. All 69 trained runs completed in three-seed groups without a best epoch reaching the training boundary. Model and epoch selection use validation PSNR only; held-out test metrics never participate in selection. Metrics comprise PSNR, channel-aware SSIM \cite{wang2004}, RGB MAE, CIEDE2000 \cite{sharma2005} and edge consistency.
 
 \subsection{Input-level technical validation}
 All 21 prespecified input runs completed with three seeds, unique run signatures and no best epoch at the training boundary. The largest mean validation PSNR was obtained with \SelectedInput{} (\SelectedInputValidationPSNR{}\,dB), followed by \InputRunnerUp{} (\InputRunnerUpValidationPSNR{}\,dB). Their margin was only \InputValidationMargin{}\,dB and was smaller than the between-seed standard deviation of either configuration; the validation ranking therefore indicates near parity rather than a general advantage of one representation.
@@ -118,7 +119,19 @@ The fixed-test ordering differed from the validation ordering. \ModelBestTestFam
   \label{fig:model-benchmark}
 \end{figure}
 
-\pending{Insert the validated leave-one-scene-out results.}
+\subsection{Cross-scene technical validation}
+The validation-selected \LOSOModelFamily{}+\LOSOInput{} configuration was fixed before the ten leave-one-scene-out evaluations. Across the ten held-out scenes, mean PSNR was \LOSOMeanPSNR{}\,dB and mean SSIM was \LOSOMeanSSIM{}. Scene-level PSNR ranged from \LOSOMinPSNR{} to \LOSOMaxPSNR{}\,dB, a spread of more than 7\,dB that is much larger than the within-fold seed variation for most scenes (Table~\ref{tab:scene-results}). The associated SSIM profile did not simply reproduce the PSNR ordering, showing that scene difficulty depends on more than a single distortion measure.
+
+These results provide the intended technical validation of dataset reuse: the task is learnable, the code path produces repeatable three-seed estimates, and scene identity materially affects the reported outcome. The ten-fold values are descriptive rather than a claim of model superiority. One fold also overlaps the scene role used during configuration selection and is therefore interpreted descriptively; no fold result was used to revise the fixed model or input. Users should consequently report per-scene results or scene-level uncertainty instead of relying only on a pooled patch average.
+
+\input{generated/scene_benchmark_table_en.tex}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{fig6_scene_benchmark.pdf}
+  \caption{Cross-scene variability under leave-one-scene-out evaluation with the fixed validation-selected \LOSOModelFamily{}+\LOSOInput{} configuration. \textbf{a}, held-out PSNR; \textbf{b}, held-out SSIM. Points show means and error bars show sample standard deviations over three seeds; dashed lines mark the unweighted mean across the ten scenes. All fold results are descriptive and were not used for configuration selection.}
+  \label{fig:scene-benchmark}
+\end{figure}
 
 \section{User Notes}
 Users should split by source scene before deriving model inputs. Random patch-level partitioning would mix spatially neighbouring observations across subsets and overstate generalization. Normalization statistics must be estimated from training scenes only. The supplied manifests should be used to exclude privacy-intersecting positions and to verify the exact data snapshot. Automated registration diagnostics are suitable for comparative quality inspection but should not be relabelled as geolocation or manual-checkpoint accuracy.

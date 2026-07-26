@@ -450,7 +450,7 @@ def write_scene_latex(frame: pd.DataFrame) -> None:
             f"{latex_pm(row['CIEDE2000_Mean'], row['CIEDE2000_SD'], 2)} \\\\"
         )
     head = [
-        r"\begin{table}[htbp]",
+        r"\begin{table}[H]",
         r"\centering",
         r"\small",
         r"\begin{tabular}{lrrr}",
