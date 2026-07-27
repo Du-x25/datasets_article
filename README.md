@@ -17,7 +17,7 @@ five-band SWIR dataset.
 ```powershell
 conda activate mswir-paper
 python scripts\generate_dataset_figures.py
-python scripts\generate_benchmark_figures.py --benchmark-dir D:\A_projects\swir_rgb_dataset_benchmark\artifacts\benchmarks\m_swir_v3
+python scripts\generate_benchmark_figures.py --benchmark-dir D:\A_projects\swir_rgb_dataset_benchmark\artifacts\benchmarks\m_swir_complete_20260726 --stages input model scene
 ```
 
 ## Build manuscripts

@@ -26,7 +26,7 @@ def main() -> None:
                 )
             texts.append(text)
         joined = "\n".join(texts)
-        for required in ("M-SWIR", "1691", "60"):
+        for required in ("M-SWIR", "1800", "14400", "60", "69"):
             if required not in joined:
                 raise SystemExit(f"Required field {required!r} missing from {path}")
         digest = hashlib.sha256(path.read_bytes()).hexdigest()
@@ -37,4 +37,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
