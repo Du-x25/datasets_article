@@ -6,6 +6,7 @@
 \usepackage{booktabs}
 \usepackage{tabularx}
 \usepackage{array}
+\usepackage{amsmath}
 \usepackage{microtype}
 \usepackage{xcolor}
 \usepackage{hyperref}
@@ -38,7 +39,7 @@
 \maketitle
 
 \begin{abstract}
-Paired visible and short-wave infrared (SWIR) imagery supports cross-spectral synthesis, fusion and multimodal perception, but dataset reuse depends on explicit scene identity, channel definitions, spatial correspondence and leakage-safe evaluation. We present M-SWIR-RGB, a scene-level dataset containing \DatasetSceneCount{} paired scenes, each represented by one RGB image and five SWIR-band images. The release therefore contains \DatasetTiffCount{} scene-level TIFF files and a reproducible inventory of \DatasetUsablePatchCount{} non-overlapping $256\times256$ positions after privacy-aware exclusion. All modalities within a scene share common dimensions, file identity is bound by SHA-256, and train, validation and test partitions are separated at the scene level. Automated quality records describe image properties and registration diagnostics without treating feature residuals as manual-checkpoint or geolocation accuracy. A prespecified 69-run SWIR-to-RGB benchmark compares individual bands, multiband inputs and three model families, then quantifies cross-scene variability: leave-one-scene-out PSNR averaged \LOSOMeanPSNR{}\,dB and ranged from \LOSOMinPSNR{} to \LOSOMaxPSNR{}\,dB. The dataset is intended as a compact, auditable resource for studying spectral input value and scene dependence rather than as evidence for a new image-generation model.
+Paired visible and short-wave infrared (SWIR) imagery supports cross-spectral synthesis, fusion and multimodal perception, but dataset reuse depends on explicit scene identity, channel definitions, spatial correspondence and leakage-safe evaluation. We present M-SWIR-RGB, a scene-level dataset of \DatasetSceneCount{} paired scenes acquired with a common-aperture dichroic platform in which a visible sCMOS camera and an InGaAs SWIR camera share one entrance aperture, and in which five SWIR bands are produced by a motorized filter wheel. Each scene is a mosaic assembled from a scanning position sequence and is released as one RGB image plus five single-channel SWIR images, giving \DatasetTiffCount{} uncompressed eight-bit TIFF files, together with a reproducible inventory of \DatasetUsablePatchCount{} non-overlapping $256\times256$ positions after privacy-aware exclusion. All modalities within a scene share common dimensions, file identity is bound by SHA-256, and train, validation and test partitions are separated at the scene level. Two properties of the acquisition constrain interpretation and are recorded per scene: the five channels are nominal filter passbands rather than a measured end-to-end relative spectral response, no radiometric calibration was applied, and because the output grid is defined at the native RGB pitch each SWIR band is upsampled by \DatasetOutputScale{}$\times$ per axis and carries roughly one twelfth of the independent samples of its RGB target. Automated quality records describe image properties and registration diagnostics in released output pixels, without treating feature residuals as manual-checkpoint or geolocation accuracy. A fixed 69-run SWIR-to-RGB benchmark reports the whole input-by-architecture grid against training-free channel-mapping and linear references, then quantifies cross-scene variability: leave-one-scene-out PSNR averaged \LOSOMeanPSNR{}\,dB and ranged from \LOSOMinPSNR{} to \LOSOMaxPSNR{}\,dB, the validation-optimal configuration was not the held-out-optimal one, and in \LOSOLinearBeatsFolds{} of the ten folds a training-free per-fold linear colour map alone exceeds the trained configuration. The dataset is intended as a compact, auditable resource for studying spectral input value and scene dependence rather than as evidence for a new image-generation model.
 \end{abstract}
 
 \textbf{Keywords:} short-wave infrared; RGB; paired dataset; multispectral imaging; cross-spectral synthesis; scene-disjoint evaluation
@@ -66,22 +67,120 @@ The dataset contains \DatasetSceneCount{} scene units. Each unit has one RGB ima
   \label{fig:overview}
 \end{figure}
 
-\section{Data Description}
-The scene-level release consists of \DatasetTiffCount{} uncompressed eight-bit TIFF files. RGB images use three channels, whereas B1--B5 are single-channel images. Within each scene, all six modalities have identical width and height. A file manifest records relative path, modality, dimensions, mode, byte size and SHA-256. A scene table records the patch inventory and quality-gate status. Derived task views preserve the source-scene identifier so that users can reproduce scene-disjoint analysis.
+\subsection{Positioning against related paired resources}
+Paired visible--infrared resources already exist, and the value of this release lies in the properties it adds rather than in scale. Table~\ref{tab:related} summarizes the structural differences using only facts reported by the cited sources. Driving datasets such as RASMD pair RGB with a single broadband SWIR channel over four weather conditions and provide frame-level partitions \cite{jin2026,jin2025rasmd}; aerial translation datasets such as AVIID provide thousands of visible--infrared patch pairs of vehicle targets \cite{aviid2023}; satellite studies such as DeepSWIR synthesize a SWIR band from other multispectral bands rather than measuring it \cite{rout2019}; and earlier work on the same acquisition platform organized 4000 sliding-window paired samples with a random 4:1 train/test split and a three-band input \cite{chen2026threeband,chen2026thesis}. None of these resources combines five measured SWIR bands, a common-aperture optical pairing, scene-level identity with scene-disjoint partitions, per-scene registration diagnostics, privacy-aware patch exclusion and hash-bound release manifests. The random patch-level split used previously on this platform is precisely the practice this release replaces: neighbouring crops of one scene can then appear on both sides of the train/test boundary.
 
-Non-overlapping $256\times256$ patches are anchored at the top-left pixel of each scene, and incomplete right or bottom remainders are discarded. Patches intersecting privacy masks are excluded from every split, removing \DatasetPrivacyExcludedCount{} positions. The current fixed partition contains \DatasetFixedTrainCount{} training, \DatasetFixedValidationCount{} validation and \DatasetFixedTestCount{} test positions, while the scene identifiers remain the primary unit of interpretation.
-
-\input{generated/scene_inventory_en.tex}
-
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=\textwidth]{fig2_scale_quality_diagnostics.pdf}
-  \caption{Dataset scale and reproducible quality diagnostics. \textbf{a}, Usable non-overlapping patch count by source scene; the accent colour marks a scene with privacy-related exclusions. \textbf{b}, Scene dimensions, with point area proportional to usable patch count. \textbf{c}, automated RGB--B1 held-out feature residuals and corner deviation. These image-derived diagnostics are not manual independent-checkpoint RMSE.}
-  \label{fig:quality}
-\end{figure}
+\begin{table}[htbp]
+\centering
+\caption{Structural comparison with related paired resources. Entries for other resources are taken from their published descriptions; ``n.r.'' means not reported in the cited source and was not independently verified here.}
+\label{tab:related}
+\small
+\begin{tabularx}{\textwidth}{@{}p{0.13\textwidth}p{0.17\textwidth}p{0.20\textwidth}p{0.20\textwidth}X@{}}
+\toprule
+Resource & Domain & Spectral content & Pairing mechanism & Organization and splits\\
+\midrule
+RASMD \cite{jin2026,jin2025rasmd} & Driving, urban/suburban, sunny, cloudy, rain, snow & RGB plus one broadband SWIR channel (1000--1700\,nm) & Two separate cameras, post-hoc SIFT homography with RANSAC & $10^5$ frames per modality; frame-level split (1432 train, 956 test)\\
+AVIID \cite{aviid2023} & Aerial, vehicle targets & Visible and infrared patch pairs & Separate aerial acquisitions & 993, 1090 and 1280 pairs at $434\times434$ or $512\times512$; patch-level\\
+DeepSWIR \cite{rout2019} & Satellite multisensor & SWIR band synthesized from green, red, NIR and coarse SWIR & Cross-sensor co-registration at 5 and 24\,m GSD & n.r.\\
+Same-platform earlier release \cite{chen2026threeband,chen2026thesis} & Ground scenes, four categories & Three SWIR bands (B1, B2, B4) & Common-aperture platform, mosaic then sliding window & 4000 patch pairs; random 4:1 train/test split\\
+M-SWIR-RGB (this release) & Ground scenes, four categories, seven sites & RGB plus five measured SWIR bands & Common-aperture dichroic platform; feature-based pose graph per scene & \DatasetSceneCount{} scenes, \DatasetUsablePatchCount{} positions; scene-disjoint train/validation/test\\
+\bottomrule
+\end{tabularx}
+\end{table}
 
 \section{Methods}
-\subsection{Data organization and evidence chain}
+\subsection{Acquisition platform}
+Paired acquisition uses a common-aperture dichroic platform rather than two independently aimed cameras. Scene radiation passes a front objective and reaches a mirror mounted at 45$^{\circ}$; wavelengths below 900\,nm are reflected into a vertical visible branch while wavelengths above 900\,nm are transmitted into a horizontal SWIR branch. Because both sensors view the scene through the same entrance aperture, the parallax that separates two side-by-side cameras is removed optically and the relative image position of a target is preserved regardless of range. Residual misregistration still arises from the difference in pixel pitch, focal-plane size and rear-optics distortion between the two branches, so geometric registration remains a required processing step.
+
+The visible branch carries a PCO panda 4.2 sCMOS camera ($2048\times2048$ pixels, 450--680\,nm) and the SWIR branch a Xenics Bobcat 640 camera with an InGaAs focal plane ($640\times512$ pixels, 900--1700\,nm). Five narrow-band interference filters are mounted in a motorized wheel (Thorlabs FW102C) in front of the SWIR sensor. One acquisition software sequence per position releases the wheel move and both exposures, so RGB and SWIR frames of a position are triggered by the same sequence. The SWIR channels are nevertheless time-division rather than snapshot: the five bands of one position are sequential exposures of a nominally static scene, not five simultaneous measurements. Any scene change between exposures enters as an inter-band inconsistency that no registration step can remove (Table~\ref{tab:hardware}). The platform is described in detail elsewhere \cite{chen2026thesis}.
+
+\begin{table}[htbp]
+\centering
+\caption{Acquisition platform components.}
+\label{tab:hardware}
+\small
+\begin{tabularx}{\textwidth}{@{}p{0.22\textwidth}X@{}}
+\toprule
+Component & Specification\\
+\midrule
+Beamsplitting & Common entrance aperture; 45$^{\circ}$ dichroic mirror, $<$900\,nm reflected to the visible branch, $>$900\,nm transmitted to the SWIR branch\\
+Visible camera & PCO panda 4.2 sCMOS, $2048\times2048$ pixels, 450--680\,nm\\
+SWIR camera & Xenics Bobcat 640, InGaAs focal plane, $640\times512$ pixels, 900--1700\,nm\\
+Filter wheel & Thorlabs FW102C, motorized, five positions, sequential band acquisition\\
+Filters & Edmund Optics narrow-band interference filters, 50\,nm bandwidth (Table~\ref{tab:bands})\\
+Triggering & One software sequence per position drives the wheel move and both exposures\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Spectral band definition}
+The five passbands were fixed before data collection using an effective-energy integral over the InGaAs response range,
+\begin{equation}
+E_{[\lambda_1,\lambda_2]}=\int_{\lambda_1}^{\lambda_2}E_{\mathrm{sun}}(\lambda)\,\tau_{\mathrm{atm}}(\lambda)\,\eta_{\mathrm{QE}}(\lambda)\,\mathrm{d}\lambda ,
+\label{eq:energy}
+\end{equation}
+where $E_{\mathrm{sun}}$ is the ASTM G173 reference solar spectral irradiance \cite{astmg173}, $\tau_{\mathrm{atm}}$ is atmospheric transmittance simulated with MODTRAN under a mid-latitude winter atmosphere and a rural aerosol model \cite{berk2014modtran}, and $\eta_{\mathrm{QE}}$ is the InGaAs detector quantum efficiency. Integrating 900--1700\,nm in 100\,nm bins separates three high-energy, low-variance windows (1000--1100, 1200--1300 and 1500--1700\,nm) from two bins dominated by water-vapour absorption, whose mean effective energies fall to 0.065 and 0.028 and which are therefore excluded (Table~\ref{tab:energy}). The highest-energy window is sampled by two adjacent 50\,nm channels because reflectance contrast between vegetation and bare soil inside it is small, so finer spectral sampling where the signal is strongest improves material separability; discrimination of the typical scene materials was assessed against the NASA AVIRIS spectral library \cite{chen2026thesis}.
+
+Two limits of this definition are stated explicitly because they constrain reuse. First, the tabulated passbands are nominal filter specifications, not a measured end-to-end system response: the relative spectral response of the assembled optics, filter and detector chain was never characterized, so the effective in-band shape and the out-of-band leakance of the interference filters are not recorded anywhere in the release. Second, no radiometric calibration was applied at any stage. All released pixel values are eight-bit digital numbers, and inter-band ratios should be read as instrument-specific quantities rather than as surface reflectance.
+
+\begin{table}[htbp]
+\centering
+\caption{SWIR channel definition. Passbands are nominal filter specifications; the end-to-end relative spectral response of the assembled system was not measured.}
+\label{tab:bands}
+\small
+\begin{tabular}{@{}lllll@{}}
+\toprule
+Channel & Nominal passband (nm) & Centre (nm) & Bandwidth (nm) & Energy window (nm)\\
+\midrule
+B1 & 1000--1050 & 1025 & 50 & 1000--1100\\
+B2 & 1050--1100 & 1075 & 50 & 1000--1100\\
+B3 & 1225--1275 & 1250 & 50 & 1200--1300\\
+B4 & 1525--1575 & 1550 & 50 & 1500--1700\\
+B5 & 1625--1675 & 1650 & 50 & 1500--1700\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{Effective energy integral statistics from Equation~\eqref{eq:energy} in 100\,nm bins over 900--1700\,nm, in normalized model units. Bins dominated by water-vapour absorption are excluded from the channel set \cite{chen2026thesis}.}
+\label{tab:energy}
+\small
+\begin{tabular}{@{}lrrll@{}}
+\toprule
+Bin (nm) & Mean energy & Variance & Window property & Channel\\
+\midrule
+900--1000 & 0.120 & 0.0055 & rising energy, high fluctuation & ---\\
+1000--1100 & 0.288 & 0.0002 & highest mean energy, very low variance & B1, B2\\
+1100--1200 & 0.145 & 0.0056 & sharp energy drop, high fluctuation & ---\\
+1200--1300 & 0.232 & 0.0003 & high mean energy, very low variance & B3\\
+1300--1400 & 0.065 & 0.0056 & water-vapour absorption, energy too low & ---\\
+1400--1500 & 0.028 & 0.0009 & water-vapour absorption, energy too low & ---\\
+1500--1600 & 0.158 & 0.0001 & high mean energy, very low variance & B4\\
+1600--1700 & 0.146 & 0.0001 & high mean energy, lowest variance & B5\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Scene acquisition}
+Ten scenes were captured at seven outdoor sites spanning four scene categories: urban building surfaces (concrete, glass, red vegetation), industrial yards (steel plate, tarpaulin, metal surfaces), traffic and road surfaces (asphalt, rubber, lane markings) and rural terrain (soil, bare ground, yellow vegetation). A scene is not a single camera frame but a continuous scanning sequence: the platform was moved through 4--29 positions per scene, \DatasetSourcePositionCount{} positions in total, so that neighbouring positions overlap. Overlap is what makes mosaicking possible and what allows the inter-position geometry to be estimated from image features alone. Each position provides one RGB observation and five SWIR observations, giving \DatasetRgbFrameCount{} RGB and \DatasetSwirFrameCount{} SWIR source frames across \DatasetRawFileCount{} read-only raw files. For C1--C7 one RGB frame was captured per position; for C8, C9 and C10 a burst of ten frames was captured and the sharpest single frame was selected by the processing chain.
+
+Acquisition dates were recovered from the modification times of the read-only source files and asserted to be a single calendar date per scene; they span \DatasetAcquisitionDateMin{} to \DatasetAcquisitionDateMax{} and are recorded per scene in \texttt{metadata/acquisition\_provenance.csv} and Table~\ref{tab:acquisition}. The raw files carry no embedded GNSS or clock metadata, so location is documented as scene category and site count rather than as coordinates, and weather was not logged. Illumination and atmospheric state are therefore recoverable only from the images themselves. This is a deliberate limitation of the release and one reason scene identity, not patch count, is the unit of interpretation.
+
+\subsection{Scene mosaic construction}
+Each scene is assembled into one canvas per modality. Features are detected with SIFT (8000 features, contrast threshold 0.005) and matched under a 0.72 ratio test; correspondences are filtered by RANSAC with a 2.0-pixel reprojection threshold and an edge is rejected if fewer than 45 inliers survive. Two edge families enter the pose graph: cross-modal edges linking the RGB frame to the B1 frame of the same position, and intra-SWIR edges linking B1 to each of B2--B5, so that all six modalities of a position share one geometric solution. \DatasetPoseEdgeCount{} edges were accepted across the ten scenes. The pose graph is solved in the B1 reference frame. C8 and C9 use a homography pose model and additionally run a bundle adjustment that holds out 20\% of matched points (at most 220 points per edge and 120 evaluations); on those two scenes the training RMS falls from 1.364 to 0.841 and from 0.729 to 0.475 reference pixels and the held-out 95th percentile is 2.079 and 1.187 reference pixels. The remaining eight scenes use an affine pose model without bundle adjustment.
+
+The canvas is defined on the B1 reference frame and scaled by a fixed factor of \DatasetOutputScale{}, which is the ratio of visible to SWIR sensor width ($2048/640$). The output pixel pitch therefore equals the native RGB sampling pitch: RGB is resampled close to its native resolution, while every SWIR band is upsampled by \DatasetOutputScale{}$\times$ per axis from $640\times512$ sensor pixels onto the output grid. A SWIR band consequently carries about one twelfth of the independent samples of the RGB target it is paired with. This asymmetry is a property of the acquisition platform rather than of the release processing, and it bounds the spatial detail that any SWIR-to-RGB model can synthesize; it is the main reason absolute synthesis metrics here are low compared with same-resolution benchmarks.
+
+Each canvas is cropped to the largest rectangle in which all six modalities are valid (recorded crop mode \texttt{largest\_common\_valid\_rectangle}) with a 4-pixel output inset, and every cropped pixel is asserted to be commonly valid. The common-coverage fraction of the uncropped canvas ranges from \DatasetCoverageMin{} to \DatasetCoverageMax{} (mean \DatasetCoverageMean{}). Positions are blended with a seam-select mosaic (96-pixel feather, 72-pixel seam transition, 12-pixel output margin around the reference frame). Per-scene build time ranged from \DatasetBuildSecondsMin{} to \DatasetBuildSecondsMax{}\,s.
+
+\subsection{Radiometric policy}
+Radiometry is handled differently in the two branches and the difference is recorded per scene. For RGB, a per-position, per-channel gamma look-up is estimated from the overlap between adjacent positions so that midtones agree across the mosaic; the applied gain is clamped to $[0.65,1.35]$ and the tone correction fades over 128 pixels. This limits photometric drift within a scene without attempting absolute calibration. For SWIR, radiometry is preserved: gain is fixed at 1.0 and only geometric resampling (bicubic) and the 72-pixel seam transition modify pixel values. A release gate asserts the preservation flag for every scene, so inter-band contrast in the released SWIR channels reflects the scene and the filter passbands rather than a per-band tone adjustment. The policy is reported per scene in \texttt{source\_provenance.csv}.
+
+\subsection{Privacy redaction}
+One scene (C10) contains vehicle licence plates. Seven plate regions were annotated in the scene configuration and redacted in all six released modalities: each box is dilated by 24 pixels, the median value of the resulting annulus is computed per channel, and the dilated interior is replaced by that constant. The operation is a constant fill, not a blur, so no residual high-frequency plate structure survives. We verified it directly against the released TIFFs rather than inferring it from the code: within each of the $7\times6=42$ redacted regions the number of distinct pixel values is exactly one, confirming a uniform fill in every modality. Redaction precedes patching; the \DatasetPrivacyExcludedCount{} grid positions in C10 that intersect a redacted region are excluded from every split, leaving \DatasetRedactedSceneUsablePatchCount{} usable positions there.
+
+\subsection{Release pipeline and metadata generation}
 Input observations are treated as read-only. The data pipeline inventories expected files, computes SHA-256 digests, applies the configured scene-processing chain, validates scene-level products, creates privacy-aware patch manifests and exports release metadata. All paper counts are generated from machine-readable manifests. Figure~\ref{fig:pipeline} shows the boundary between data production, computational validation and manuscript evidence.
 
 \begin{figure}[htbp]
@@ -91,56 +190,169 @@ Input observations are treated as read-only. The data pipeline inventories expec
   \label{fig:pipeline}
 \end{figure}
 
-\subsection{Quality control}
-Release gates verify the expected file count, common dimensions within each scene, RGB and SWIR storage modes, distinct B1--B5 hashes, patch geometry, privacy exclusions and split disjointness. Registration features provide a reproducible diagnostic of image correspondence. They are not interpreted as geolocation accuracy or independent manually annotated checkpoint error.
+\input{generated/scene_acquisition_en.tex}
 
-\subsection{Computational validation}
-The primary reuse task maps SWIR inputs to RGB targets. Seven derived task views contain \DatasetTaskFileCount{} files whose split membership, array shape, image mode and SHA-256 identity passed automated validation. A deterministic GrayRep baseline first replicates a single SWIR channel into three output channels. A fixed U-Net then compares B1--B5, B124 and the five-band input over three seeds. U-Net, ResUNet and a ResNet generator are compared on representative B1, B124 and five-band inputs. Finally, the selected configuration is evaluated in ten leave-one-scene-out folds. All 69 trained runs completed in three-seed groups without a best epoch reaching the training boundary. Model and epoch selection use validation PSNR only; held-out test metrics never participate in selection. Metrics comprise PSNR, channel-aware SSIM \cite{wang2004}, RGB MAE, CIEDE2000 \cite{sharma2005} and edge consistency.
+\section{Data Records}
+The released snapshot is organized as ten scene directories (\texttt{C1}--\texttt{C10}), one shared \texttt{metadata/} directory and one derived \texttt{tasks/} directory. Every count quoted below is generated from the machine-readable records listed here.
+
+\subsection{Scene-level imagery}
+Each scene directory holds six uncompressed eight-bit TIFF files: one three-channel RGB image (\texttt{scene\emph{N}.tif}) and five single-channel SWIR images (\texttt{scene\emph{N}\_band1.tif} to \texttt{scene\emph{N}\_band5.tif}), giving \DatasetTiffCount{} files in total. Within each scene all six modalities have identical width and height (Table~\ref{tab:scene-inventory}). Scene extents range from $2663\times4710$ to $11451\times1499$ pixels because each canvas is the cropped union of a position sequence rather than a single frame.
+
+Equal dimensions do not imply equal information content. The output grid is defined at the native RGB sampling pitch, so the RGB channel is resampled close to its $2048\times2048$ sensor resolution while each SWIR band is upsampled by \DatasetOutputScale{}$\times$ per axis from its $640\times512$ InGaAs sensor. A SWIR band therefore carries roughly one twelfth of the independent samples of the RGB target it is paired with, and neighbouring output pixels within a SWIR band are correlated by the resampling kernel. This is a property of the acquisition platform and is recorded per scene in \texttt{acquisition\_provenance.csv}; it bounds the spatial detail recoverable from SWIR inputs and must be taken into account when comparing synthesis metrics against same-resolution benchmarks.
+
+\subsection{Metadata records}
+\texttt{dataset\_manifest.csv} carries one row per released TIFF and records scene, modality, filename, width, height, colour mode, bit depth, compression, byte size, SHA-256, whether the digest matches the pre-release candidate hash, the processing mode, the scene configuration path and the SHA-256 of that configuration file.
+
+\texttt{source\_provenance.csv} carries one row per scene and records the read-only RGB and SWIR input roots, the number of source positions combined into the released scene mosaic, whether geometric transforms were recomputed during release, and the radiometry policy applied to RGB (overlap midtone matching) and to SWIR (values preserved).
+
+\texttt{acquisition\_provenance.csv} carries one row per scene and records the acquisition date, the evidence for that date, the number of read-only source files and their split into RGB and SWIR frames, the number of source positions and frames per position, the burst-selection mode, the pose model and whether bundle adjustment ran, the number of accepted pose edges and the anchor position, the reference band and output scale factor, the uncropped and cropped canvas sizes, the crop mode and inset, the common-coverage fraction and per-modality coverage fractions, the build time in seconds, the scene validation flag, the native sensor pixel counts of both branches, and the statements that no radiometric calibration was applied and that the spectral channels are nominal filter passbands rather than a measured system response.
+
+\texttt{scene\_quality\_summary.csv} records the per-scene gate outcome, the registration diagnostics and the flag confirming that SWIR radiometry was preserved. \texttt{validation\_report.json} is the machine-readable release report: release identifier, creation timestamp in UTC, expected and observed scene and TIFF counts, hash-match and quality-assurance flags, and per-scene patch-grid summaries including the discarded right and bottom remainders.
+
+\subsection{Patch geometry and privacy exclusions}
+Non-overlapping $256\times256$ patches are anchored at the top-left pixel of each scene, and incomplete right or bottom remainders are discarded. \texttt{privacy\_patch\_exclusions.csv} records every excluded position with its scene, patch size, grid rule, row and column index, pixel bounds, the identifier of the intersecting privacy region and the action taken; \texttt{privacy\_patch\_grid\_summary.json} reports the corresponding per-scene grid totals. All \DatasetPrivacyExcludedCount{} exclusions fall in a single scene and reference seven distinct annotated regions. The fixed partition contains \DatasetFixedTrainCount{} training, \DatasetFixedValidationCount{} validation and \DatasetFixedTestCount{} test positions, while the scene identifiers remain the primary unit of interpretation.
+
+\subsection{Derived task views}
+\texttt{tasks/} contains seven task views, each subdivided into \texttt{train/}, \texttt{val/} and \texttt{test/}: five single-band views (\texttt{swir2rgb\_band1} to \texttt{swir2rgb\_band5}), one three-band view (\texttt{swir2rgb\_b124}) and one five-band view (\texttt{swir2rgb\_5band}). The six single- and three-band views store SWIR inputs only, as PNG patches named \texttt{\{scene\}\_r\{row\}\_c\{column\}.png} with \DatasetUsablePatchCount{} files each. The five-band view additionally materializes, for every position, the five-channel input array (\texttt{\_swir5.npy}) and the RGB target (\texttt{\_rgb.png}), giving $2\times\DatasetUsablePatchCount{}$ files; the seven views therefore total \DatasetTaskFileCount{} files. Because each RGB target is materialized once, all views share identical positions and split membership.
+
+\texttt{task\_manifest.csv} maps every sample identifier to its scene, split, row and column index, pixel origin, patch size and the channel order of the three-band and five-band views. \texttt{task\_file\_manifest.csv} records the relative path, byte size and SHA-256 of every task file. \texttt{task\_summary.json} and \texttt{task\_validation.json} record the observed file count, the split position counts and the validation outcome.
+
+\input{generated/scene_inventory_en.tex}
+
+\section{Technical Validation}
+\subsection{Release gates and registration diagnostics}
+Validation happens at two levels. Build-time scene quality assurance checks, for every released image, that the fraction of all-zero pixels does not exceed 0.01 and that the dynamic range is at least 20 gray levels, and it records the registration diagnostics described below; the outcome is the per-scene \texttt{qa\_passed} flag. Release gates then verify the expected scene and file counts, common dimensions within each scene, RGB and SWIR storage modes, distinct B1--B5 hashes, patch geometry, privacy exclusions and split disjointness. All ten scenes pass both levels, and all \DatasetTiffCount{} released SHA-256 digests match their pre-release candidate hashes.
+
+Correspondence between modalities is documented with three image-derived quantities rather than one, because the two branches are not geometrically identical and no ground-truth correspondence exists. The per-scene record reports the 95th-percentile residual of held-out cross-modal RGB--B1 feature matches, the deviation of the RGB$\rightarrow$B1 transform corners from the identity, and the maximum over B2--B5 of the 95th-percentile intra-SWIR output residual. The first two are computed on 1200-pixel preview images, so they are gate units rather than release units; multiplying by the per-scene factor $\max(W,H)/1200$ expresses them in released output pixels. In output pixels the held-out RGB--B1 residual ranges from \RegHoldoutMinPx{} to \RegHoldoutMaxPx{} (median \RegHoldoutMedianPx{}, mean \RegHoldoutMeanPx{}), the corner deviation from \RegCornerMinPx{} to \RegCornerMaxPx{} (median \RegCornerMedianPx{}, mean \RegCornerMeanPx{}), and the intra-SWIR residual from \IntraSwirMinPx{} to \IntraSwirMaxPx{} (mean \IntraSwirMeanPx{}) against a gate of \IntraSwirGatePx{} output pixels.
+
+Two properties of these numbers must be read together with them. First, because the gates on the first two quantities are defined in preview pixels (2.5 and 8.0), their output-pixel equivalents are scene dependent; the corner-deviation gate corresponds to between \RegCornerGateMinPx{} and \RegCornerGateMaxPx{} released pixels across the ten scenes, so it is tighter for physically small canvases and looser for large ones. Second, one scene is an outlier. \RegCornerWorstScene{} reaches \RegCornerMaxPx{} output pixels of corner deviation, \RegCornerOutlierRatio{} times the next largest value (\RegCornerRunnerUpPx{} pixels), whereas the remaining nine scenes average \RegCornerOtherMeanPx{} pixels. All ten scenes satisfy the configured gate, but the gate is loose relative to the observed distribution, and users who require tight cross-modal alignment should treat \RegCornerWorstScene{} as the weakest scene and verify local alignment before use.
+
+These diagnostics are not geolocation accuracy and not independent manually annotated checkpoint error. No manual checkpoints were collected; every value is derived from automatically matched image features, so it measures the internal consistency of the estimated geometry rather than its absolute correctness (Figure~\ref{fig:quality}).
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{fig2_scale_quality_diagnostics.pdf}
+  \caption{Dataset scale and reproducible quality diagnostics. \textbf{a}, Usable non-overlapping patch count by source scene; the accent colour marks the scene with privacy-related exclusions. \textbf{b}, Scene dimensions, with point area proportional to usable patch count. \textbf{c}, registration diagnostics converted to released output pixels on a logarithmic axis: held-out RGB--B1 feature residual, RGB--B1 identity-transform corner deviation, and the maximum intra-SWIR residual. The dotted line is the intra-SWIR gate (\IntraSwirGatePx{} output pixels) and the shaded band spans the scene-dependent output-pixel equivalent of the 8.0-preview-pixel corner-deviation gate. These image-derived diagnostics are not manual independent-checkpoint RMSE.}
+  \label{fig:quality}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.86\textwidth]{fig7_registration_zoom.pdf}
+  \caption{Central $256\times256$ crop of every scene, RGB beside SWIR B1, two scenes per row. The crop is the geometric centre of each canvas, so no location was chosen on the basis of appearance and the panel is a uniform sample of the release rather than a best case. Each panel uses one 1st--99th percentile stretch recorded in \texttt{figures/source\_data/fig7\_zoom\_provenance.csv}. The panel shows both the shared structure that supports the pairing and the resolution asymmetry described in the Methods: fine RGB texture has no counterpart at the same spatial frequency in the upsampled SWIR band.}
+  \label{fig:zoom}
+\end{figure}
+
+\subsection{Benchmark design and metrics}
+The primary reuse task maps SWIR inputs to RGB targets, and the seven derived task views passed automated validation of split membership, array shape, image mode and SHA-256 identity before any training. The benchmark is fixed in advance and contains 69 trained runs in three stages plus training-free reference baselines. Stage one trains a single U-Net on all seven input representations (B1--B5, B124, 5B) with three seeds each, giving 21 runs on the fixed partition (training C1, C3--C7 and C10; validation C8; test C2 and C9). Stage two adds ResUNet and a ResNet generator on the three representative inputs B1, B124 and 5B with three seeds each, giving 18 further runs that combine with the nine matching U-Net runs from stage one into a $3\times3$ architecture-by-input grid. Stage three evaluates ten leave-one-scene-out folds with three seeds each, giving 30 runs; in fold $i$ scene $i$ is the test scene, the next scene in the fixed order is the validation scene and the remaining eight are training scenes.
+
+Training-free reference baselines are computed for every input representation on the fixed test partition and for the carried-forward input in each leave-one-scene-out fold. The first is a deterministic channel mapping that replicates a single SWIR channel into three output channels (GrayRep) or maps the first three input channels directly to the output channels (ChannelMap). The second is a per-fold least-squares linear colour transform, fitted on that fold's training scenes only and applied with an affine map per output channel. Together they bound what a trained network adds beyond a channel relabelling and beyond a global linear colour correction.
+
+All 69 trained runs completed in three-seed groups, each with a unique run signature and no best epoch at the training boundary. Capacity, optimizer, schedule, loss, normalization and augmentation are identical across all stages, so the only manipulated factors are the input representation, the generator architecture and the scene partition (Table~\ref{tab:protocol}). Model and epoch selection use validation PSNR alone; held-out test metrics never participate in selection and are reported descriptively. Metric definitions are given in Table~\ref{tab:metrics}.
+
+\begin{table}[htbp]
+\centering
+\caption{Training protocol shared by all 69 benchmark runs. Values are read from the frozen benchmark configuration and runner script, whose SHA-256 digests are recorded in the provenance bundle.}
+\label{tab:protocol}
+\small
+\begin{tabularx}{\textwidth}{@{}p{0.28\textwidth}X@{}}
+\toprule
+Item & Value\\
+\midrule
+Generator capacity & \texttt{base\_channels} 24 for all architectures\\
+Optimizer & AdamW, learning rate $2\times10^{-4}$, betas $(0.5,0.999)$, weight decay $10^{-4}$\\
+Epochs / early stopping & 50 maximum, patience 10 on validation PSNR\\
+Batch size & 8\\
+Loss & $\mathcal{L}_1$ plus $0.1\times$ gradient $\mathcal{L}_1$\\
+Normalization & division by 255 only; no dataset-level statistics are estimated\\
+Augmentation & random horizontal and vertical flips\\
+Seeds & 2026, 2027, 2028\\
+Numerical precision & automatic mixed precision\\
+Hardware & single NVIDIA GeForce RTX 4090 Laptop GPU\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{Benchmark metrics. All are computed against the RGB target on the 0--255 scale; aggregation over patches and seeds is an unweighted mean.}
+\label{tab:metrics}
+\small
+\begin{tabularx}{\textwidth}{@{}p{0.20\textwidth}Xp{0.13\textwidth}@{}}
+\toprule
+Metric & Definition & Direction\\
+\midrule
+PSNR (dB) & $10\log_{10}\!\left(255^2/\mathrm{MSE}\right)$ over all RGB channels & higher\\
+SSIM & structural similarity computed per channel and averaged (\texttt{channel\_axis}=2) \cite{wang2004} & higher\\
+RGB MAE & mean absolute difference on the 0--255 RGB scale & lower\\
+CIEDE2000 & mean per-pixel $\Delta E_{00}$ after sRGB to CIELAB conversion \cite{sharma2005} & lower\\
+Edge consistency & mean cosine similarity of Sobel gradient orientation between prediction and target & higher\\
+\bottomrule
+\end{tabularx}
+\end{table}
 
 \subsection{Input-level technical validation}
-All 21 prespecified input runs completed with three seeds, unique run signatures and no best epoch at the training boundary. The largest mean validation PSNR was obtained with \SelectedInput{} (\SelectedInputValidationPSNR{}\,dB), followed by \InputRunnerUp{} (\InputRunnerUpValidationPSNR{}\,dB). Their margin was only \InputValidationMargin{}\,dB and was smaller than the between-seed standard deviation of either configuration; the validation ranking therefore indicates near parity rather than a general advantage of one representation.
+All 21 input runs completed with three seeds, unique run signatures and no best epoch at the training boundary. Table~\ref{tab:input-results} reports the whole grid; we deliberately do not convert it into a single winner. Three statements are supported by the numbers.
 
-Held-out test values were reported descriptively and did not alter this ranking. B124 produced the largest test PSNR (\BOneTwoFourTestPSNR{}\,dB) and SSIM (\BOneTwoFourTestSSIM{}), together with the lowest CIEDE2000 (\BOneTwoFourTestCIE{}). The trained B1 model also exceeded its GrayRep sanity baseline (\BOneGrayRepPSNR{}\,dB), while trained B124 exceeded the direct ChannelMap baseline (\BOneTwoFourChannelMapPSNR{}\,dB). The divergence between validation and held-out ordering motivates the prespecified model-family and leave-one-scene-out stages rather than a claim that one input is universally optimal.
+First, validation cannot separate the seven representations. The largest mean validation PSNR belongs to \SelectedInput{} (\SelectedInputValidationPSNR{}\,dB) and the second to \InputRunnerUp{} (\InputRunnerUpValidationPSNR{}\,dB), a margin of \InputValidationMargin{}\,dB that is smaller than the between-seed standard deviation of either configuration.
+
+Second, the held-out ordering differs from the validation ordering. B124 attains the largest fixed-test PSNR (\BOneTwoFourTestPSNR{}\,dB) and SSIM (\BOneTwoFourTestSSIM{}) together with the lowest CIEDE2000 (\BOneTwoFourTestCIE{}). Because the fixed test partition contains only two scenes, this disagreement is itself evidence about scene composition rather than about representations, and it motivates the leave-one-scene-out stage.
+
+Third, trained models exceed the training-free references: trained B1 reaches a fixed-test PSNR above the GrayRep value of \BOneGrayRepPSNR{}\,dB and trained B124 above the ChannelMap value of \BOneTwoFourChannelMapPSNR{}\,dB. The networks therefore learn more than a channel relabelling, and the per-fold linear reference quantifies how much of the remaining gain is a global colour correction rather than spatial synthesis.
 
 \input{generated/input_benchmark_table_en.tex}
 
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=\textwidth]{fig4_input_benchmark.pdf}
-  \caption{Input-level computational validation with a fixed U-Net. \textbf{a}, validation PSNR used for input ranking. \textbf{b--d}, held-out test PSNR, SSIM and CIEDE2000, respectively. Bars show means and error bars show sample standard deviations over three independent seeds. Test metrics were not used for selection.}
+  \caption{Input-level computational validation with a fixed U-Net. \textbf{a}, validation PSNR. \textbf{b--d}, held-out test PSNR, SSIM and CIEDE2000. Bars show means and error bars show sample standard deviations over three independent seeds. Validation and test orderings disagree, so no input representation is declared optimal. Test metrics were not used for selection.}
   \label{fig:input-benchmark}
 \end{figure}
 
 \subsection{Model-family technical validation}
-The 18 additional model runs completed without missing seeds or training-boundary best epochs and were combined with the nine corresponding U-Net runs from the input study. Validation-only selection identified \SelectedModelFamily{} with \SelectedModelInput{} as the fixed configuration for scene-level evaluation, with a mean validation PSNR of \SelectedModelValidationPSNR{}\,dB. Its descriptive fixed-test PSNR and SSIM were \SelectedModelTestPSNR{}\,dB and \SelectedModelTestSSIM{}, respectively.
+The 18 additional model runs completed without missing seeds or training-boundary best epochs and combine with the nine corresponding U-Net runs from the input study into the $3\times3$ grid of Table~\ref{tab:model-results}. The configuration carried forward to the scene stage is defined by one rule stated before the results were read: among the nine cells, take the one with the highest mean validation PSNR, computed on the validation partition only. That rule selects \SelectedModelFamily{} with \SelectedModelInput{} at \SelectedModelValidationPSNR{}\,dB validation PSNR.
 
-The fixed-test ordering differed from the validation ordering. \ModelBestTestFamily{} with \ModelBestTestInput{} produced the largest descriptive test PSNR (\ModelBestTestPSNR{}\,dB) but a validation PSNR of only \ModelBestTestValidationPSNR{}\,dB, and therefore was not selected. This reversal indicates that conclusions drawn from one scene partition are sensitive to scene composition. We consequently retained the validation-selected configuration and used the prespecified leave-one-scene-out study to quantify that variability.
+The rule and the fixed-test outcome point in opposite directions. The carried-forward cell has a descriptive fixed-test PSNR of only \SelectedModelTestPSNR{}\,dB and SSIM of \SelectedModelTestSSIM{}, whereas \ModelBestTestFamily{} with \ModelBestTestInput{} reaches \ModelBestTestPSNR{}\,dB on the same partition from a validation PSNR of \ModelBestTestValidationPSNR{}\,dB. A validation-only rule therefore selected the cell with the weaker held-out result. We report this reversal instead of resolving it by selecting on the test set, because it is the clearest available demonstration that a ranking obtained from one scene partition does not transfer to another. The leave-one-scene-out stage quantifies that dependence directly.
 
 \input{generated/model_benchmark_table_en.tex}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{fig5_model_benchmark.pdf}
-  \caption{Model-family comparison on representative SWIR inputs. \textbf{a}, validation PSNR used for configuration selection. \textbf{b--d}, descriptive held-out test PSNR, SSIM and CIEDE2000. Bars show means and error bars show sample standard deviations over three seeds. The opposing validation and fixed-test rankings were not resolved by selecting on the test set.}
+  \caption{Model-family comparison on representative SWIR inputs. \textbf{a}, validation PSNR, the only quantity used by the carry-forward rule. \textbf{b--d}, descriptive held-out test PSNR, SSIM and CIEDE2000. Bars show means and error bars show sample standard deviations over three seeds. The opposing validation and fixed-test rankings were not resolved by selecting on the test set.}
   \label{fig:model-benchmark}
 \end{figure}
 
 \subsection{Cross-scene technical validation}
-The validation-selected \LOSOModelFamily{}+\LOSOInput{} configuration was fixed before the ten leave-one-scene-out evaluations. Across the ten held-out scenes, mean PSNR was \LOSOMeanPSNR{}\,dB and mean SSIM was \LOSOMeanSSIM{}. Scene-level PSNR ranged from \LOSOMinPSNR{} to \LOSOMaxPSNR{}\,dB, a spread of more than 7\,dB that is much larger than the within-fold seed variation for most scenes (Table~\ref{tab:scene-results}). The associated SSIM profile did not simply reproduce the PSNR ordering, showing that scene difficulty depends on more than a single distortion measure.
+The \LOSOModelFamily{}+\LOSOInput{} configuration produced by the carry-forward rule was frozen before the ten leave-one-scene-out folds were trained. Across the ten held-out scenes, mean PSNR was \LOSOMeanPSNR{}\,dB and mean SSIM was \LOSOMeanSSIM{}. Scene-level PSNR ranged from \LOSOMinPSNR{} to \LOSOMaxPSNR{}\,dB (Table~\ref{tab:scene-results}), a spread far larger than the within-fold seed variation for most scenes. The SSIM profile does not reproduce the PSNR ordering, so scene difficulty is not captured by a single distortion measure. Per-fold channel-mapping and linear references are reported alongside every trained value, which separates scene-dependent synthesis gain from scene-dependent colour offset.
 
-These results provide the intended technical validation of dataset reuse: the task is learnable, the code path produces repeatable three-seed estimates, and scene identity materially affects the reported outcome. The ten-fold values are descriptive rather than a claim of model superiority. One fold also overlaps the scene role used during configuration selection and is therefore interpreted descriptively; no fold result was used to revise the fixed model or input. Users should consequently report per-scene results or scene-level uncertainty instead of relying only on a pooled patch average.
+The reference columns deserve explicit attention. In \LOSOLinearBeatsFolds{} of the ten folds the per-fold linear reference alone exceeds the trained configuration: its mean PSNR across folds is \LOSOLinearRefMeanPSNR{}\,dB against \LOSOMeanPSNR{}\,dB for the trained model and \LOSOChannelRefMeanPSNR{}\,dB for the training-free channel mapping. For those scenes most of the predictable signal is a global colour relation that a least-squares affine map recovers without any training, and the trained model adds value mainly in the folds where local texture must be synthesized. This is a direct consequence of the SWIR sampling density described in the Methods, and it is why every trained value in this release is reported beside its training-free references rather than alone.
+
+One dependency must be stated explicitly. The carry-forward rule maximized validation PSNR on C8, so the fold that holds out C8 is not independent of the configuration choice and is reported descriptively rather than as a clean held-out estimate; the same applies to folds in which C8 serves as the within-fold validation scene. No fold result was used to revise the model or the input.
+
+These results provide the intended technical validation of dataset reuse: the task is learnable, the code path produces repeatable three-seed estimates, and scene identity materially affects every reported number. The ten-fold values are descriptive rather than a claim of model superiority. Users should report per-scene results or scene-level uncertainty instead of relying on a pooled patch average, and should not read the pooled mean of any single configuration as a property of the dataset.
 
 \input{generated/scene_benchmark_table_en.tex}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{fig6_scene_benchmark.pdf}
-  \caption{Cross-scene variability under leave-one-scene-out evaluation with the fixed validation-selected \LOSOModelFamily{}+\LOSOInput{} configuration. \textbf{a}, held-out PSNR; \textbf{b}, held-out SSIM. Points show means and error bars show sample standard deviations over three seeds; dashed lines mark the unweighted mean across the ten scenes. All fold results are descriptive and were not used for configuration selection.}
+  \caption{Cross-scene variability under leave-one-scene-out evaluation with the fixed validation-selected \LOSOModelFamily{}+\LOSOInput{} configuration. \textbf{a}, held-out PSNR; \textbf{b}, held-out SSIM. Points show means and error bars show sample standard deviations over three seeds; dashed lines mark the unweighted mean across the ten scenes. In \textbf{a}, crosses mark the training-free channel reference and squares the per-fold least-squares linear reference. All fold results are descriptive and were not used for configuration selection.}
   \label{fig:scene-benchmark}
 \end{figure}
 
 \section{User Notes}
-Users should split by source scene before deriving model inputs. Random patch-level partitioning would mix spatially neighbouring observations across subsets and overstate generalization. Normalization statistics must be estimated from training scenes only. The supplied manifests should be used to exclude privacy-intersecting positions and to verify the exact data snapshot. Automated registration diagnostics are suitable for comparative quality inspection but should not be relabelled as geolocation or manual-checkpoint accuracy.
+Users should split by source scene before deriving model inputs. Random patch-level partitioning would mix spatially neighbouring observations across subsets and overstate generalization; the earlier same-platform release used exactly such a split and is superseded in this respect. Normalization statistics must be estimated from training scenes only. The supplied manifests should be used to exclude privacy-intersecting positions and to verify the exact data snapshot.
+
+Four further constraints follow from the acquisition design and should be respected in reuse. First, the SWIR bands are upsampled by \DatasetOutputScale{}$\times$ per axis relative to their sensor grid, so absolute synthesis metrics are bounded by the SWIR sampling density; comparisons against same-resolution visible-to-visible benchmarks are misleading, and users who need a fair resolution comparison should downsample the RGB target to the SWIR-native grid. Second, the five channels are nominal filter passbands without radiometric calibration, so band ratios are instrument-specific and must not be converted to reflectance or used for atmospheric correction. Third, the SWIR bands of one position are sequential exposures, so moving scene content (foliage, vehicles, people) can differ between bands within a position; applications that assume instantaneous multispectral capture should screen for this. Fourth, the redacted regions in C10 are constant fills that carry no scene information; they must be excluded rather than learned from, and \texttt{privacy\_patch\_exclusions.csv} lists every affected position.
+
+Automated registration diagnostics are suitable for comparative quality inspection but should not be relabelled as geolocation or manual-checkpoint accuracy. Scene \RegCornerWorstScene{} has the weakest cross-modal geometry in the release and should be verified locally before being used in alignment-sensitive applications. Acquisition dates are recorded per scene, but no coordinates or weather logs exist; illumination and atmospheric state are properties of each scene and should be treated as part of its identity.
+
+\section*{Code Availability}
+The scene-mosaic builder, the release validation gates, the task-view generator and the benchmark runner are released as a public GitHub repository at the time of submission; the repository address and the commit identifiers are recorded in the Data Availability Statement once the record is public. Release-time provenance already binds every number in this manuscript to code: \texttt{validation\_report.json} records the commit of the mosaic repository at release time together with the SHA-256 of each scene configuration, and the benchmark provenance bundle records the SHA-256 of the runner script, the benchmark configuration and the task tree used for training. Together with the per-file SHA-256 manifests, these records allow an external reader to verify that the released files, the code and the reported metrics describe one consistent snapshot.
+
+\section*{Acknowledgements}
+The authors thank the colleagues of the Key Laboratory of Optical Calibration and Characterization, Chinese Academy of Sciences, for assistance with field acquisition and instrument maintenance, and the colleagues who reviewed earlier internal versions of the data release. Computational resources for the benchmark were provided by the authors' institution.
 
 \section*{Data Availability Statement}
 The M-SWIR-RGB dataset will be deposited in the Zenodo public repository under a Creative Commons Attribution 4.0 International (CC BY 4.0) license. The public DOI, release identifier, formal dataset citation, and an anonymous review link for peer review will be inserted here after upload and download verification.

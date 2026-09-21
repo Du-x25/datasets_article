@@ -12,12 +12,12 @@
 
 ## Figure 2 — scale and quality diagnostics
 
-- Core conclusion: the dataset combines heterogeneous scene extents with a fully auditable patch inventory and registration diagnostics.
+- Core conclusion: the dataset combines heterogeneous scene extents with a fully auditable patch inventory and registration diagnostics expressed in released output pixels.
 - Archetype: quantitative grid with a dominant patch-count panel.
-- Panels: usable patch count; scene dimensions; RGB–B1 held-out residual; RGB–B1 corner deviation.
-- Statistics: descriptive scene-level values; no inferential test.
-- Source data: exported scene audit and scene quality summary.
-- Reviewer risk: automated feature residuals must not be labelled manual-checkpoint RMSE.
+- Panels: usable patch count; scene dimensions; log-scale registration diagnostics (held-out RGB–B1 residual, RGB–B1 corner deviation, maximum intra-SWIR residual) converted from preview pixels by the per-scene factor max(W,H)/1200.
+- Statistics: descriptive scene-level values; no inferential test. The shaded band spans the scene-dependent output-pixel equivalent of the 8.0-preview-pixel corner-deviation gate; the dotted line is the intra-SWIR gate.
+- Source data: exported scene audit and scene quality summary (`figures/source_data/fig2_scene_quality.csv`).
+- Reviewer risk: automated feature residuals must not be labelled manual-checkpoint RMSE; the gate band shows that the configured gate is loose relative to the observed distribution.
 - Exports: SVG, PDF, TIFF at 600 dpi, and PNG preview.
 
 ## Figure 3 — data flow and project boundary
@@ -63,3 +63,19 @@
 - Reviewer risk: the fold corresponding to the fixed validation scene is
   interpreted descriptively because that scene contributed to configuration
   selection.
+
+## Figure 7 — central paired crop of every scene
+
+- Core conclusion: every released scene shows shared RGB/SWIR-B1 structure at a
+  uniform, appearance-independent location, together with the resolution
+  asymmetry between the native-RGB grid and the upsampled SWIR grid.
+- Archetype: paired image grid, two scenes per row, RGB beside SWIR B1.
+- Evidence: the central 256×256 crop of each released canvas; the crop position
+  is the geometric centre, so no region was selected on appearance.
+- Source data: released TIFF files; per-panel display stretch recorded in
+  `figures/source_data/fig7_zoom_provenance.csv`.
+- Integrity: one 1st–99th percentile stretch per panel, recorded; no local
+  editing, no retouching of redacted regions.
+- Reviewer risk: the panel demonstrates correspondence and sampling asymmetry,
+  not registration accuracy and not synthesis quality.
+- Exports: SVG, PDF, TIFF at 300 dpi, and PNG preview.

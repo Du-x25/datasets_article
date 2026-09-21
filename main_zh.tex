@@ -5,6 +5,7 @@
 \usepackage{booktabs}
 \usepackage{tabularx}
 \usepackage{array}
+\usepackage{amsmath}
 \usepackage{xcolor}
 \usepackage{hyperref}
 \usepackage{caption}
@@ -35,7 +36,7 @@
 \maketitle
 
 \begin{abstract}
-可见光与短波红外（SWIR）配对影像可用于跨光谱生成、图像融合和多模态感知，但数据复用依赖清晰的场景身份、波段定义、空间对应关系和无泄漏评估。本文介绍M-SWIR-\allowbreak RGB场景级数据集，共包含\DatasetSceneCount{}个配对场景，每个场景由一幅RGB图像和五幅SWIR波段图像组成。数据集包含\DatasetTiffCount{}幅场景级TIFF文件；在排除与隐私区域相交的图块后，可生成\DatasetUsablePatchCount{}个互不重叠的$256\times256$空间位置。每个场景内六种模态具有一致尺寸，文件身份通过SHA-256绑定，训练、验证和测试集合按完整场景隔离。质量记录描述图像属性和自动配准诊断，但不把特征残差解释为人工检查点精度或地理定位精度。预设的69次SWIR到RGB实验比较单波段、多波段输入和三类基础模型，并量化跨场景差异：留一场景PSNR均值为\LOSOMeanPSNR{}\,dB，范围为\LOSOMinPSNR{}--\LOSOMaxPSNR{}\,dB。本数据集旨在为研究光谱输入价值和场景依赖性提供紧凑、可审计的资源，而不是用于证明新的图像生成模型。
+可见光与短波红外（SWIR）配对影像可用于跨光谱生成、图像融合和多模态感知，但数据复用依赖清晰的场景身份、波段定义、空间对应关系和无泄漏评估。本文介绍M-SWIR-\allowbreak RGB场景级数据集，共包含\DatasetSceneCount{}个配对场景，由共孔径二向色分光平台采集：可见光sCMOS相机与InGaAs SWIR相机共享同一入射光瞳，五个SWIR波段由电动滤光片轮产生。每个场景是由扫描位置序列拼接而成的马赛克，发布为一幅RGB图像与五幅单通道SWIR图像，共\DatasetTiffCount{}幅无压缩八位TIFF文件；在隐私感知排除之后可复算地得到\DatasetUsablePatchCount{}个互不重叠的$256\times256$空间位置。每个场景内六种模态具有一致尺寸，文件身份通过SHA-256绑定，训练、验证和测试集合按完整场景隔离。采集方式带来两点约束解释方式的性质，并逐场景记录：五个通道为滤光片名义通带而非实测的端到端相对光谱响应；全流程未做辐射定标；由于输出网格按RGB原生像元间距定义，每个SWIR波段在各轴上被上采样\DatasetOutputScale{}倍，其独立样本数约为配对RGB目标的十二分之一。自动质量记录描述图像属性与以发布输出像素为单位的配准诊断，但不把特征残差解释为人工检查点精度或地理定位精度。预设的69次SWIR到RGB实验报告完整的输入与结构组合，并与免训练通道映射和线性参照比较，进而量化跨场景差异：留一场景PSNR均值为\LOSOMeanPSNR{}\,dB，范围为\LOSOMinPSNR{}--\LOSOMaxPSNR{}\,dB，验证集最优配置并非留出集最优配置，且十折中有\LOSOLinearBeatsFolds{}折仅凭免训练的逐折线性色彩映射即超过训练配置。本数据集旨在为研究光谱输入价值和场景依赖性提供紧凑、可审计的资源，而不是用于证明新的图像生成模型。
 \end{abstract}
 
 \textbf{关键词：}短波红外；RGB；配对数据集；多光谱成像；跨光谱生成；场景隔离评估
@@ -64,22 +65,120 @@
   \label{fig:overview-zh}
 \end{figure}
 
-\section{数据说明}
-场景级发布内容由\DatasetTiffCount{}幅无压缩八位TIFF文件组成。RGB图像为三通道，B1--B5为单通道；每个场景内六种模态具有完全一致的宽度和高度。文件清单记录相对路径、模态、尺寸、模式、字节数和SHA-256；场景表记录图块数量和质量门槛状态。派生任务始终保留源场景标识，以便用户复现场景隔离分析。
+\subsection{与已有配对数据资源的比较}
+可见光--红外配对资源已经存在，本发布的价值在于其新增的性质而非规模。表~\ref{tab:related-zh}仅使用被引文献自身报告的事实概括结构性差异。驾驶类数据集如RASMD在四种天气条件下将RGB与单一宽带SWIR通道配对，并提供帧级划分\cite{jin2026,jin2025rasmd}；航拍翻译类数据集如AVIID提供数千对车辆目标的可见光--红外图块对\cite{aviid2023}；卫星类研究如DeepSWIR由其他多光谱波段合成SWIR波段，而非直接测量\cite{rout2019}；同一采集平台上的早期工作以随机4:1训练/测试划分和滑动窗口方式组织4000对样本，并使用三波段输入\cite{chen2026threeband,chen2026thesis}。上述资源均未同时具备五个实测SWIR波段、共孔径光学配对、场景级身份与场景隔离划分、逐场景配准诊断、隐私感知图块排除以及哈希绑定的发布清单。该平台此前使用的随机图块级划分正是本发布所要取代的做法：同一场景的相邻图块可能同时出现在训练与测试两侧。
 
-互不重叠的$256\times256$图块从场景左上角锚定，不完整的右侧与底部余量不进入任务。所有与隐私遮挡相交的图块均从各划分中排除，共排除\DatasetPrivacyExcludedCount{}个位置。当前固定划分包含\DatasetFixedTrainCount{}个训练位置、\DatasetFixedValidationCount{}个验证位置和\DatasetFixedTestCount{}个测试位置，但统计解释仍以场景为单位。
-
-\input{generated/scene_inventory_zh.tex}
-
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=\textwidth]{fig2_scale_quality_diagnostics.pdf}
-  \caption{数据规模与可复算质量诊断。\textbf{a}，各源场景的有效非重叠图块数量，强调色表示存在隐私排除的场景。\textbf{b}，场景尺寸，点面积与有效图块数成比例。\textbf{c}，RGB--B1自动留出特征残差与角点偏差。这些图像诊断值不是人工独立检查点RMSE。}
-  \label{fig:quality-zh}
-\end{figure}
+\begin{table}[htbp]
+\centering
+\caption{与已有配对数据资源的结构性比较。其他资源的条目取自其公开描述；``n.r.''表示被引文献未报告，本文未独立核实。}
+\label{tab:related-zh}
+\small
+\begin{tabularx}{\textwidth}{@{}p{0.13\textwidth}p{0.17\textwidth}p{0.20\textwidth}p{0.20\textwidth}X@{}}
+\toprule
+资源 & 场景域 & 光谱内容 & 配对机制 & 组织方式与划分\\
+\midrule
+RASMD \cite{jin2026,jin2025rasmd} & 驾驶，城市/郊区，晴、阴、雨、雪 & RGB加一个宽带SWIR通道（1000--1700\,nm） & 两台独立相机，事后SIFT单应与RANSAC & 每模态$10^5$帧；帧级划分（训练1432、测试956）\\
+AVIID \cite{aviid2023} & 航拍，车辆目标 & 可见光与红外图块对 & 分开航拍获取 & 993、1090与1280对，$434\times434$或$512\times512$；图块级\\
+DeepSWIR \cite{rout2019} & 卫星多传感器 & 由绿、红、近红外与粗分辨率SWIR合成的SWIR波段 & 跨传感器配准，5与24\,m GSD & n.r.\\
+同平台早期发布 \cite{chen2026threeband,chen2026thesis} & 地面场景，四类 & 三个SWIR波段（B1、B2、B4） & 共孔径平台，先拼接后滑动窗口 & 4000对图块；随机4:1训练/测试划分\\
+M-SWIR-RGB（本发布） & 地面场景，四类，七个地点 & RGB加五个实测SWIR波段 & 共孔径二向色平台；逐场景特征位姿图 & \DatasetSceneCount{}个场景、\DatasetUsablePatchCount{}个位置；场景隔离的训练/验证/测试\\
+\bottomrule
+\end{tabularx}
+\end{table}
 
 \section{方法}
-\subsection{数据组织与证据链}
+\subsection{采集平台}
+配对采集采用共孔径二向色分光平台，而非两台各自独立瞄准的相机。景物辐射先经前置物镜，到达以45$^{\circ}$放置的分光镜：波长小于900\,nm的部分被反射进入垂直方向的可见光支路，波长大于900\,nm的部分透射进入水平方向的SWIR支路。由于两个传感器通过同一入射光瞳观测场景，双相机并排方案中的视差在光路层面即被消除，目标的相对像面位置不随远近变化。残余失配仍来自两支路像元间距、靶面尺寸与后光路镜头畸变的差异，因此几何配准仍是必需的处理步骤。
+
+可见光支路搭载PCO panda 4.2 sCMOS相机（$2048\times2048$像素，450--680\,nm），SWIR支路搭载Xenics Bobcat 640相机，其InGaAs焦平面为$640\times512$像素、响应范围900--1700\,nm。五个窄带干涉滤光片安装于SWIR传感器前端的电动滤光片轮（Thorlabs FW102C）。每个位置由同一段采集软件序列驱动滤光片轮换位与两台相机的曝光，因此同一位置的RGB与SWIR由同一序列触发。但SWIR通道本质上是分时而非快照式：同一位置的五个波段是对近似静态场景的连续曝光，而不是五次同时测量。曝光间隔内发生的任何场景变化都会成为波段间不一致，且无法由任何配准步骤消除（表~\ref{tab:hardware-zh}）。该平台的详细设计见文献\cite{chen2026thesis}。
+
+\begin{table}[htbp]
+\centering
+\caption{采集平台组成。}
+\label{tab:hardware-zh}
+\small
+\begin{tabularx}{\textwidth}{@{}p{0.20\textwidth}X@{}}
+\toprule
+组件 & 参数\\
+\midrule
+分光结构 & 共入射光瞳；45$^{\circ}$二向色分光镜，$<$900\,nm反射至可见光支路，$>$900\,nm透射至SWIR支路\\
+可见光相机 & PCO panda 4.2 sCMOS，$2048\times2048$像素，450--680\,nm\\
+短波红外相机 & Xenics Bobcat 640，InGaAs焦平面，$640\times512$像素，900--1700\,nm\\
+滤光片轮 & Thorlabs FW102C，电动，五个位置，分时切换波段\\
+滤光片 & Edmund Optics窄带干涉滤光片，带宽50\,nm（表~\ref{tab:bands-zh}）\\
+触发方式 & 每个位置由一段软件序列驱动滤光片轮换位与两路曝光\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{光谱波段定义}
+五个通带在数据采集之前即已确定，依据是在InGaAs响应范围内建立的有效能量积分模型：
+\begin{equation}
+E_{[\lambda_1,\lambda_2]}=\int_{\lambda_1}^{\lambda_2}E_{\mathrm{sun}}(\lambda)\,\tau_{\mathrm{atm}}(\lambda)\,\eta_{\mathrm{QE}}(\lambda)\,\mathrm{d}\lambda ,
+\label{eq:energy-zh}
+\end{equation}
+其中$E_{\mathrm{sun}}$为ASTM G173标准太阳光谱辐照度\cite{astmg173}，$\tau_{\mathrm{atm}}$为在中纬度冬季大气模型与乡村型气溶胶模型参数下由MODTRAN仿真得到的大气透过率\cite{berk2014modtran}，$\eta_{\mathrm{QE}}$为InGaAs探测器量子效率。将900--1700\,nm以100\,nm为区间积分统计，可区分出三个高能量、低方差窗口（1000--1100、1200--1300与1500--1700\,nm）以及两个受水汽强吸收主导的区间；后者的能量均值分别降至0.065与0.028，因而不具备常规成像价值并被排除（表~\ref{tab:energy-zh}）。能量最高的窗口被拆分为两个相邻的50\,nm通道，原因是该窗口内植被与裸土的反射率差异较小，在信号最强处加密光谱采样可提升材质可分性；典型地物的区分能力依据NASA AVIRIS光谱库评估\cite{chen2026thesis}。
+
+该定义有两点限制必须明确说明，因为它们约束数据的复用方式。其一，表中通道为滤光片的名义规格，并非系统级实测结果：装配后的光学系统、滤光片与探测器链路的相对光谱响应从未被定标，因此实际带内形状与干涉滤光片的带外泄漏在发布数据中没有任何记录。其二，全流程未做任何辐射定标。所有发布的像素值均为八位数字量，波段间比值应理解为仪器相关量，而非地表反射率。
+
+\begin{table}[htbp]
+\centering
+\caption{SWIR通道定义。通道为滤光片名义规格；装配系统的端到端相对光谱响应未实测。}
+\label{tab:bands-zh}
+\small
+\begin{tabular}{@{}lllll@{}}
+\toprule
+通道 & 名义通带（nm） & 中心波长（nm） & 带宽（nm） & 所属能量窗口（nm）\\
+\midrule
+B1 & 1000--1050 & 1025 & 50 & 1000--1100\\
+B2 & 1050--1100 & 1075 & 50 & 1000--1100\\
+B3 & 1225--1275 & 1250 & 50 & 1200--1300\\
+B4 & 1525--1575 & 1550 & 50 & 1500--1700\\
+B5 & 1625--1675 & 1650 & 50 & 1500--1700\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{按式~\eqref{eq:energy-zh}在900--1700\,nm内以100\,nm为区间统计的有效能量积分结果（归一化模型单位）。受水汽强吸收主导的区间不进入通道集合\cite{chen2026thesis}。}
+\label{tab:energy-zh}
+\small
+\begin{tabular}{@{}lrrll@{}}
+\toprule
+区间（nm） & 能量均值 & 方差 & 窗口特性 & 对应通道\\
+\midrule
+900--1000 & 0.120 & 0.0055 & 能量爬升，波动较大 & ---\\
+1000--1100 & 0.288 & 0.0002 & 能量均值最高，方差极低 & B1、B2\\
+1100--1200 & 0.145 & 0.0056 & 能量急剧下降，波动较大 & ---\\
+1200--1300 & 0.232 & 0.0003 & 能量均值较高，方差极低 & B3\\
+1300--1400 & 0.065 & 0.0056 & 水汽吸收，能量极低 & ---\\
+1400--1500 & 0.028 & 0.0009 & 水汽吸收，能量极低 & ---\\
+1500--1600 & 0.158 & 0.0001 & 能量均值较高，方差极低 & B4\\
+1600--1700 & 0.146 & 0.0001 & 能量均值较高，方差最低 & B5\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{场景采集}
+十个场景在七个室外地点采集，覆盖四类场景：城市建筑表面（混凝土、玻璃、红色植被）、工业场地（钢板、防水布、金属表面）、交通道路（沥青、橡胶、车道标线）与乡村地表（土壤、裸土、黄色植被）。一个场景并非单帧图像，而是一段连续扫描序列：平台在每个场景内移动4至29个位置，合计\DatasetSourcePositionCount{}个位置，使相邻位置之间保留重叠。重叠既是拼接的前提，也是仅凭图像特征估计位置间几何关系的前提。每个位置提供一次RGB观测与五次SWIR观测，共得到\DatasetRgbFrameCount{}帧RGB与\DatasetSwirFrameCount{}帧SWIR源图像，来自\DatasetRawFileCount{}个只读原始文件。C1--C7每个位置仅采集一帧RGB；C8、C9与C10每个位置采集十帧连拍，并由处理链选取最清晰的一帧。
+
+采集日期由只读原始文件的修改时间恢复，并逐场景断言其对应唯一日历日期；日期范围为\DatasetAcquisitionDateMin{}至\DatasetAcquisitionDateMax{}，逐场景记录于\texttt{metadata/acquisition\_provenance.csv}与表~\ref{tab:acquisition-zh}。原始文件不含GNSS或时钟元数据，因此地点仅以场景类别与地点数量说明，不给出坐标；天气亦未记录。光照与大气状态只能从图像本身推断。这是发布数据的固有限制，也是本数据集以场景身份而非图块数量作为解释单位的原因之一。
+
+\subsection{场景拼接构建}
+每个场景按模态各合成一幅画布。特征使用SIFT检测（8000个特征，对比度阈值0.005），以0.72比值检验匹配；对应点经RANSAC以2.0像素重投影阈值筛选，内点少于45个的边被剔除。进入位姿图的边分为两类：连接同一位置RGB帧与B1帧的跨模态边，以及连接B1与B2--B5的SWIR带内边，因此同一位置的六种模态共享同一几何解。十个场景共接受\DatasetPoseEdgeCount{}条边。位姿图在B1参考系中求解。C8与C9采用单应位姿模型并额外执行光束法平差，保留20\%匹配点作为验证集（每条边至多220个点、至多120次迭代）；这两个场景的训练残差RMS分别从1.364降至0.841、从0.729降至0.475参考像素，验证集95分位分别为2.079与1.187参考像素。其余八个场景采用仿射位姿模型且不做光束法平差。
+
+画布在B1参考系上定义并按固定系数\DatasetOutputScale{}放大，该系数即可见光与SWIR传感器宽度之比（$2048/640$）。因此输出像元间距等于RGB原生采样间距：RGB接近原生分辨率重采样，而每个SWIR波段在各轴上被上采样\DatasetOutputScale{}倍，由$640\times512$传感器像素映射到输出网格。一个SWIR波段所含的独立样本数约为其配对RGB目标的十二分之一。这种不对称来自采集平台而非发布处理，它界定了任何SWIR到RGB模型所能恢复的空间细节上限，也是本文合成指标绝对值低于同分辨率基准的主要原因。
+
+每幅画布裁剪为六模态均有效的最大矩形（记录的裁剪模式为\texttt{largest\_common\_valid\_rectangle}），输出方向内缩4像素，并断言裁剪区域内每个像素均为共同有效像素。未裁剪画布的共同覆盖率介于\DatasetCoverageMin{}与\DatasetCoverageMax{}之间（均值\DatasetCoverageMean{}）。位置间采用接缝择优方式融合（羽化96像素、接缝过渡72像素，参考帧四周保留12像素输出余量）。单场景构建耗时介于\DatasetBuildSecondsMin{}至\DatasetBuildSecondsMax{}\,s。
+
+\subsection{辐射策略}
+两支路的辐射处理策略不同，且逐场景记录。对RGB，依据相邻位置的重叠区估计逐位置、逐通道的gamma查找表，使拼接结果中间调一致；所施加的增益被限幅在$[0.65,1.35]$，色调校正在128像素范围内渐隐。该做法只抑制场景内的光度漂移，不尝试绝对定标。对SWIR，辐射数值保持不变：增益固定为1.0，仅几何重采样（双三次）与72像素接缝过渡会改变像素值。发布门槛逐场景断言该保持标志位为真，因此发布SWIR通道之间的对比度反映场景与滤光片通带，而不是逐波段的色调调整。策略逐场景记录于\texttt{source\_provenance.csv}。
+
+\subsection{隐私遮蔽}
+C10场景包含机动车号牌。七个号牌区域在场景配置中标注，并在全部六种发布模态中遮蔽：每个框外扩24像素，按通道计算外扩环带的中值，再用该常数填充外扩后的框内区域。该操作是常数填充而非模糊，因此不残留任何高频号牌结构。我们直接读取发布的TIFF加以核验，而非仅由代码推断：在$7\times6=42$个遮蔽区域内，每一区域的相异像素值个数恰为1，说明每种模态下均为均匀填充。遮蔽在切图之前完成；C10中与遮蔽区域相交的\DatasetPrivacyExcludedCount{}个网格位置被排除出全部划分，该场景保留\DatasetRedactedSceneUsablePatchCount{}个可用位置。
+
+\subsection{发布流程与元数据生成}
 输入观测始终按只读方式处理。数据流程检查预期文件、计算SHA-256、执行配置化场景处理、验证场景级产品、创建隐私感知图块清单并导出发布元数据。论文中的所有数量均从机器可读清单生成。图~\ref{fig:pipeline-zh}展示数据生产、计算验证与论文证据之间的边界。
 
 \begin{figure}[htbp]
@@ -89,56 +188,169 @@
   \label{fig:pipeline-zh}
 \end{figure}
 
-\subsection{质量控制}
-发布门槛包括预期文件数、场景内共同尺寸、RGB与SWIR存储模式、B1--B5哈希互异、图块几何、隐私排除以及划分互斥。自动图像特征可作为可复算的对应关系诊断，但不解释为地理定位精度或独立人工检查点误差。
+\input{generated/scene_acquisition_zh.tex}
 
-\subsection{计算验证}
-主要复用任务为SWIR到RGB生成。七类派生任务视图共包含\DatasetTaskFileCount{}个文件，其划分归属、数组形状、图像模式和SHA-256身份均通过自动验证。首先使用确定性的GrayRep基线，将单个SWIR通道复制为三通道输出；随后用固定U-Net比较B1--B5、B124和五波段输入，并运行三个随机种子。U-Net、ResUNet和ResNet生成器在B1、B124和五波段输入上进行比较。最后，对选定配置执行十折留一场景评估。全部69次训练均以三个随机种子为组完成，且最佳epoch均未触及训练边界。模型和epoch仅依据验证集PSNR选择，留出测试指标不参与选择。评估指标包括PSNR、通道感知SSIM\cite{wang2004}、RGB MAE、CIEDE2000\cite{sharma2005}和边缘一致性。
+\section{数据记录}
+发布快照由十个场景目录（\texttt{C1}--\texttt{C10}）、一个共享的\texttt{metadata/}目录和一个派生的\texttt{tasks/}目录组成。下文引用的全部数量均由此处列出的机器可读记录生成。
+
+\subsection{场景级影像}
+每个场景目录包含六幅无压缩八位TIFF文件：一幅三通道RGB图像（\texttt{scene\emph{N}.tif}）与五幅单通道SWIR图像（\texttt{scene\emph{N}\_band1.tif}至\texttt{scene\emph{N}\_band5.tif}），合计\DatasetTiffCount{}个文件。同一场景内六种模态具有完全一致的宽度和高度（表~\ref{tab:scene-inventory-zh}）。场景尺寸介于$2663\times4710$与$11451\times1499$像素之间，因为每幅画布是位置序列拼接后的裁剪并集，而非单帧图像。
+
+尺寸相同并不意味着信息量相同。输出网格按RGB原生采样间距定义，因此RGB通道在接近其$2048\times2048$传感器分辨率处重采样，而每个SWIR波段从其$640\times512$的InGaAs传感器在各轴上被上采样\DatasetOutputScale{}倍。一个SWIR波段所含的独立样本数约为其配对RGB目标的十二分之一，且波段内相邻输出像素被重采样核相关。这是采集平台的性质，逐场景记录于\texttt{acquisition\_provenance.csv}；它界定了SWIR输入可恢复的空间细节上限，在与同分辨率基准比较合成指标时必须予以考虑。
+
+\subsection{元数据记录}
+\texttt{dataset\_manifest.csv}中每幅TIFF对应一行，记录场景、模态、文件名、宽度、高度、色彩模式、位深、压缩方式、字节数、SHA-256、该摘要是否与发布前候选哈希一致、处理模式、场景配置文件路径以及该配置文件的SHA-256。
+
+\texttt{source\_provenance.csv}中每个场景对应一行，记录只读的RGB与SWIR输入根目录、合成该场景影像所用的源位置数量、发布过程中是否重新计算了几何变换，以及对RGB采用的辐射策略（重叠区中间调匹配）与对SWIR采用的辐射策略（数值保持不变）。
+
+\texttt{acquisition\_provenance.csv}中每个场景对应一行，记录采集日期及其证据、只读源文件数及其RGB与SWIR帧的拆分、源位置数与每位置帧数、连拍选取模式、位姿模型与是否执行光束法平差、接受的位姿边数与锚定位置、参考波段与输出缩放系数、未裁剪与裁剪后的画布尺寸、裁剪模式与内缩量、共同覆盖率与各模态覆盖率、构建耗时（秒）、场景验证标志位、两支路的原生传感器像素数，以及未做辐射定标、光谱通道为滤光片名义通带而非实测系统响应这两项声明。
+
+\texttt{scene\_quality\_summary.csv}记录逐场景的门槛判定结果、配准诊断以及确认SWIR辐射数值未改动的标志位。\texttt{validation\_report.json}是机器可读的发布报告，包含发布标识符、UTC创建时间、预期与实测的场景数与TIFF数、哈希一致性与质量保证标志，以及逐场景图块网格汇总（含被舍弃的右侧与底部余量）。
+
+\subsection{图块几何与隐私排除}
+互不重叠的$256\times256$图块从场景左上角像素锚定，不完整的右侧与底部余量不进入任务。\texttt{privacy\_patch\_exclusions.csv}逐条记录被排除位置的场景、图块尺寸、网格规则、行列索引、像素边界、相交隐私区域标识以及所采取的动作；\texttt{privacy\_patch\_grid\_summary.json}给出对应的逐场景网格总数。全部\DatasetPrivacyExcludedCount{}个排除位置集中在单一场景，涉及七个不同的已标注区域。当前固定划分包含\DatasetFixedTrainCount{}个训练位置、\DatasetFixedValidationCount{}个验证位置和\DatasetFixedTestCount{}个测试位置，但统计解释仍以场景为单位。
+
+\subsection{派生任务视图}
+\texttt{tasks/}包含七类任务视图，每类均分为\texttt{train/}、\texttt{val/}和\texttt{test/}：五个单波段视图（\texttt{swir2rgb\_band1}至\texttt{swir2rgb\_band5}）、一个三波段视图（\texttt{swir2rgb\_b124}）和一个五波段视图（\texttt{swir2rgb\_5band}）。六个单波段与三波段视图仅存放SWIR输入，为文件名形如\texttt{\{scene\}\_r\{row\}\_c\{column\}.png}的PNG图块，各含\DatasetUsablePatchCount{}个文件。五波段视图额外为每个位置生成五通道输入数组（\texttt{\_swir5.npy}）与RGB目标（\texttt{\_rgb.png}），共$2\times\DatasetUsablePatchCount{}$个文件；七类视图合计\DatasetTaskFileCount{}个文件。由于每个RGB目标只生成一次，所有视图的位置与划分归属完全一致。
+
+\texttt{task\_manifest.csv}将每个样本标识映射到其场景、划分、行列索引、像素起点、图块尺寸以及三波段与五波段视图的通道顺序。\texttt{task\_file\_manifest.csv}记录每个任务文件的相对路径、字节数和SHA-256。\texttt{task\_summary.json}与\texttt{task\_validation.json}记录实测文件数、各划分的位置数量和验证结论。
+
+\input{generated/scene_inventory_zh.tex}
+
+\section{技术验证}
+\subsection{发布门槛与配准诊断}
+验证分为两个层级。构建时的场景质量保证对每幅发布图像检查全零像素占比不超过0.01、动态范围不低于20个灰度级，并记录下述配准诊断，其结论为逐场景的\texttt{qa\_passed}标志位。发布门槛随后验证预期场景数与文件数、场景内共同尺寸、RGB与SWIR存储模式、B1--B5哈希互异、图块几何、隐私排除与划分互斥。十个场景在两个层级上全部通过，且全部\DatasetTiffCount{}个发布SHA-256摘要与发布前候选哈希一致。
+
+模态间的对应关系用三个图像派生量而非一个量来记录，因为两支路在几何上并不完全相同，且不存在真值对应。逐场景记录包括：留出的跨模态RGB--B1特征匹配残差的第95百分位、RGB$\rightarrow$B1变换角点相对恒等变换的偏差，以及B2--B5波段间输出残差第95百分位的最大值。前两者在1200像素预览图上计算，因此其单位是门槛单位而非发布单位；乘以逐场景系数$\max(W,H)/1200$后即换算为发布输出像素。以输出像素计，留出RGB--B1残差介于\RegHoldoutMinPx{}与\RegHoldoutMaxPx{}之间（中位数\RegHoldoutMedianPx{}，均值\RegHoldoutMeanPx{}），角点偏差介于\RegCornerMinPx{}与\RegCornerMaxPx{}之间（中位数\RegCornerMedianPx{}，均值\RegCornerMeanPx{}），波段间残差介于\IntraSwirMinPx{}与\IntraSwirMaxPx{}之间（均值\IntraSwirMeanPx{}），对应门槛为\IntraSwirGatePx{}个输出像素。
+
+这些数值必须与两点性质一并阅读。其一，前两个量的门槛定义在预览像素上（2.5与8.0），其输出像素等价量随场景而变：角点偏差门槛在十个场景上对应\RegCornerGateMinPx{}至\RegCornerGateMaxPx{}个发布像素，因此对物理尺寸小的画布更紧、对大画布更松。其二，存在一个离群场景。\RegCornerWorstScene{}的角点偏差达到\RegCornerMaxPx{}个输出像素，为次大值（\RegCornerRunnerUpPx{}像素）的\RegCornerOutlierRatio{}倍，而其余九个场景平均为\RegCornerOtherMeanPx{}像素。十个场景均满足所配置的门槛，但该门槛相对观测分布偏松；对跨模态对齐要求较高的使用者应将\RegCornerWorstScene{}视为最弱场景，并在使用前核验其局部对齐。
+
+这些诊断不是地理定位精度，也不是独立人工标注检查点误差。本文未采集任何人工检查点；所有数值均由自动匹配的图像特征导出，因此度量的是估计几何的内部一致性，而非其绝对正确性（图~\ref{fig:quality-zh}）。
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{fig2_scale_quality_diagnostics.pdf}
+  \caption{数据规模与可复算质量诊断。\textbf{a}，各源场景的有效非重叠图块数量，强调色表示存在隐私排除的场景。\textbf{b}，场景尺寸，点面积与有效图块数成比例。\textbf{c}，换算为发布输出像素的配准诊断（对数轴）：留出RGB--B1特征残差、RGB--B1恒等变换角点偏差、波段间输出残差最大值。点线为波段间门槛（\IntraSwirGatePx{}个输出像素），阴影带为8.0预览像素角点偏差门槛在十个场景上的输出像素等价范围。这些图像诊断值不是人工独立检查点RMSE。}
+  \label{fig:quality-zh}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.86\textwidth]{fig7_registration_zoom.pdf}
+  \caption{每个场景中心$256\times256$裁剪，RGB与SWIR B1并列，每行两个场景。裁剪取每幅画布的几何中心，因此未按外观挑选位置，该图是对发布内容的均匀抽样而非最优示例。每个面板使用一次1\%--99\%分位拉伸，记录于\texttt{figures/source\_data/fig7\_zoom\_provenance.csv}。该图同时展示支撑配对关系的共同结构与方法一节所述的分辨率不对称：RGB的细纹理在上采样后的SWIR波段中没有相同空间频率的对应成分。}
+  \label{fig:zoom-zh}
+\end{figure}
+
+\subsection{基准设计与评估指标}
+主要复用任务是将SWIR输入映射为RGB目标。数据记录一节所述七类派生任务视图在任何训练之前即通过划分归属、数组形状、图像模式与SHA-256身份的自动验证。基准预先固定，包含三个阶段共69次训练运行，以及免训练参照基线。阶段一用单一U-Net在全部七种输入表示（B1--B5、B124、5B）上各训练三个种子，在固定划分（训练C1、C3--C7与C10；验证C8；测试C2与C9）上得到21次运行。阶段二在三个代表性输入B1、B124与5B上加入ResUNet与ResNet生成器，各三个种子，新增18次运行，与阶段一中对应的9次U-Net运行合并为$3\times3$的结构--输入网格。阶段三执行十折留一场景评估，每折三个种子，共30次运行；第$i$折以场景$i$为测试场景，固定顺序中的下一个场景为验证场景，其余八个为训练场景。
+
+免训练参照基线在固定测试划分上对每种输入表示计算，并在每个留一场景折中对沿用的输入计算。第一类是确定性通道映射：将单个SWIR通道复制为三通道输出（GrayRep），或将前三个输入通道直接映射为输出通道（ChannelMap）。第二类是逐折最小二乘线性色彩变换，仅在该折的训练场景上拟合，并对每个输出通道施加仿射映射。二者共同界定训练网络相对通道重命名与全局线性色彩校正所增加的能力。
+
+全部69次训练运行均以三个种子为组完成，运行签名互不重复，且最佳epoch均未触及训练边界。容量、优化器、调度、损失、归一化与增强在各阶段完全相同，因此被操纵的因素只有输入表示、生成器结构与场景划分（表~\ref{tab:protocol-zh}）。模型与epoch仅依据验证集PSNR选择；留出测试指标不参与选择，仅作描述性报告。指标定义见表~\ref{tab:metrics-zh}。
+
+\begin{table}[htbp]
+\centering
+\caption{全部69次基准运行共享的训练协议。数值读取自冻结的基准配置与运行脚本，其SHA-256摘要记录于溯源包中。}
+\label{tab:protocol-zh}
+\small
+\begin{tabularx}{\textwidth}{@{}p{0.28\textwidth}X@{}}
+\toprule
+条目 & 取值\\
+\midrule
+生成器容量 & 所有结构均为\texttt{base\_channels} 24\\
+优化器 & AdamW，学习率$2\times10^{-4}$，betas $(0.5,0.999)$，权重衰减$10^{-4}$\\
+轮数/早停 & 最多50轮，按验证PSNR耐心值10\\
+批大小 & 8\\
+损失 & $\mathcal{L}_1$加$0.1\times$梯度$\mathcal{L}_1$\\
+归一化 & 仅除以255；不估计数据集级统计量\\
+数据增强 & 随机水平与垂直翻转\\
+随机种子 & 2026、2027、2028\\
+数值精度 & 自动混合精度\\
+硬件 & 单张NVIDIA GeForce RTX 4090 Laptop GPU\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{基准指标。全部指标在0--255尺度上相对RGB目标计算；对图块与种子的聚合为非加权均值。}
+\label{tab:metrics-zh}
+\small
+\begin{tabularx}{\textwidth}{@{}p{0.20\textwidth}Xp{0.13\textwidth}@{}}
+\toprule
+指标 & 定义 & 方向\\
+\midrule
+PSNR (dB) & 对全部RGB通道计算$10\log_{10}\!\left(255^2/\mathrm{MSE}\right)$ & 越高\\
+SSIM & 逐通道计算结构相似度后平均（\texttt{channel\_axis}=2）\cite{wang2004} & 越高\\
+RGB MAE & 0--255 RGB尺度上的平均绝对差 & 越低\\
+CIEDE2000 & sRGB转CIELAB后逐像素$\Delta E_{00}$的均值\cite{sharma2005} & 越低\\
+边缘一致性 & 预测与目标的Sobel梯度方向平均余弦相似度 & 越高\\
+\bottomrule
+\end{tabularx}
+\end{table}
 
 \subsection{输入层面的技术验证}
-预设的21次输入实验全部完成，每个输入均包含三个随机种子，运行签名互不重复，且最佳epoch均未触及训练边界。最高的平均验证PSNR来自\SelectedInput{}（\SelectedInputValidationPSNR{}\,dB），其次为\InputRunnerUp{}（\InputRunnerUpValidationPSNR{}\,dB）。两者仅相差\InputValidationMargin{}\,dB，小于任一配置的种子间标准差，因此该验证排序更接近性能相当，不能解释为某一输入表示具有普遍优势。
+全部21次输入运行均以三个种子完成，运行签名互不重复，且最佳epoch均未触及训练边界。表~\ref{tab:input-results-zh}报告完整网格；我们有意不将其压缩为单一优胜者。数值支持三点陈述。
 
-留出测试指标仅用于描述，未反向改变验证排序。B124取得最高的测试PSNR（\BOneTwoFourTestPSNR{}\,dB）和SSIM（\BOneTwoFourTestSSIM{}），同时具有最低的CIEDE2000（\BOneTwoFourTestCIE{}）。训练后的B1模型超过其GrayRep检验基线（\BOneGrayRepPSNR{}\,dB），训练后的B124也超过直接ChannelMap基线（\BOneTwoFourChannelMapPSNR{}\,dB）。验证排序与留出测试排序之间的差异说明有必要继续执行预设的模型族比较和留一场景评估，而不能据此宣称某一种输入在所有场景中最优。
+其一，验证集无法区分七种表示。最高的平均验证PSNR属于\SelectedInput{}（\SelectedInputValidationPSNR{}\,dB），第二位为\InputRunnerUp{}（\InputRunnerUpValidationPSNR{}\,dB），二者差距\InputValidationMargin{}\,dB小于任一配置的种子间标准差。
+
+其二，留出排序与验证排序不同。B124取得最高的固定测试PSNR（\BOneTwoFourTestPSNR{}\,dB）与SSIM（\BOneTwoFourTestSSIM{}），同时CIEDE2000最低（\BOneTwoFourTestCIE{}）。由于固定测试划分仅含两个场景，这种不一致本身就是关于场景组成的证据，而非关于表示的证据，并构成留一场景阶段的动机。
+
+其三，训练模型超过免训练参照：训练后的B1固定测试PSNR高于GrayRep的\BOneGrayRepPSNR{}\,dB，训练后的B124高于ChannelMap的\BOneTwoFourChannelMapPSNR{}\,dB。因此网络学到的不止是通道重命名，而逐折线性参照进一步量化剩余增益中有多少属于全局色彩校正而非空间合成。
 
 \input{generated/input_benchmark_table_zh.tex}
 
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=\textwidth]{fig4_input_benchmark.pdf}
-  \caption{固定U-Net下的输入层面计算验证。\textbf{a}，用于输入排序的验证集PSNR；\textbf{b--d}，留出测试集上的PSNR、SSIM和CIEDE2000。柱高为三个独立随机种子的均值，误差线为样本标准差；测试指标不参与选择。}
+  \caption{固定U-Net下的输入层面计算验证。\textbf{a}，验证集PSNR；\textbf{b--d}，留出测试集上的PSNR、SSIM和CIEDE2000。柱高为三个独立随机种子的均值，误差线为样本标准差。验证排序与测试排序不一致，因此不宣布任何输入表示最优；测试指标不参与选择。}
   \label{fig:input-benchmark-zh}
 \end{figure}
 
 \subsection{模型族技术验证}
-新增的18次模型实验全部完成，不存在随机种子缺失或最佳epoch触及训练边界的问题，并与输入实验中对应的9次U-Net运行合并比较。仅依据验证指标，最终用于场景级评估的固定配置为\SelectedModelFamily{}+\SelectedModelInput{}，平均验证PSNR为\SelectedModelValidationPSNR{}\,dB。其固定留出测试PSNR和SSIM分别为\SelectedModelTestPSNR{}\,dB和\SelectedModelTestSSIM{}。
+新增的18次模型运行不存在随机种子缺失或最佳epoch触及训练边界的问题，并与输入实验中对应的9次U-Net运行合并为表~\ref{tab:model-results-zh}的$3\times3$网格。沿用到场景阶段的配置由一条在读结果之前声明的规则确定：在九个单元中取验证集平均PSNR最高者，且该值仅在验证划分上计算。该规则选出\SelectedModelFamily{}+\SelectedModelInput{}，验证PSNR为\SelectedModelValidationPSNR{}\,dB。
 
-固定测试排序与验证排序并不一致。\ModelBestTestFamily{}+\ModelBestTestInput{}取得最高的描述性测试PSNR（\ModelBestTestPSNR{}\,dB），但验证PSNR仅为\ModelBestTestValidationPSNR{}\,dB，因此未被选中。该排序反转表明单一场景划分所得结论对场景组成较为敏感。为避免利用测试集重新选择配置，后续仍固定使用验证集选出的配置，并通过预设的留一场景实验量化跨场景变化。
+该规则与固定测试的结果指向相反方向。被沿用的单元描述性固定测试PSNR仅为\SelectedModelTestPSNR{}\,dB、SSIM为\SelectedModelTestSSIM{}，而\ModelBestTestFamily{}+\ModelBestTestInput{}在同一划分上达到\ModelBestTestPSNR{}\,dB，其验证PSNR却只有\ModelBestTestValidationPSNR{}\,dB。因此仅依赖验证集的规则选出了留出结果较弱的单元。我们报告这一反转，而不是通过在测试集上重新选择来消除它，因为这是"单一场景划分所得排序不能迁移到另一划分"最直接的证据。留一场景阶段直接量化这种依赖性。
 
 \input{generated/model_benchmark_table_zh.tex}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{fig5_model_benchmark.pdf}
-  \caption{代表性SWIR输入上的模型族比较。\textbf{a}，用于配置选择的验证PSNR；\textbf{b--d}，描述性的留出测试PSNR、SSIM和CIEDE2000。柱高为三个随机种子的均值，误差线为样本标准差。验证排序与固定测试排序相反时，没有使用测试集重新选择配置。}
+  \caption{代表性SWIR输入上的模型族比较。\textbf{a}，验证PSNR，即沿用规则唯一使用的量；\textbf{b--d}，描述性的留出测试PSNR、SSIM和CIEDE2000。柱高为三个随机种子的均值，误差线为样本标准差。验证排序与固定测试排序相反时，没有使用测试集重新选择配置。}
   \label{fig:model-benchmark-zh}
 \end{figure}
 
 \subsection{跨场景技术验证}
-在十折留一场景评估开始前，依据验证集选出的\LOSOModelFamily{}+\LOSOInput{}配置已经固定。十个留出场景的PSNR平均值为\LOSOMeanPSNR{}\,dB，SSIM平均值为\LOSOMeanSSIM{}。场景级PSNR从\LOSOMinPSNR{}变化到\LOSOMaxPSNR{}\,dB，跨度超过7\,dB，明显大于多数场景内部的随机种子波动（表~\ref{tab:scene-results-zh}）。SSIM变化也没有简单复现PSNR排序，说明场景难度不能只由单一失真指标概括。
+沿用规则产生的\LOSOModelFamily{}+\LOSOInput{}配置在十折留一场景评估训练之前即已冻结。十个留出场景的PSNR平均值为\LOSOMeanPSNR{}\,dB，SSIM平均值为\LOSOMeanSSIM{}。场景级PSNR从\LOSOMinPSNR{}变化到\LOSOMaxPSNR{}\,dB（表~\ref{tab:scene-results-zh}），跨度明显大于多数场景内部的种子波动。SSIM的变化没有简单复现PSNR排序，说明场景难度不能由单一失真指标概括。逐折的通道映射与线性参照与每个训练数值并列报告，用以区分依赖于场景的合成增益与依赖于场景的色彩偏移。
 
-这些结果完成了面向数据复用的技术验证：任务能够学习，实验代码可重复生成三个随机种子的统计结果，同时源场景身份会显著影响报告值。十折结果仅作描述，不用于宣称模型优越性。其中一折与配置选择阶段使用的场景角色重合，因此同样仅作描述；任何留出场景结果都没有反向用于修改已固定的模型或输入。后续使用者应报告逐场景结果或场景层面的不确定性，而不应只给出汇总后的图块平均值。
+参照列值得明确讨论。十折中有\LOSOLinearBeatsFolds{}折仅凭逐折线性参照即超过训练配置：线性参照的跨折平均PSNR为\LOSOLinearRefMeanPSNR{}\,dB，训练模型为\LOSOMeanPSNR{}\,dB，免训练通道映射为\LOSOChannelRefMeanPSNR{}\,dB。对这些场景而言，可预测信号的大部分是全局色彩关系，最小二乘仿射映射无需训练即可恢复；训练模型的价值主要体现在需要合成局部纹理的折上。这是方法一节所述SWIR采样密度的直接后果，也是本发布在每一个训练数值旁并列免训练参照而非单独报告的原因。
+
+必须明确说明一处依赖关系。沿用规则在C8上最大化验证PSNR，因此留出C8的那一折与配置选择并不独立，只能作描述性报告，而不能视为干净的留出估计；C8在折内充当验证场景的那些折同理。任何留出场景结果都没有反向用于修改模型或输入。
+
+这些结果完成了面向数据复用的技术验证：任务能够学习，实验代码可重复生成三个随机种子的统计结果，同时源场景身份会显著影响每一个报告值。十折结果仅作描述，不用于宣称模型优越性。使用者应报告逐场景结果或场景层面的不确定性，而不应只给出汇总后的图块平均值，也不应把任一配置的汇总均值读作数据集本身的性质。
 
 \input{generated/scene_benchmark_table_zh.tex}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{fig6_scene_benchmark.pdf}
-  \caption{固定验证集选出的\LOSOModelFamily{}+\LOSOInput{}配置后进行留一场景评估所得的跨场景差异。\textbf{a}，留出场景PSNR；\textbf{b}，留出场景SSIM。点表示三个随机种子的均值，误差线表示样本标准差，虚线表示十个场景的非加权平均值。所有留出结果仅作描述，不参与配置选择。}
+  \caption{固定验证集选出的\LOSOModelFamily{}+\LOSOInput{}配置后进行留一场景评估所得的跨场景差异。\textbf{a}，留出场景PSNR；\textbf{b}，留出场景SSIM。点表示三个随机种子的均值，误差线表示样本标准差，虚线表示十个场景的非加权平均值。\textbf{a}中叉号表示免训练通道参照，方块表示逐折最小二乘线性参照。所有留出结果仅作描述，不参与配置选择。}
   \label{fig:scene-benchmark-zh}
 \end{figure}
 
 \section{使用说明}
-用户必须先按源场景划分数据，再生成模型输入。随机图块划分会把空间相邻观测分散到不同集合，从而高估泛化能力。归一化统计只能从训练场景估计。用户应使用提供的清单排除隐私相交位置，并验证所用数据快照。自动配准诊断适合比较质量，但不能重新命名为地理定位精度或人工检查点精度。
+用户必须先按源场景划分数据，再生成模型输入。随机图块划分会把空间相邻观测分散到不同集合，从而高估泛化能力；该平台此前的发布正使用这种划分，在这一方面已被本发布取代。归一化统计只能从训练场景估计。用户应使用提供的清单排除隐私相交位置，并验证所用数据快照。
+
+另有四条约束来自采集设计，复用时应当遵守。其一，SWIR波段相对其传感器网格在各轴上被上采样\DatasetOutputScale{}倍，因此合成指标的绝对值受SWIR采样密度限制；与同分辨率可见光--可见光基准的比较具有误导性，需要公平分辨率比较的用户应将RGB目标下采样到SWIR原生网格。其二，五个通道为滤光片名义通带且未做辐射定标，因此波段比值是仪器相关量，不得转换为反射率或用于大气校正。其三，同一位置的SWIR波段为连续曝光，运动内容（树叶、车辆、行人）在同一位置的不同波段之间可能不同；假设瞬时多光谱采集的应用应先筛查该现象。其四，C10的遮蔽区域为不携带场景信息的常数填充，必须排除而不能作为学习内容；\texttt{privacy\_patch\_exclusions.csv}列出全部受影响位置。
+
+自动配准诊断适合比较质量，但不能重新命名为地理定位精度或人工检查点精度。场景\RegCornerWorstScene{}的跨模态几何为全发布中最弱，用于对齐敏感应用前应先局部核验。采集日期逐场景记录，但不存在坐标或天气记录；光照与大气状态属于每个场景自身的性质，应作为场景身份的一部分对待。
+
+\section*{代码可用性}
+场景拼接构建器、发布验证门槛、任务视图生成器与基准运行器将在投稿时以公开GitHub仓库形式发布；仓库地址与提交标识在记录公开后记录于数据可用性声明。发布时的溯源信息已将本文全部数值与代码绑定：\texttt{validation\_report.json}记录发布时拼接仓库的提交号以及每个场景配置的SHA-256，基准溯源包记录运行脚本、基准配置与训练所用任务树的SHA-256。结合逐文件SHA-256清单，这些记录使外部读者能够核验发布文件、代码与报告指标描述的是同一个一致快照。
+
+\section*{致谢}
+作者感谢中国科学院光学定标与表征重点实验室同事在外场采集与仪器维护方面的协助，以及审阅数据发布早期内部版本的同事。基准实验的计算资源由作者所在单位提供。
 
 \section*{数据可用性声明}
 M-SWIR-\allowbreak RGB 数据集将在知识共享署名 4.0 国际许可（CC BY 4.0）下存入 Zenodo 公共仓库。公开 DOI、发布标识符、正式数据引用以及供同行评审使用的匿名审稿链接将在数据上传并完成下载复核后填写于此。

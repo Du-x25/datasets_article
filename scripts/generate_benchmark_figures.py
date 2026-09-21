@@ -363,13 +363,36 @@ def write_model_latex(frame: pd.DataFrame) -> None:
     )
 
 
-def figure_scene(summary: pd.DataFrame) -> None:
+def load_loso_references(benchmark: Path, frame: pd.DataFrame) -> pd.DataFrame:
+    path = benchmark / "reference_baselines.csv"
+    if not path.is_file():
+        raise SystemExit(
+            f"Missing {path}; run compute_reference_baselines.py before the scene stage."
+        )
+    references = pd.read_csv(path)
+    references.to_csv(
+        SOURCE_DATA / "reference_baselines.csv", index=False, encoding="utf-8-sig"
+    )
+    folds = references[references["Scope"] == "loso_fold"].copy()
+    folds["scene"] = folds["Fold"].str.extract(r"test=(C\d+)")
+    channel = folds[folds["Baseline"] != "Linear"].set_index("scene")["PSNR"]
+    linear = folds[folds["Baseline"] == "Linear"].set_index("scene")["PSNR"]
+    frame = frame.copy()
+    frame["reference_psnr"] = frame["Test_Scene"].map(channel)
+    frame["linear_psnr"] = frame["Test_Scene"].map(linear)
+    if frame[["reference_psnr", "linear_psnr"]].isna().any().any():
+        raise SystemExit("Leave-one-scene-out reference baselines are incomplete.")
+    return frame
+
+
+def figure_scene(summary: pd.DataFrame, benchmark: Path) -> None:
     frame = summary[summary["Stage"] == "scene"].copy()
     require_complete(frame, 10, "scene")
     frame["scene_number"] = (
         frame["Test_Scene"].str.removeprefix("C").astype(int)
     )
     frame = frame.sort_values("scene_number").reset_index(drop=True)
+    frame = load_loso_references(benchmark, frame)
     SOURCE_DATA.mkdir(parents=True, exist_ok=True)
     frame.to_csv(
         SOURCE_DATA / "fig6_scene_benchmark.csv",
@@ -413,6 +436,26 @@ def figure_scene(summary: pd.DataFrame) -> None:
             capsize=3,
         )
         ax.axhline(mean.mean(), color=SLATE, linestyle="--", linewidth=0.8)
+        if metric == "PSNR":
+            ax.plot(
+                x,
+                frame["reference_psnr"],
+                color=SLATE,
+                marker="x",
+                markersize=4,
+                linestyle="none",
+                label="channel reference",
+            )
+            ax.plot(
+                x,
+                frame["linear_psnr"],
+                color=GOLD,
+                marker="s",
+                markersize=3.2,
+                linestyle="none",
+                label="per-fold linear reference",
+            )
+            ax.legend(loc="upper left", frameon=False)
         ax.set_ylabel(ylabel)
         ax.set_title(title, loc="left", fontweight="bold")
         ax.grid(axis="y", color=GRID, linewidth=0.6)
@@ -437,6 +480,9 @@ def write_scene_latex(frame: pd.DataFrame) -> None:
         rf"\newcommand{{\LOSOMinPSNR}}{{{frame['PSNR_Mean'].min():.2f}}}",
         rf"\newcommand{{\LOSOMaxPSNR}}{{{frame['PSNR_Mean'].max():.2f}}}",
         rf"\newcommand{{\LOSOMeanSSIM}}{{{frame['SSIM_Mean'].mean():.3f}}}",
+        rf"\newcommand{{\LOSOChannelRefMeanPSNR}}{{{frame['reference_psnr'].mean():.2f}}}",
+        rf"\newcommand{{\LOSOLinearRefMeanPSNR}}{{{frame['linear_psnr'].mean():.2f}}}",
+        rf"\newcommand{{\LOSOLinearBeatsFolds}}{{{int((frame['linear_psnr'] > frame['PSNR_Mean']).sum())}}}",
     ]
     (GENERATED / "scene_benchmark_macros.tex").write_text(
         "\n".join(macros) + "\n", encoding="utf-8"
@@ -447,32 +493,34 @@ def write_scene_latex(frame: pd.DataFrame) -> None:
             f"{row['Test_Scene']} & "
             f"{latex_pm(row['PSNR_Mean'], row['PSNR_SD'], 2)} & "
             f"{latex_pm(row['SSIM_Mean'], row['SSIM_SD'], 3)} & "
-            f"{latex_pm(row['CIEDE2000_Mean'], row['CIEDE2000_SD'], 2)} \\\\"
+            f"{latex_pm(row['CIEDE2000_Mean'], row['CIEDE2000_SD'], 2)} & "
+            f"{row['reference_psnr']:.2f} & "
+            f"{row['linear_psnr']:.2f} \\\\"
         )
     head = [
         r"\begin{table}[H]",
         r"\centering",
         r"\small",
-        r"\begin{tabular}{lrrr}",
+        r"\begin{tabular}{lrrrrr}",
         r"\toprule",
     ]
     tail = [r"\bottomrule", r"\end{tabular}", r"\end{table}"]
     en = [
         *head[:2],
-        r"\caption{Leave-one-scene-out results. Values are mean $\pm$ sample standard deviation over three seeds.}",
+        r"\caption{Leave-one-scene-out results. Trained values are mean $\pm$ sample standard deviation over three seeds. The channel reference replicates or maps input channels without training (GrayRep for single-band inputs, ChannelMap otherwise) and the linear reference is a per-fold least-squares affine colour fit on that fold's training scenes; both are seed-free and carry no deviation term.}",
         r"\label{tab:scene-results}",
         *head[2:],
-        r"Held-out scene & PSNR & SSIM & CIEDE2000 \\",
+        r"Held-out scene & PSNR & SSIM & CIEDE2000 & Channel ref. & Linear ref. \\",
         r"\midrule",
         *rows,
         *tail,
     ]
     zh = [
         *head[:2],
-        r"\caption{留一场景评估结果。数值为三个随机种子的均值$\pm$样本标准差。}",
+        r"\caption{留一场景评估结果。训练数值为三个随机种子的均值$\pm$样本标准差。通道参照为免训练的通道复制或通道映射（单波段输入为GrayRep，其余为ChannelMap），线性参照为仅在该折训练场景上拟合的逐折最小二乘仿射色彩变换；二者不含随机种子，故无偏差项。}",
         r"\label{tab:scene-results-zh}",
         *head[2:],
-        r"留出场景 & PSNR & SSIM & CIEDE2000 \\",
+        r"留出场景 & PSNR & SSIM & CIEDE2000 & 通道参照 & 线性参照 \\",
         r"\midrule",
         *rows,
         *tail,
@@ -508,7 +556,7 @@ def main() -> None:
         elif stage == "model":
             figure_model(summary)
         else:
-            figure_scene(summary)
+            figure_scene(summary, benchmark)
     print(f"Generated benchmark figures for: {', '.join(args.stages)}")
 
 

@@ -1,22 +1,22 @@
 \begin{table}[H]
 \centering
-\caption{Leave-one-scene-out results. Values are mean $\pm$ sample standard deviation over three seeds.}
+\caption{Leave-one-scene-out results. Trained values are mean $\pm$ sample standard deviation over three seeds. The channel reference replicates or maps input channels without training (GrayRep for single-band inputs, ChannelMap otherwise) and the linear reference is a per-fold least-squares affine colour fit on that fold's training scenes; both are seed-free and carry no deviation term.}
 \label{tab:scene-results}
 \small
-\begin{tabular}{lrrr}
+\begin{tabular}{lrrrrr}
 \toprule
-Held-out scene & PSNR & SSIM & CIEDE2000 \\
+Held-out scene & PSNR & SSIM & CIEDE2000 & Channel ref. & Linear ref. \\
 \midrule
-C1 & $8.27\pm0.28$ & $0.324\pm0.014$ & $36.43\pm0.71$ \\
-C2 & $10.49\pm0.95$ & $0.321\pm0.017$ & $28.86\pm3.21$ \\
-C3 & $15.40\pm0.54$ & $0.487\pm0.018$ & $22.57\pm0.72$ \\
-C4 & $13.90\pm1.35$ & $0.439\pm0.055$ & $22.55\pm2.62$ \\
-C5 & $11.34\pm0.43$ & $0.337\pm0.011$ & $26.70\pm1.79$ \\
-C6 & $10.99\pm0.47$ & $0.502\pm0.012$ & $31.16\pm2.05$ \\
-C7 & $11.40\pm0.57$ & $0.418\pm0.013$ & $28.46\pm1.40$ \\
-C8 & $13.87\pm0.13$ & $0.546\pm0.013$ & $26.36\pm0.55$ \\
-C9 & $12.15\pm1.02$ & $0.329\pm0.033$ & $25.00\pm1.16$ \\
-C10 & $12.50\pm0.46$ & $0.367\pm0.015$ & $25.93\pm1.67$ \\
+C1 & $8.12\pm0.11$ & $0.308\pm0.010$ & $37.50\pm1.57$ & 10.78 & 10.01 \\
+C2 & $10.32\pm1.14$ & $0.328\pm0.013$ & $29.01\pm3.56$ & 10.24 & 12.32 \\
+C3 & $15.36\pm0.54$ & $0.485\pm0.019$ & $22.83\pm0.90$ & 12.50 & 16.46 \\
+C4 & $13.19\pm0.07$ & $0.417\pm0.007$ & $24.04\pm0.72$ & 14.09 & 15.57 \\
+C5 & $11.31\pm0.30$ & $0.332\pm0.010$ & $26.69\pm1.28$ & 7.67 & 8.33 \\
+C6 & $10.98\pm0.24$ & $0.503\pm0.005$ & $31.43\pm0.44$ & 10.30 & 11.27 \\
+C7 & $12.15\pm0.99$ & $0.432\pm0.018$ & $27.22\pm2.51$ & 9.56 & 10.11 \\
+C8 & $14.55\pm0.14$ & $0.568\pm0.008$ & $24.23\pm0.51$ & 10.28 & 11.74 \\
+C9 & $12.77\pm0.42$ & $0.355\pm0.004$ & $25.18\pm0.65$ & 8.44 & 11.33 \\
+C10 & $12.97\pm0.36$ & $0.372\pm0.007$ & $24.03\pm1.92$ & 10.06 & 12.73 \\
 \bottomrule
 \end{tabular}
 \end{table}

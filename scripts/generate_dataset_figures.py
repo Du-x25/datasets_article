@@ -14,14 +14,21 @@ from PIL import Image
 
 
 REPO = Path(__file__).resolve().parents[1]
-DATASET = Path(r"D:\Data_dir\SWIR-RGB\datasets_article_auto_v2")
-AUDIT = Path(r"D:\A_projects\swir_rgb_dataset_pipeline\artifacts\current_audit")
+DATASET = Path(r"D:\Data_dir\SWIR-RGB\datasets_article_auto_v3")
+AUDIT = Path(r"D:\A_projects\swir_rgb_dataset_pipeline\artifacts\audit_v3")
 TASK_VALIDATION = Path(
-    r"D:\Data_dir\SWIR-RGB\M-SWIR-RGB\tasks\task_validation.json"
+    r"D:\Data_dir\SWIR-RGB\M-SWIR-RGB\tasks_v3\task_validation.json"
 )
 FIGURES = REPO / "figures"
 SOURCE_DATA = FIGURES / "source_data"
 GENERATED = REPO / "generated"
+
+# Quality-gate thresholds, mirrored from
+# D:/A_projects/swir_rgb_scene_mosaic/configs/rawdata/base.yaml (validation block).
+PREVIEW_MAXIMUM_DIMENSION = 1200
+GATE_HOLDOUT_P95_PREVIEW_PX = 2.5
+GATE_CORNER_DEVIATION_PREVIEW_PX = 8.0
+GATE_INTRA_SWIR_OUTPUT_P95_PX = 8.0
 
 BLUE = "#2F6B8A"
 GOLD = "#D8A03D"
@@ -127,13 +134,31 @@ def figure_scale_quality() -> pd.DataFrame:
                 "scene",
                 "rgb_b1_holdout_p95_preview_px",
                 "rgb_b1_identity_corner_deviation_preview_px",
+                "maximum_intra_swir_output_p95_px",
             ]
         ],
         on="scene",
         how="left",
     )
     data["scene_number"] = data["scene"].str.removeprefix("C").astype(int)
-    data = data.sort_values("scene_number")
+    data = data.sort_values("scene_number").reset_index(drop=True)
+
+    # Registration gates are defined on 1200-pixel preview images, so converting
+    # them to released pixels needs the per-scene preview scale factor.
+    data["preview_scale"] = data[["width", "height"]].max(axis=1) / PREVIEW_MAXIMUM_DIMENSION
+    data["rgb_b1_holdout_p95_output_px"] = (
+        data["rgb_b1_holdout_p95_preview_px"] * data["preview_scale"]
+    )
+    data["rgb_b1_identity_corner_deviation_output_px"] = (
+        data["rgb_b1_identity_corner_deviation_preview_px"] * data["preview_scale"]
+    )
+    data["gate_holdout_p95_output_px"] = (
+        GATE_HOLDOUT_P95_PREVIEW_PX * data["preview_scale"]
+    )
+    data["gate_corner_deviation_output_px"] = (
+        GATE_CORNER_DEVIATION_PREVIEW_PX * data["preview_scale"]
+    )
+    data["gate_intra_swir_output_p95_px"] = GATE_INTRA_SWIR_OUTPUT_P95_PX
     data.to_csv(SOURCE_DATA / "fig2_scene_quality.csv", index=False, encoding="utf-8-sig")
 
     fig = plt.figure(figsize=(7.2, 5.2))
@@ -160,19 +185,47 @@ def figure_scale_quality() -> pd.DataFrame:
     ax_b.grid(color="#E6E9EC", linewidth=0.6)
 
     x = np.arange(len(data))
-    ax_c.plot(x, data["rgb_b1_holdout_p95_preview_px"], marker="o", color=BLUE, label="RGB–B1 held-out P95")
+    ax_c.plot(x, data["rgb_b1_holdout_p95_output_px"], marker="o", color=BLUE, label="RGB–B1 held-out P95")
     ax_c.plot(
         x,
-        data["rgb_b1_identity_corner_deviation_preview_px"],
+        data["rgb_b1_identity_corner_deviation_output_px"],
         marker="s",
         color=PURPLE,
         label="RGB–B1 corner deviation",
     )
+    ax_c.plot(
+        x,
+        data["maximum_intra_swir_output_p95_px"],
+        marker="^",
+        color=GOLD,
+        label="max intra-SWIR P95",
+    )
+    ax_c.axhline(
+        GATE_INTRA_SWIR_OUTPUT_P95_PX,
+        color=GOLD,
+        linestyle=":",
+        linewidth=0.9,
+        label=f"intra-SWIR gate ({GATE_INTRA_SWIR_OUTPUT_P95_PX:g} px)",
+    )
+    gate_low = float(data["gate_corner_deviation_output_px"].min())
+    gate_high = float(data["gate_corner_deviation_output_px"].max())
+    ax_c.axhspan(gate_low, gate_high, color=PURPLE, alpha=0.10)
+    ax_c.text(
+        0.02,
+        gate_low,
+        "corner-deviation gate band (scene dependent)",
+        ha="left",
+        va="bottom",
+        fontsize=5.2,
+        color=PURPLE,
+    )
+    ax_c.set_yscale("log")
+    ax_c.set_ylim(1.2, gate_high * 1.25)
     ax_c.set_xticks(x, data["scene"])
-    ax_c.set_ylabel("Automated residual (pixels)")
+    ax_c.set_ylabel("Residual (released output pixels, log)")
     ax_c.set_title("c  Registration diagnostics", loc="left", fontweight="bold")
-    ax_c.grid(axis="y", color="#E6E9EC", linewidth=0.6)
-    ax_c.legend(loc="upper left")
+    ax_c.grid(axis="y", color="#E6E9EC", linewidth=0.6, which="both")
+    ax_c.legend(loc="lower left", fontsize=5.2, framealpha=0.9)
 
     fig.suptitle("Dataset scale and reproducible quality diagnostics", fontsize=10, fontweight="bold")
     save_figure(fig, "fig2_scale_quality_diagnostics", dpi=600)
@@ -236,7 +289,15 @@ def figure_pipeline() -> None:
     plt.close(fig)
 
 
-def write_macros(data: pd.DataFrame) -> None:
+def load_acquisition() -> pd.DataFrame:
+    acquisition = pd.read_csv(DATASET / "metadata" / "acquisition_provenance.csv")
+    acquisition["scene_number"] = (
+        acquisition["scene"].str.removeprefix("C").astype(int)
+    )
+    return acquisition.sort_values("scene_number").reset_index(drop=True)
+
+
+def write_macros(data: pd.DataFrame, acquisition: pd.DataFrame) -> None:
     train = {"C1", "C3", "C4", "C5", "C6", "C7", "C10"}
     validation = {"C8"}
     test = {"C2", "C9"}
@@ -245,6 +306,10 @@ def write_macros(data: pd.DataFrame) -> None:
     task_validation = json.loads(TASK_VALIDATION.read_text(encoding="utf-8"))
     if not task_validation["passed"]:
         raise RuntimeError("Refusing to write manuscript macros from invalid tasks")
+    if not acquisition["scene_validation_passed"].all():
+        raise RuntimeError("Refusing to write manuscript macros from failed scene builds")
+    coverage = acquisition["common_coverage_fraction_uncropped"]
+    build_seconds = acquisition["build_seconds"]
     lines = [
         "% Generated by scripts/generate_dataset_figures.py.",
         r"\newcommand{\DatasetSceneCount}{" + str(len(data)) + "}",
@@ -256,6 +321,96 @@ def write_macros(data: pd.DataFrame) -> None:
         r"\newcommand{\DatasetFixedTestCount}{" + str(sum(int(counts[x]) for x in test)) + "}",
         r"\newcommand{\DatasetTaskFileCount}{"
         + str(int(task_validation["actual_file_count"]))
+        + "}",
+        r"\newcommand{\DatasetRawFileCount}{"
+        + str(int(acquisition["raw_file_count"].sum()))
+        + "}",
+        r"\newcommand{\DatasetSourcePositionCount}{"
+        + str(int(acquisition["source_positions"].sum()))
+        + "}",
+        r"\newcommand{\DatasetRgbFrameCount}{"
+        + str(int(acquisition["rgb_source_frames"].sum()))
+        + "}",
+        r"\newcommand{\DatasetSwirFrameCount}{"
+        + str(int(acquisition["swir_source_frames"].sum()))
+        + "}",
+        r"\newcommand{\DatasetPoseEdgeCount}{"
+        + str(int(acquisition["accepted_pose_edges"].sum()))
+        + "}",
+        r"\newcommand{\DatasetOutputScale}{"
+        + f"{float(acquisition['output_scale'].iloc[0]):g}"
+        + "}",
+        r"\newcommand{\DatasetAcquisitionDateMin}{"
+        + str(acquisition["acquisition_date"].min())
+        + "}",
+        r"\newcommand{\DatasetAcquisitionDateMax}{"
+        + str(acquisition["acquisition_date"].max())
+        + "}",
+        r"\newcommand{\DatasetCoverageMin}{" + f"{coverage.min():.3f}" + "}",
+        r"\newcommand{\DatasetCoverageMax}{" + f"{coverage.max():.3f}" + "}",
+        r"\newcommand{\DatasetCoverageMean}{" + f"{coverage.mean():.3f}" + "}",
+        r"\newcommand{\DatasetBuildSecondsMin}{" + f"{build_seconds.min():.1f}" + "}",
+        r"\newcommand{\DatasetBuildSecondsMax}{" + f"{build_seconds.max():.1f}" + "}",
+        r"\newcommand{\DatasetRedactedSceneUsablePatchCount}{"
+        + str(int(counts["C10"]))
+        + "}",
+        r"\newcommand{\RegHoldoutMinPx}{"
+        + f"{data['rgb_b1_holdout_p95_output_px'].min():.2f}"
+        + "}",
+        r"\newcommand{\RegHoldoutMedianPx}{"
+        + f"{data['rgb_b1_holdout_p95_output_px'].median():.2f}"
+        + "}",
+        r"\newcommand{\RegHoldoutMeanPx}{"
+        + f"{data['rgb_b1_holdout_p95_output_px'].mean():.2f}"
+        + "}",
+        r"\newcommand{\RegHoldoutMaxPx}{"
+        + f"{data['rgb_b1_holdout_p95_output_px'].max():.2f}"
+        + "}",
+        r"\newcommand{\RegCornerMinPx}{"
+        + f"{data['rgb_b1_identity_corner_deviation_output_px'].min():.2f}"
+        + "}",
+        r"\newcommand{\RegCornerMedianPx}{"
+        + f"{data['rgb_b1_identity_corner_deviation_output_px'].median():.2f}"
+        + "}",
+        r"\newcommand{\RegCornerMeanPx}{"
+        + f"{data['rgb_b1_identity_corner_deviation_output_px'].mean():.2f}"
+        + "}",
+        r"\newcommand{\RegCornerMaxPx}{"
+        + f"{data['rgb_b1_identity_corner_deviation_output_px'].max():.2f}"
+        + "}",
+        r"\newcommand{\RegCornerWorstScene}{"
+        + str(
+            data.loc[
+                data["rgb_b1_identity_corner_deviation_output_px"].idxmax(), "scene"
+            ]
+        )
+        + "}",
+        r"\newcommand{\RegCornerRunnerUpPx}{"
+        + f"{data['rgb_b1_identity_corner_deviation_output_px'].nlargest(2).iloc[1]:.2f}"
+        + "}",
+        r"\newcommand{\RegCornerOutlierRatio}{"
+        + f"{data['rgb_b1_identity_corner_deviation_output_px'].nlargest(1).iloc[0] / data['rgb_b1_identity_corner_deviation_output_px'].nlargest(2).iloc[1]:.1f}"
+        + "}",
+        r"\newcommand{\RegCornerOtherMeanPx}{"
+        + f"{data['rgb_b1_identity_corner_deviation_output_px'].drop(data['rgb_b1_identity_corner_deviation_output_px'].idxmax()).mean():.2f}"
+        + "}",
+        r"\newcommand{\RegCornerGateMinPx}{"
+        + f"{data['gate_corner_deviation_output_px'].min():.1f}"
+        + "}",
+        r"\newcommand{\RegCornerGateMaxPx}{"
+        + f"{data['gate_corner_deviation_output_px'].max():.1f}"
+        + "}",
+        r"\newcommand{\IntraSwirMinPx}{"
+        + f"{data['maximum_intra_swir_output_p95_px'].min():.2f}"
+        + "}",
+        r"\newcommand{\IntraSwirMeanPx}{"
+        + f"{data['maximum_intra_swir_output_p95_px'].mean():.2f}"
+        + "}",
+        r"\newcommand{\IntraSwirMaxPx}{"
+        + f"{data['maximum_intra_swir_output_p95_px'].max():.2f}"
+        + "}",
+        r"\newcommand{\IntraSwirGatePx}{"
+        + f"{GATE_INTRA_SWIR_OUTPUT_P95_PX:g}"
         + "}",
     ]
     (GENERATED / "dataset_macros.tex").write_text("\n".join(lines) + "\n", encoding="utf-8")
@@ -311,6 +466,163 @@ def write_macros(data: pd.DataFrame) -> None:
     )
 
 
+def write_acquisition_tables(acquisition: pd.DataFrame) -> None:
+    header_en = [
+        r"\begin{table}[htbp]",
+        r"\centering",
+        r"\caption{Per-scene acquisition and mosaic-construction record, generated from "
+        r"\texttt{metadata/acquisition\_provenance.csv}. Dates were recovered from the "
+        r"modification times of the read-only source files and each scene maps to a single "
+        r"calendar date. Pose edges are the accepted inter-position feature matches entering "
+        r"the pose graph; coverage is the fraction of the uncropped canvas on which all six "
+        r"modalities are valid.}",
+        r"\label{tab:acquisition}",
+        r"\small",
+        r"\begin{tabular}{@{}llrrrrlrr@{}}",
+        r"\toprule",
+        r"Scene & Date & Pos. & RGB frames & SWIR frames & Pose edges & Pose model "
+        r"& Canvas (px) & Coverage \\",
+        r"\midrule",
+    ]
+    header_zh = [
+        r"\begin{table}[htbp]",
+        r"\centering",
+        r"\caption{由 \texttt{metadata/acquisition\_provenance.csv} 自动生成的逐场景采集与"
+        r"拼接构建记录。日期由只读原始文件的修改时间恢复，每个场景对应唯一日历日期。"
+        r"位姿边为进入位姿图的已接受位置间特征匹配数；覆盖率为未裁剪画布上六模态均有效的比例。}",
+        r"\label{tab:acquisition-zh}",
+        r"\small",
+        r"\begin{tabular}{@{}llrrrrlrr@{}}",
+        r"\toprule",
+        r"场景 & 日期 & 位置数 & RGB帧 & SWIR帧 & 位姿边 & 位姿模型 & 画布（像素） & 覆盖率 \\",
+        r"\midrule",
+    ]
+    rows_en, rows_zh = [], []
+    for _, row in acquisition.iterrows():
+        bundle = "+BA" if bool(row["bundle_adjustment_enabled"]) else ""
+        pose = f"{row['pose_model']}{bundle}"
+        burst = int(row["rgb_frames_per_position"])
+        rgb_cell = f"{int(row['rgb_source_frames'])}" + (
+            f" ({burst}/pos)" if burst > 1 else ""
+        )
+        values = (
+            row["scene"],
+            str(row["acquisition_date"]),
+            int(row["source_positions"]),
+            rgb_cell,
+            int(row["swir_source_frames"]),
+            int(row["accepted_pose_edges"]),
+            pose,
+            f"{int(row['canvas_width'])}$\\times${int(row['canvas_height'])}",
+            f"{float(row['common_coverage_fraction_uncropped']):.3f}",
+        )
+        line = " & ".join(str(value) for value in values) + r" \\"
+        rows_en.append(line)
+        rows_zh.append(line)
+    tail = [r"\bottomrule", r"\end{tabular}", r"\end{table}"]
+    (GENERATED / "scene_acquisition_en.tex").write_text(
+        "\n".join(header_en + rows_en + tail) + "\n", encoding="utf-8"
+    )
+    (GENERATED / "scene_acquisition_zh.tex").write_text(
+        "\n".join(header_zh + rows_zh + tail) + "\n", encoding="utf-8"
+    )
+    acquisition.to_csv(
+        SOURCE_DATA / "acquisition_provenance.csv", index=False, encoding="utf-8-sig"
+    )
+
+
+def figure_registration_zoom() -> None:
+    """Central 256x256 crop of every scene, RGB next to B1, without cherry-picking."""
+    patch = 256
+    records: list[dict[str, object]] = []
+    fig, axes = plt.subplots(5, 4, figsize=(5.6, 7.4))
+    fig.subplots_adjust(
+        left=0.01, right=0.995, top=0.945, bottom=0.005, wspace=0.06, hspace=0.17
+    )
+    for row in range(5):
+        for column in range(4):
+            scene = f"C{2 * row + (1 if column < 2 else 2)}"
+            number = int(scene.removeprefix("C"))
+            is_rgb = column % 2 == 0
+            path = (
+                DATASET / scene / f"scene{number}.tif"
+                if is_rgb
+                else DATASET / scene / f"scene{number}_band1.tif"
+            )
+            with Image.open(path) as image:
+                width, height = image.size
+                x0, y0 = (width - patch) // 2, (height - patch) // 2
+                array = np.asarray(
+                    image.crop((x0, y0, x0 + patch, y0 + patch)).convert(
+                        "RGB" if is_rgb else "L"
+                    )
+                )
+            shown, low, high = display_array_from_array(array)
+            ax = axes[row, column]
+            ax.imshow(shown, cmap=None if is_rgb else "gray", vmin=0, vmax=1)
+            ax.set_xticks([])
+            ax.set_yticks([])
+            for spine in ax.spines.values():
+                spine.set_visible(False)
+            ax.text(
+                0.03,
+                0.97,
+                "RGB" if is_rgb else "B1",
+                transform=ax.transAxes,
+                ha="left",
+                va="top",
+                fontsize=6,
+                color="white",
+                bbox=dict(boxstyle="round,pad=0.18", fc="black", alpha=0.5, ec="none"),
+            )
+            if column % 2 == 0:
+                ax.text(
+                    1.03,
+                    1.02,
+                    scene,
+                    transform=ax.transAxes,
+                    ha="center",
+                    va="bottom",
+                    fontsize=7,
+                    fontweight="bold",
+                )
+            records.append(
+                {
+                    "scene": scene,
+                    "modality": "RGB" if is_rgb else "B1",
+                    "crop_x0": x0,
+                    "crop_y0": y0,
+                    "crop_size": patch,
+                    "scene_width": width,
+                    "scene_height": height,
+                    "selection_rule": "central_non_overlapping_256px_crop",
+                    "display_percentile_low": 1,
+                    "display_percentile_high": 99,
+                    "display_value_low": low,
+                    "display_value_high": high,
+                }
+            )
+    fig.suptitle(
+        "Central paired crop of every scene: RGB and SWIR B1",
+        fontsize=9,
+        fontweight="bold",
+        y=0.985,
+    )
+    save_figure(fig, "fig7_registration_zoom", dpi=400)
+    plt.close(fig)
+    pd.DataFrame(records).to_csv(
+        SOURCE_DATA / "fig7_zoom_provenance.csv", index=False, encoding="utf-8-sig"
+    )
+
+
+def display_array_from_array(array: np.ndarray) -> tuple[np.ndarray, float, float]:
+    low, high = np.percentile(array, [1, 99])
+    if high <= low:
+        low, high = float(array.min()), float(array.max() or 1)
+    shown = np.clip((array.astype(np.float32) - low) / (high - low), 0, 1)
+    return shown, float(low), float(high)
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -331,7 +643,10 @@ def main() -> None:
         figure_scene_plate()
         data = figure_scale_quality()
         figure_pipeline()
-    write_macros(data)
+        figure_registration_zoom()
+    acquisition = load_acquisition()
+    write_macros(data, acquisition)
+    write_acquisition_tables(acquisition)
     print(f"Generated manuscript data products in {REPO}")
 
 
