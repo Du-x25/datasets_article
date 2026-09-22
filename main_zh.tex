@@ -16,6 +16,7 @@
 \input{generated/input_benchmark_macros.tex}
 \input{generated/model_benchmark_macros.tex}
 \input{generated/scene_benchmark_macros.tex}
+\input{generated/qualitative_benchmark_macros.tex}
 \hypersetup{colorlinks=true,linkcolor=black,citecolor=black,urlcolor=blue}
 \setlength{\parindent}{2em}
 \setlength{\parskip}{0.25em}
@@ -322,7 +323,7 @@ CIEDE2000 & sRGB转CIELAB后逐像素$\Delta E_{00}$的均值\cite{sharma2005} &
 \end{figure}
 
 \subsection{跨场景技术验证}
-沿用规则产生的\LOSOModelFamily{}+\LOSOInput{}配置在十折留一场景评估训练之前即已冻结。十个留出场景的PSNR平均值为\LOSOMeanPSNR{}\,dB，SSIM平均值为\LOSOMeanSSIM{}。场景级PSNR从\LOSOMinPSNR{}变化到\LOSOMaxPSNR{}\,dB（表~\ref{tab:scene-results-zh}），跨度明显大于多数场景内部的种子波动。SSIM的变化没有简单复现PSNR排序，说明场景难度不能由单一失真指标概括。逐折的通道映射与线性参照与每个训练数值并列报告，用以区分依赖于场景的合成增益与依赖于场景的色彩偏移。
+沿用规则产生的\LOSOModelFamily{}+\LOSOInput{}配置在十折留一场景评估训练之前即已冻结。十个留出场景的PSNR平均值为\LOSOMeanPSNR{}\,dB，SSIM平均值为\LOSOMeanSSIM{}。场景级PSNR从\LOSOMinPSNR{}变化到\LOSOMaxPSNR{}\,dB（表~\ref{tab:scene-results-zh}），跨度明显大于多数场景内部的种子波动。对十折进行非参数bootstrap（重抽样10\,000次、固定生成器种子2026，记录于\texttt{figures/source\_data/fig6\_scene\_bootstrap.csv}）得到留出PSNR均值的95\%区间为\LOSOPSNRCILow{}--\LOSOPSNRCIHigh{}\,dB、SSIM均值区间为\LOSOSSIMCILow{}--\LOSOSSIMCIHigh{}；该区间量化的是场景抽样不确定性，作为逐场景值的补充而非替代。SSIM的变化没有简单复现PSNR排序，说明场景难度不能由单一失真指标概括。逐折的通道映射与线性参照与每个训练数值并列报告，用以区分依赖于场景的合成增益与依赖于场景的色彩偏移。
 
 参照列值得明确讨论。十折中有\LOSOLinearBeatsFolds{}折仅凭逐折线性参照即超过训练配置：线性参照的跨折平均PSNR为\LOSOLinearRefMeanPSNR{}\,dB，训练模型为\LOSOMeanPSNR{}\,dB，免训练通道映射为\LOSOChannelRefMeanPSNR{}\,dB。对这些场景而言，可预测信号的大部分是全局色彩关系，最小二乘仿射映射无需训练即可恢复；训练模型的价值主要体现在需要合成局部纹理的折上。这是方法一节所述SWIR采样密度的直接后果，也是本发布在每一个训练数值旁并列免训练参照而非单独报告的原因。
 
@@ -337,6 +338,15 @@ CIEDE2000 & sRGB转CIELAB后逐像素$\Delta E_{00}$的均值\cite{sharma2005} &
   \includegraphics[width=\textwidth]{fig6_scene_benchmark.pdf}
   \caption{固定验证集选出的\LOSOModelFamily{}+\LOSOInput{}配置后进行留一场景评估所得的跨场景差异。\textbf{a}，留出场景PSNR；\textbf{b}，留出场景SSIM。点表示三个随机种子的均值，误差线表示样本标准差，虚线表示十个场景的非加权平均值。\textbf{a}中叉号表示免训练通道参照，方块表示逐折最小二乘线性参照。所有留出结果仅作描述，不参与配置选择。}
   \label{fig:scene-benchmark-zh}
+\end{figure}
+
+图~\ref{fig:qualitative-zh}以两个方向相反的折使该反转具体化。在\QualRowOneScene{}上，仿射参照比训练模型更忠实地复现目标色彩场；在\QualRowTwoScene{}上，训练预测保留了仿射映射所抹平的冠层结构；两折中任何一种方法都未恢复植被目标的绿色色调，这与SWIR通道为名义通带且未定标的性质一致，而不能仅归因于训练协议不足。
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{fig8_qualitative.pdf}
+  \caption{两个留出方向相反的留一场景折上的定性比较。列：SWIR \LOSOInput{}输入、训练\LOSOModelFamily{}+\LOSOInput{}预测、逐折最小二乘线性参照、RGB目标。每行展示PSNR最接近所选种子中位数的图块，所选种子为场景级PSNR最接近三种子均值的种子，因此两行均非最优示例；选择标识与显示指标记录于\texttt{figures/source\_data/fig8\_qualitative\_provenance.csv}。在\QualRowOneScene{}上，仿射参照比训练模型更忠实地复现目标色彩场（该图块\QualRowOneLinearPSNR{}对\QualRowOneTrainedPSNR{}\,dB）；在\QualRowTwoScene{}上，训练预测保留了仿射映射所抹平的冠层结构（\QualRowTwoTrainedPSNR{}对\QualRowTwoLinearPSNR{}\,dB）。}
+  \label{fig:qualitative-zh}
 \end{figure}
 
 \section{使用说明}

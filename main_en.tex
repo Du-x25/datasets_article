@@ -19,6 +19,7 @@
 \input{generated/input_benchmark_macros.tex}
 \input{generated/model_benchmark_macros.tex}
 \input{generated/scene_benchmark_macros.tex}
+\input{generated/qualitative_benchmark_macros.tex}
 \hypersetup{colorlinks=true,linkcolor=black,citecolor=black,urlcolor=blue}
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0.45em}
@@ -324,7 +325,7 @@ The rule and the fixed-test outcome point in opposite directions. The carried-fo
 \end{figure}
 
 \subsection{Cross-scene technical validation}
-The \LOSOModelFamily{}+\LOSOInput{} configuration produced by the carry-forward rule was frozen before the ten leave-one-scene-out folds were trained. Across the ten held-out scenes, mean PSNR was \LOSOMeanPSNR{}\,dB and mean SSIM was \LOSOMeanSSIM{}. Scene-level PSNR ranged from \LOSOMinPSNR{} to \LOSOMaxPSNR{}\,dB (Table~\ref{tab:scene-results}), a spread far larger than the within-fold seed variation for most scenes. The SSIM profile does not reproduce the PSNR ordering, so scene difficulty is not captured by a single distortion measure. Per-fold channel-mapping and linear references are reported alongside every trained value, which separates scene-dependent synthesis gain from scene-dependent colour offset.
+The \LOSOModelFamily{}+\LOSOInput{} configuration produced by the carry-forward rule was frozen before the ten leave-one-scene-out folds were trained. Across the ten held-out scenes, mean PSNR was \LOSOMeanPSNR{}\,dB and mean SSIM was \LOSOMeanSSIM{}. Scene-level PSNR ranged from \LOSOMinPSNR{} to \LOSOMaxPSNR{}\,dB (Table~\ref{tab:scene-results}), a spread far larger than the within-fold seed variation for most scenes. A nonparametric bootstrap over the ten folds (10\,000 resamples, fixed generator seed 2026, recorded in \texttt{figures/source\_data/fig6\_scene\_bootstrap.csv}) places the 95\% interval for the mean held-out PSNR at \LOSOPSNRCILow{}--\LOSOPSNRCIHigh{}\,dB and that for the mean SSIM at \LOSOSSIMCILow{}--\LOSOSSIMCIHigh{}; these intervals quantify scene-sampling uncertainty and are reported in addition to, not instead of, the per-scene values. The SSIM profile does not reproduce the PSNR ordering, so scene difficulty is not captured by a single distortion measure. Per-fold channel-mapping and linear references are reported alongside every trained value, which separates scene-dependent synthesis gain from scene-dependent colour offset.
 
 The reference columns deserve explicit attention. In \LOSOLinearBeatsFolds{} of the ten folds the per-fold linear reference alone exceeds the trained configuration: its mean PSNR across folds is \LOSOLinearRefMeanPSNR{}\,dB against \LOSOMeanPSNR{}\,dB for the trained model and \LOSOChannelRefMeanPSNR{}\,dB for the training-free channel mapping. For those scenes most of the predictable signal is a global colour relation that a least-squares affine map recovers without any training, and the trained model adds value mainly in the folds where local texture must be synthesized. This is a direct consequence of the SWIR sampling density described in the Methods, and it is why every trained value in this release is reported beside its training-free references rather than alone.
 
@@ -339,6 +340,15 @@ These results provide the intended technical validation of dataset reuse: the ta
   \includegraphics[width=\textwidth]{fig6_scene_benchmark.pdf}
   \caption{Cross-scene variability under leave-one-scene-out evaluation with the fixed validation-selected \LOSOModelFamily{}+\LOSOInput{} configuration. \textbf{a}, held-out PSNR; \textbf{b}, held-out SSIM. Points show means and error bars show sample standard deviations over three seeds; dashed lines mark the unweighted mean across the ten scenes. In \textbf{a}, crosses mark the training-free channel reference and squares the per-fold least-squares linear reference. All fold results are descriptive and were not used for configuration selection.}
   \label{fig:scene-benchmark}
+\end{figure}
+
+Figure~\ref{fig:qualitative} makes the reversal concrete on two folds with opposite outcomes. On \QualRowOneScene{} the affine reference reproduces the target colour field more faithfully than the trained model, while on \QualRowTwoScene{} the trained prediction retains canopy structure that the affine map flattens; on neither fold does either method recover the green hue of the vegetation target, which is consistent with nominal, uncalibrated SWIR channels rather than with a failure of the training protocol alone.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{fig8_qualitative.pdf}
+  \caption{Qualitative comparison on two leave-one-scene-out folds with opposite reference outcomes. Columns: SWIR \LOSOInput{} input, trained \LOSOModelFamily{}+\LOSOInput{} prediction, per-fold least-squares linear reference, and RGB target. Each row shows the patch whose PSNR is closest to the median of the seed whose scene-level PSNR is closest to the three-seed mean, so neither row is a best case; selection identifiers and displayed metrics are recorded in \texttt{figures/source\_data/fig8\_qualitative\_provenance.csv}. On \QualRowOneScene{} the affine reference reproduces the target colour field more faithfully than the trained model (\QualRowOneLinearPSNR{} against \QualRowOneTrainedPSNR{}\,dB on this patch); on \QualRowTwoScene{} the trained prediction retains canopy structure that the affine map flattens (\QualRowTwoTrainedPSNR{} against \QualRowTwoLinearPSNR{}\,dB).}
+  \label{fig:qualitative}
 \end{figure}
 
 \section{User Notes}

@@ -396,6 +396,35 @@ def load_loso_references(benchmark: Path, frame: pd.DataFrame) -> pd.DataFrame:
     return frame
 
 
+def scene_bootstrap(benchmark: Path, n_iter: int = 10000, seed: int = 2026) -> dict:
+    runs = pd.read_csv(benchmark / "run_metrics.csv")
+    runs = runs[runs["stage"] == "scene"]
+    folds = runs.groupby("test_scenes")[["PSNR", "SSIM"]].mean()
+    values = folds.to_numpy(float)
+    rng = np.random.default_rng(seed)
+    draws = rng.integers(0, len(values), size=(n_iter, len(values)))
+    means = values[draws].mean(axis=1)
+    low, high = np.percentile(means, [2.5, 97.5], axis=0)
+    result = {
+        "metric": ["PSNR", "SSIM"],
+        "point": [float(values[:, 0].mean()), float(values[:, 1].mean())],
+        "ci_low": [float(low[0]), float(low[1])],
+        "ci_high": [float(high[0]), float(high[1])],
+        "n_iter": n_iter,
+        "rng_seed": seed,
+        "unit": ["dB", ""],
+    }
+    pd.DataFrame(result).to_csv(
+        SOURCE_DATA / "fig6_scene_bootstrap.csv", index=False, encoding="utf-8-sig"
+    )
+    return {
+        "psnr_low": float(low[0]),
+        "psnr_high": float(high[0]),
+        "ssim_low": float(low[1]),
+        "ssim_high": float(high[1]),
+    }
+
+
 def figure_scene(summary: pd.DataFrame, benchmark: Path) -> None:
     frame = summary[summary["Stage"] == "scene"].copy()
     require_complete(frame, 10, "scene")
@@ -410,7 +439,7 @@ def figure_scene(summary: pd.DataFrame, benchmark: Path) -> None:
         index=False,
         encoding="utf-8-sig",
     )
-    write_scene_latex(frame)
+    write_scene_latex(frame, scene_bootstrap(benchmark))
     x = np.arange(len(frame))
     fig, axes = plt.subplots(
         2,
@@ -481,7 +510,7 @@ def figure_scene(summary: pd.DataFrame, benchmark: Path) -> None:
     plt.close(fig)
 
 
-def write_scene_latex(frame: pd.DataFrame) -> None:
+def write_scene_latex(frame: pd.DataFrame, bootstrap: dict) -> None:
     GENERATED.mkdir(parents=True, exist_ok=True)
     macros = [
         "% Generated from complete three-seed leave-one-scene-out results.",
@@ -494,6 +523,10 @@ def write_scene_latex(frame: pd.DataFrame) -> None:
         rf"\newcommand{{\LOSOChannelRefMeanPSNR}}{{{frame['reference_psnr'].mean():.2f}}}",
         rf"\newcommand{{\LOSOLinearRefMeanPSNR}}{{{frame['linear_psnr'].mean():.2f}}}",
         rf"\newcommand{{\LOSOLinearBeatsFolds}}{{{int((frame['linear_psnr'] > frame['PSNR_Mean']).sum())}}}",
+        rf"\newcommand{{\LOSOPSNRCILow}}{{{bootstrap['psnr_low']:.2f}}}",
+        rf"\newcommand{{\LOSOPSNRCIHigh}}{{{bootstrap['psnr_high']:.2f}}}",
+        rf"\newcommand{{\LOSOSSIMCILow}}{{{bootstrap['ssim_low']:.3f}}}",
+        rf"\newcommand{{\LOSOSSIMCIHigh}}{{{bootstrap['ssim_high']:.3f}}}",
     ]
     (GENERATED / "scene_benchmark_macros.tex").write_text(
         "\n".join(macros) + "\n", encoding="utf-8"
@@ -544,6 +577,52 @@ def write_scene_latex(frame: pd.DataFrame) -> None:
     )
 
 
+QUALITATIVE_SCENES = ("C3", "C9")
+
+
+def figure_qualitative(benchmark: Path) -> None:
+    selection = pd.read_csv(benchmark / "qualitative" / "selection.csv")
+    rows = selection[selection["Source_Scene_ID"].isin(QUALITATIVE_SCENES)]
+    if len(rows) != len(QUALITATIVE_SCENES):
+        raise SystemExit("qualitative selection is missing rows for the panel scenes")
+    SOURCE_DATA.mkdir(parents=True, exist_ok=True)
+    rows.to_csv(
+        SOURCE_DATA / "fig8_qualitative_provenance.csv",
+        index=False,
+        encoding="utf-8-sig",
+    )
+    by_scene = {row["Source_Scene_ID"]: row for _, row in rows.iterrows()}
+    macros = ["% Generated from the non-cherry-picked qualitative export."]
+    for tag, scene in zip(("One", "Two"), QUALITATIVE_SCENES):
+        row = by_scene[scene]
+        macros += [
+            rf"\newcommand{{\QualRow{tag}Scene}}{{{scene}}}",
+            rf"\newcommand{{\QualRow{tag}TrainedPSNR}}{{{row['Displayed_PSNR']:.2f}}}",
+            rf"\newcommand{{\QualRow{tag}LinearPSNR}}{{{row['DisplayedLinear_PSNR']:.2f}}}",
+        ]
+    (GENERATED / "qualitative_benchmark_macros.tex").write_text(
+        "\n".join(macros) + "\n", encoding="utf-8"
+    )
+    columns = (
+        ("source.png", "SWIR input"),
+        ("prediction.png", "trained prediction"),
+        ("linear_prediction.png", "linear reference"),
+        ("target.png", "RGB target"),
+    )
+    fig, axes = plt.subplots(2, 4, figsize=(7.2, 3.7), constrained_layout=True)
+    for i, scene in enumerate(QUALITATIVE_SCENES):
+        for j, (name, label) in enumerate(columns):
+            ax = axes[i][j]
+            ax.imshow(plt.imread(benchmark / "qualitative" / scene / name))
+            ax.set_xticks([])
+            ax.set_yticks([])
+            if i == 0:
+                ax.set_title(label, fontsize=7, fontweight="bold")
+        axes[i][0].set_ylabel(scene, fontweight="bold")
+    save_figure(fig, "fig8_qualitative")
+    plt.close(fig)
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--benchmark-dir", type=Path, required=True)
@@ -568,6 +647,7 @@ def main() -> None:
             figure_model(summary)
         else:
             figure_scene(summary, benchmark)
+            figure_qualitative(benchmark)
     print(f"Generated benchmark figures for: {', '.join(args.stages)}")
 
 
