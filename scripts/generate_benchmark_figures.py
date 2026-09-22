@@ -97,7 +97,9 @@ def latex_pm(mean: float, sd: float, digits: int) -> str:
     return f"${mean:.{digits}f}\\pm{sd:.{digits}f}$"
 
 
-def write_input_latex(frame: pd.DataFrame, baseline: pd.DataFrame) -> None:
+def write_input_latex(
+    frame: pd.DataFrame, baseline: pd.DataFrame, linear_refs: dict[str, float]
+) -> None:
     GENERATED.mkdir(parents=True, exist_ok=True)
     ranked = frame.sort_values("validation_psnr_Mean", ascending=False)
     selected = ranked.iloc[0]
@@ -119,6 +121,9 @@ def write_input_latex(frame: pd.DataFrame, baseline: pd.DataFrame) -> None:
         rf"\newcommand{{\BOneTwoFourTestCIE}}{{{b124['CIEDE2000_Mean']:.2f}}}",
         rf"\newcommand{{\BOneGrayRepPSNR}}{{{b1_baseline['PSNR']:.2f}}}",
         rf"\newcommand{{\BOneTwoFourChannelMapPSNR}}{{{b124_baseline['PSNR']:.2f}}}",
+        rf"\newcommand{{\FixedLinearBOnePSNR}}{{{linear_refs['B1']:.2f}}}",
+        rf"\newcommand{{\FixedLinearBOneTwoFourPSNR}}{{{linear_refs['B124']:.2f}}}",
+        rf"\newcommand{{\FixedLinearFiveBandPSNR}}{{{linear_refs['5B']:.2f}}}",
     ]
     (GENERATED / "input_benchmark_macros.tex").write_text(
         "\n".join(macros) + "\n", encoding="utf-8"
@@ -127,7 +132,7 @@ def write_input_latex(frame: pd.DataFrame, baseline: pd.DataFrame) -> None:
         r"\begin{table}[htbp]",
         r"\centering",
         r"\small",
-        r"\begin{tabular}{lrrrr}",
+        r"\begin{tabular}{lrrrrr}",
         r"\toprule",
     ]
     common_tail = [r"\bottomrule", r"\end{tabular}", r"\end{table}"]
@@ -138,24 +143,25 @@ def write_input_latex(frame: pd.DataFrame, baseline: pd.DataFrame) -> None:
             f"{latex_pm(row['validation_psnr_Mean'], row['validation_psnr_SD'], 2)} & "
             f"{latex_pm(row['PSNR_Mean'], row['PSNR_SD'], 2)} & "
             f"{latex_pm(row['SSIM_Mean'], row['SSIM_SD'], 3)} & "
-            f"{latex_pm(row['CIEDE2000_Mean'], row['CIEDE2000_SD'], 2)} \\\\"
+            f"{latex_pm(row['CIEDE2000_Mean'], row['CIEDE2000_SD'], 2)} & "
+            f"{linear_refs[row['Input']]:.2f} \\\\"
         )
     en = [
         *common_head[:2],
-        r"\caption{Input comparison with a fixed U-Net. Values are mean $\pm$ sample standard deviation over three seeds. Selection uses validation PSNR only.}",
+        r"\caption{Input comparison with a fixed U-Net. Values are mean $\pm$ sample standard deviation over three seeds. Selection uses validation PSNR only. The linear reference is a least-squares affine colour map fitted on the fixed training scenes per input and is seed-free.}",
         r"\label{tab:input-results}",
         *common_head[2:],
-        r"Input & Validation PSNR & Test PSNR & Test SSIM & Test CIEDE2000 \\",
+        r"Input & Validation PSNR & Test PSNR & Test SSIM & Test CIEDE2000 & Linear ref. \\",
         r"\midrule",
         *rows,
         *common_tail,
     ]
     zh = [
         *common_head[:2],
-        r"\caption{固定U-Net下的输入比较。数值为三个随机种子的均值$\pm$样本标准差，输入选择仅依据验证集PSNR。}",
+        r"\caption{固定U-Net下的输入比较。数值为三个随机种子的均值$\pm$样本标准差，输入选择仅依据验证集PSNR。线性参照为按输入在固定训练场景上拟合的最小二乘仿射色彩映射，不含随机种子。}",
         r"\label{tab:input-results-zh}",
         *common_head[2:],
-        r"输入 & 验证PSNR & 测试PSNR & 测试SSIM & 测试CIEDE2000 \\",
+        r"输入 & 验证PSNR & 测试PSNR & 测试SSIM & 测试CIEDE2000 & 线性参照 \\",
         r"\midrule",
         *rows,
         *common_tail,
@@ -182,7 +188,12 @@ def figure_input(summary: pd.DataFrame, benchmark: Path) -> None:
     )
     baseline = pd.read_csv(benchmark / "grayrep_sanity.csv")
     baseline = baseline[baseline["Scope"] == "fixed_C2_C9"].copy()
-    write_input_latex(frame, baseline)
+    references = pd.read_csv(benchmark / "reference_baselines.csv")
+    linear = references[
+        (references["Scope"] == "fixed_split") & (references["Baseline"] == "Linear")
+    ]
+    linear_refs = {str(row["Input"]): float(row["PSNR"]) for _, row in linear.iterrows()}
+    write_input_latex(frame, baseline, linear_refs)
     colors = [
         PURPLE if name == "5B" else GOLD if name == "B124" else BLUE
         for name in frame["Input"]

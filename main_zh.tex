@@ -36,7 +36,7 @@
 \maketitle
 
 \begin{abstract}
-可见光与短波红外（SWIR）配对影像可用于跨光谱生成、图像融合和多模态感知，但数据复用依赖清晰的场景身份、波段定义、空间对应关系和无泄漏评估。本文介绍M-SWIR-\allowbreak RGB场景级数据集，共包含\DatasetSceneCount{}个配对场景，由共孔径二向色分光平台采集：可见光sCMOS相机与InGaAs SWIR相机共享同一入射光瞳，五个SWIR波段由电动滤光片轮产生。每个场景是由扫描位置序列拼接而成的马赛克，发布为一幅RGB图像与五幅单通道SWIR图像，共\DatasetTiffCount{}幅无压缩八位TIFF文件；在隐私感知排除之后可复算地得到\DatasetUsablePatchCount{}个互不重叠的$256\times256$空间位置。每个场景内六种模态具有一致尺寸，文件身份通过SHA-256绑定，训练、验证和测试集合按完整场景隔离。采集方式带来两点约束解释方式的性质，并逐场景记录：五个通道为滤光片名义通带而非实测的端到端相对光谱响应；全流程未做辐射定标；由于输出网格按RGB原生像元间距定义，每个SWIR波段在各轴上被上采样\DatasetOutputScale{}倍，其独立样本数约为配对RGB目标的十二分之一。自动质量记录描述图像属性与以发布输出像素为单位的配准诊断，但不把特征残差解释为人工检查点精度或地理定位精度。预设的69次SWIR到RGB实验报告完整的输入与结构组合，并与免训练通道映射和线性参照比较，进而量化跨场景差异：留一场景PSNR均值为\LOSOMeanPSNR{}\,dB，范围为\LOSOMinPSNR{}--\LOSOMaxPSNR{}\,dB，验证集最优配置并非留出集最优配置，且十折中有\LOSOLinearBeatsFolds{}折仅凭免训练的逐折线性色彩映射即超过训练配置。本数据集旨在为研究光谱输入价值和场景依赖性提供紧凑、可审计的资源，而不是用于证明新的图像生成模型。
+可见光与短波红外（SWIR）配对影像可用于跨光谱生成、图像融合和多模态感知，但数据复用依赖清晰的场景身份、波段定义、空间对应关系和无泄漏评估。本文介绍M-SWIR-\allowbreak RGB场景级数据集，共包含\DatasetSceneCount{}个配对场景，由共孔径二向色分光平台采集：可见光sCMOS相机与InGaAs SWIR相机共享同一入射光瞳，五个SWIR波段由电动滤光片轮产生。每个场景是由扫描位置序列拼接而成的马赛克，发布为一幅RGB图像与五幅单通道SWIR图像，共\DatasetTiffCount{}幅无压缩八位TIFF文件；在隐私感知排除之后可复算地得到\DatasetUsablePatchCount{}个互不重叠的$256\times256$空间位置。每个场景内六种模态具有一致尺寸，文件身份通过SHA-256绑定，训练、验证和测试集合按完整场景隔离。采集方式带来两点约束解释方式的性质，并逐场景记录：五个通道为滤光片名义通带而非实测的端到端相对光谱响应；全流程未做辐射定标；由于输出网格按RGB原生像元间距定义，每个SWIR波段在各轴上被上采样\DatasetOutputScale{}倍，其独立样本数约为配对RGB目标的十分之一（$3.2^2\approx10.2$）。自动质量记录描述图像属性与以发布输出像素为单位的配准诊断，但不把特征残差解释为人工检查点精度或地理定位精度。预设的69次SWIR到RGB实验报告完整的输入与结构组合，并与免训练通道映射和线性参照比较，进而量化跨场景差异：留一场景PSNR均值为\LOSOMeanPSNR{}\,dB，范围为\LOSOMinPSNR{}--\LOSOMaxPSNR{}\,dB，验证集最优配置并非留出集最优配置，且十折中有\LOSOLinearBeatsFolds{}折仅凭免训练的逐折线性色彩映射即超过训练配置。本数据集旨在为研究光谱输入价值和场景依赖性提供紧凑、可审计的资源，而不是用于证明新的图像生成模型。
 \end{abstract}
 
 \textbf{关键词：}短波红外；RGB；配对数据集；多光谱成像；跨光谱生成；场景隔离评估
@@ -161,14 +161,14 @@ B5 & 1625--1675 & 1650 & 50 & 1500--1700\\
 \end{table}
 
 \subsection{场景采集}
-十个场景在七个室外地点采集，覆盖四类场景：城市建筑表面（混凝土、玻璃、红色植被）、工业场地（钢板、防水布、金属表面）、交通道路（沥青、橡胶、车道标线）与乡村地表（土壤、裸土、黄色植被）。一个场景并非单帧图像，而是一段连续扫描序列：平台在每个场景内移动4至29个位置，合计\DatasetSourcePositionCount{}个位置，使相邻位置之间保留重叠。重叠既是拼接的前提，也是仅凭图像特征估计位置间几何关系的前提。每个位置提供一次RGB观测与五次SWIR观测，共得到\DatasetRgbFrameCount{}帧RGB与\DatasetSwirFrameCount{}帧SWIR源图像，来自\DatasetRawFileCount{}个只读原始文件。C1--C7每个位置仅采集一帧RGB；C8、C9与C10每个位置采集十帧连拍，并由处理链选取最清晰的一帧。
+十个场景在七个室外地点采集，覆盖四类场景：城市建筑表面（混凝土、玻璃、红色植被）、工业场地（钢板、防水布、金属表面）、交通道路（沥青、橡胶、车道标线）与乡村地表（土壤、裸土、黄色植被）。一个场景并非单帧图像，而是一段连续扫描序列：平台在每个场景内移动4至29个位置，合计\DatasetSourcePositionCount{}个位置，使相邻位置之间保留重叠。重叠既是拼接的前提，也是仅凭图像特征估计位置间几何关系的前提。每个位置提供一次RGB观测与五次SWIR观测，共得到\DatasetRgbFrameCount{}帧RGB与\DatasetSwirFrameCount{}帧SWIR源图像，来自\DatasetRawFileCount{}个只读原始文件。C1--C7每个位置仅采集一帧RGB；C8、C9与C10每个位置采集十帧连拍，并由处理链选取最清晰的一帧（清晰度定义为灰度帧Laplacian方差，取连拍内最大者）。
 
 采集日期由只读原始文件的修改时间恢复，并逐场景断言其对应唯一日历日期；日期范围为\DatasetAcquisitionDateMin{}至\DatasetAcquisitionDateMax{}，逐场景记录于\texttt{metadata/acquisition\_provenance.csv}与表~\ref{tab:acquisition-zh}。原始文件不含GNSS或时钟元数据，因此地点仅以场景类别与地点数量说明，不给出坐标；天气亦未记录。光照与大气状态只能从图像本身推断。这是发布数据的固有限制，也是本数据集以场景身份而非图块数量作为解释单位的原因之一。
 
 \subsection{场景拼接构建}
 每个场景按模态各合成一幅画布。特征使用SIFT检测（8000个特征，对比度阈值0.005），以0.72比值检验匹配；对应点经RANSAC以2.0像素重投影阈值筛选，内点少于45个的边被剔除。进入位姿图的边分为两类：连接同一位置RGB帧与B1帧的跨模态边，以及连接B1与B2--B5的SWIR带内边，因此同一位置的六种模态共享同一几何解。十个场景共接受\DatasetPoseEdgeCount{}条边。位姿图在B1参考系中求解。C8与C9采用单应位姿模型并额外执行光束法平差，保留20\%匹配点作为验证集（每条边至多220个点、至多120次迭代）；这两个场景的训练残差RMS分别从1.364降至0.841、从0.729降至0.475参考像素，验证集95分位分别为2.079与1.187参考像素。其余八个场景采用仿射位姿模型且不做光束法平差。
 
-画布在B1参考系上定义并按固定系数\DatasetOutputScale{}放大，该系数即可见光与SWIR传感器宽度之比（$2048/640$）。因此输出像元间距等于RGB原生采样间距：RGB接近原生分辨率重采样，而每个SWIR波段在各轴上被上采样\DatasetOutputScale{}倍，由$640\times512$传感器像素映射到输出网格。一个SWIR波段所含的独立样本数约为其配对RGB目标的十二分之一。这种不对称来自采集平台而非发布处理，它界定了任何SWIR到RGB模型所能恢复的空间细节上限，也是本文合成指标绝对值低于同分辨率基准的主要原因。
+画布在B1参考系上定义并按固定系数\DatasetOutputScale{}放大，该系数即可见光与SWIR传感器宽度之比（$2048/640$）。因此输出像元间距等于RGB原生采样间距：RGB接近原生分辨率重采样，而每个SWIR波段在各轴上被上采样\DatasetOutputScale{}倍，由$640\times512$传感器像素映射到输出网格。一个SWIR波段所含的独立样本数约为其配对RGB目标的十分之一（$3.2^2\approx10.2$）。这种不对称来自采集平台而非发布处理，它界定了任何SWIR到RGB模型所能恢复的空间细节上限，也是本文合成指标绝对值低于同分辨率基准的主要原因。
 
 每幅画布裁剪为六模态均有效的最大矩形（记录的裁剪模式为\texttt{largest\_common\_valid\_rectangle}），输出方向内缩4像素，并断言裁剪区域内每个像素均为共同有效像素。未裁剪画布的共同覆盖率介于\DatasetCoverageMin{}与\DatasetCoverageMax{}之间（均值\DatasetCoverageMean{}）。位置间采用接缝择优方式融合（羽化96像素、接缝过渡72像素，参考帧四周保留12像素输出余量）。单场景构建耗时介于\DatasetBuildSecondsMin{}至\DatasetBuildSecondsMax{}\,s。
 
@@ -196,7 +196,7 @@ C10场景包含机动车号牌。七个号牌区域在场景配置中标注，�
 \subsection{场景级影像}
 每个场景目录包含六幅无压缩八位TIFF文件：一幅三通道RGB图像（\texttt{scene\emph{N}.tif}）与五幅单通道SWIR图像（\texttt{scene\emph{N}\_band1.tif}至\texttt{scene\emph{N}\_band5.tif}），合计\DatasetTiffCount{}个文件。同一场景内六种模态具有完全一致的宽度和高度（表~\ref{tab:scene-inventory-zh}）。场景尺寸介于$2663\times4710$与$11451\times1499$像素之间，因为每幅画布是位置序列拼接后的裁剪并集，而非单帧图像。
 
-尺寸相同并不意味着信息量相同。输出网格按RGB原生采样间距定义，因此RGB通道在接近其$2048\times2048$传感器分辨率处重采样，而每个SWIR波段从其$640\times512$的InGaAs传感器在各轴上被上采样\DatasetOutputScale{}倍。一个SWIR波段所含的独立样本数约为其配对RGB目标的十二分之一，且波段内相邻输出像素被重采样核相关。这是采集平台的性质，逐场景记录于\texttt{acquisition\_provenance.csv}；它界定了SWIR输入可恢复的空间细节上限，在与同分辨率基准比较合成指标时必须予以考虑。
+尺寸相同并不意味着信息量相同。输出网格按RGB原生采样间距定义，因此RGB通道在接近其$2048\times2048$传感器分辨率处重采样，而每个SWIR波段从其$640\times512$的InGaAs传感器在各轴上被上采样\DatasetOutputScale{}倍。一个SWIR波段所含的独立样本数约为其配对RGB目标的十分之一（$3.2^2\approx10.2$），且波段内相邻输出像素被重采样核相关。这是采集平台的性质，逐场景记录于\texttt{acquisition\_provenance.csv}；它界定了SWIR输入可恢复的空间细节上限，在与同分辨率基准比较合成指标时必须予以考虑。
 
 \subsection{元数据记录}
 \texttt{dataset\_manifest.csv}中每幅TIFF对应一行，记录场景、模态、文件名、宽度、高度、色彩模式、位深、压缩方式、字节数、SHA-256、该摘要是否与发布前候选哈希一致、处理模式、场景配置文件路径以及该配置文件的SHA-256。
@@ -296,7 +296,7 @@ CIEDE2000 & sRGB转CIELAB后逐像素$\Delta E_{00}$的均值\cite{sharma2005} &
 
 其二，留出排序与验证排序不同。B124取得最高的固定测试PSNR（\BOneTwoFourTestPSNR{}\,dB）与SSIM（\BOneTwoFourTestSSIM{}），同时CIEDE2000最低（\BOneTwoFourTestCIE{}）。由于固定测试划分仅含两个场景，这种不一致本身就是关于场景组成的证据，而非关于表示的证据，并构成留一场景阶段的动机。
 
-其三，训练模型超过免训练参照：训练后的B1固定测试PSNR高于GrayRep的\BOneGrayRepPSNR{}\,dB，训练后的B124高于ChannelMap的\BOneTwoFourChannelMapPSNR{}\,dB。因此网络学到的不止是通道重命名，而逐折线性参照进一步量化剩余增益中有多少属于全局色彩校正而非空间合成。
+其三，训练模型超过免训练参照：训练后的B1固定测试PSNR高于GrayRep的\BOneGrayRepPSNR{}\,dB，训练后的B124高于ChannelMap的\BOneTwoFourChannelMapPSNR{}\,dB。因此网络学到的不止是通道重命名，而逐折线性参照进一步量化剩余增益中有多少属于全局色彩校正而非空间合成。线性参照在固定划分上同样需要审慎阅读：其在B1、B124与五波段输入上分别达到\FixedLinearBOnePSNR{}\,dB、\FixedLinearBOneTwoFourPSNR{}\,dB与\FixedLinearFiveBandPSNR{}\,dB（表~\ref{tab:input-results-zh}），在B1与五波段输入上超过训练U-Net。因此训练模型在所有输入上都超过通道重命名，但仅在部分输入上超过拟合的全局色彩映射；这正是下文留一场景观测在固定划分上的对应版本。
 
 \input{generated/input_benchmark_table_zh.tex}
 
