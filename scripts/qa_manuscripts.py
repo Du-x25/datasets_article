@@ -24,4 +24,25 @@ for lang in ['en','zh']:
         assert text.strip(),f'blank page {lang}:{i}'
         assert '\ufffd' not in text,f'replacement character {lang}:{i}'
     print(lang,'pages',len(reader.pages),'sha256',hashlib.sha256(path.read_bytes()).hexdigest())
-print('Protocol split and manuscript checks passed; pending scientific evidence is not certified by these checks.')
+
+# Regression guard: inventory tables must match the provenance metadata rows,
+# and every cited key must exist in refs.bib (the 2026-09-24..30 C2/C5 mismatch class).
+import csv
+prov={r['scene']:r for r in csv.DictReader((ROOT/'figures/source_data/acquisition_provenance.csv').open(encoding='utf-8-sig'))}
+for lang in ['en','zh']:
+    inv=(ROOT/f'generated/scene_inventory_{lang}.tex').read_text(encoding='utf-8')
+    for m in re.finditer(r'(C\d+) & (\d+)\$\\times\$(\d+) &',inv):
+        scene,w,h=m.group(1),int(m.group(2)),int(m.group(3))
+        row=prov[scene]
+        assert (w,h)==(int(row['canvas_width']),int(row['canvas_height'])),f'inventory {lang} {scene} {w}x{h} != provenance {row["canvas_width"]}x{row["canvas_height"]}'
+    assert len(re.findall(r'C\d+ &',inv))==10
+bib=(ROOT/'refs.bib').read_text(encoding='utf-8')
+bibkeys=set(re.findall(r'@\w+\{([^,]+),',bib))
+for lang in ['en','zh']:
+    s=(ROOT/f'main_{lang}.tex').read_text(encoding='utf-8')
+    cited=set()
+    for m in re.finditer(r'\\cite\{([^}]*)\}',s):
+        cited|={k.strip() for k in m.group(1).split(',')}
+    missing=sorted(cited-bibkeys)
+    assert not missing,f'{lang}: cited keys missing from refs.bib: {missing}'
+print('Inventory/provenance consistency and citation-key checks passed; pending scientific evidence is not certified by these checks.')

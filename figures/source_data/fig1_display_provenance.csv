@@ -8,9 +8,9 @@ C1,B5,scene1_band5.tif,1,99,90.0,220.0
 C2,RGB,scene2.tif,1,99,0.0,255.0
 C2,B1,scene2_band1.tif,1,99,81.0,218.0
 C2,B2,scene2_band2.tif,1,99,78.0,185.0
-C2,B3,scene2_band3.tif,1,99,76.0,151.0
+C2,B3,scene2_band3.tif,1,99,76.0,152.0
 C2,B4,scene2_band4.tif,1,99,77.0,160.0
-C2,B5,scene2_band5.tif,1,99,76.0,146.0
+C2,B5,scene2_band5.tif,1,99,76.0,147.0
 C3,RGB,scene3.tif,1,99,0.0,254.0
 C3,B1,scene3_band1.tif,1,99,81.0,242.0
 C3,B2,scene3_band2.tif,1,99,79.0,214.0
@@ -23,12 +23,12 @@ C4,B2,scene4_band2.tif,1,99,113.0,239.0
 C4,B3,scene4_band3.tif,1,99,98.0,152.0
 C4,B4,scene4_band4.tif,1,99,96.0,183.0
 C4,B5,scene4_band5.tif,1,99,95.0,142.0
-C5,RGB,scene5.tif,1,99,1.0,255.0
+C5,RGB,scene5.tif,1,99,0.0,255.0
 C5,B1,scene5_band1.tif,1,99,101.0,255.0
-C5,B2,scene5_band2.tif,1,99,95.0,238.0
+C5,B2,scene5_band2.tif,1,99,94.0,238.0
 C5,B3,scene5_band3.tif,1,99,87.0,202.0
 C5,B4,scene5_band4.tif,1,99,89.0,207.0
-C5,B5,scene5_band5.tif,1,99,87.0,193.0
+C5,B5,scene5_band5.tif,1,99,87.0,192.0
 C6,RGB,scene6.tif,1,99,7.0,255.0
 C6,B1,scene6_band1.tif,1,99,110.0,255.0
 C6,B2,scene6_band2.tif,1,99,101.0,255.0
