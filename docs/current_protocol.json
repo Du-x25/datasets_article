@@ -1,0 +1,157 @@
+{
+  "revision": "v3-hybrid-pilot-20260924",
+  "status": "protocol_current_results_pending",
+  "physical_sites": 10,
+  "site_identity": {
+    "evidence": "author_confirmed_2026-09-24",
+    "repeat_site_acquisition": false
+  },
+  "seeds": [
+    11,
+    23,
+    37,
+    53,
+    71
+  ],
+  "folds": [
+    {
+      "fold": 1,
+      "train": [
+        "C3",
+        "C4",
+        "C5",
+        "C6",
+        "C7",
+        "C10"
+      ],
+      "validation": [
+        "C2",
+        "C9"
+      ],
+      "test": [
+        "C1",
+        "C8"
+      ]
+    },
+    {
+      "fold": 2,
+      "train": [
+        "C1",
+        "C3",
+        "C4",
+        "C6",
+        "C7",
+        "C8"
+      ],
+      "validation": [
+        "C5",
+        "C10"
+      ],
+      "test": [
+        "C2",
+        "C9"
+      ]
+    },
+    {
+      "fold": 3,
+      "train": [
+        "C1",
+        "C2",
+        "C4",
+        "C7",
+        "C8",
+        "C9"
+      ],
+      "validation": [
+        "C3",
+        "C6"
+      ],
+      "test": [
+        "C5",
+        "C10"
+      ]
+    },
+    {
+      "fold": 4,
+      "train": [
+        "C1",
+        "C2",
+        "C5",
+        "C8",
+        "C9",
+        "C10"
+      ],
+      "validation": [
+        "C4",
+        "C7"
+      ],
+      "test": [
+        "C3",
+        "C6"
+      ]
+    },
+    {
+      "fold": 5,
+      "train": [
+        "C2",
+        "C3",
+        "C5",
+        "C6",
+        "C9",
+        "C10"
+      ],
+      "validation": [
+        "C1",
+        "C8"
+      ],
+      "test": [
+        "C4",
+        "C7"
+      ]
+    }
+  ],
+  "training_window": {
+    "size": 256,
+    "stride": 128,
+    "append_last_start": true,
+    "all_pixels_valid": true
+  },
+  "formal_training_status": "not_run",
+  "human_annotations_status": "hybrid_pilot_ready_awaiting_humans",
+  "evaluation_support_status": "not_frozen",
+  "training_budget": null,
+  "models": [
+    "U-Net",
+    "pix2pix",
+    "TFD-GAN",
+    "Restormer",
+    "pix2pix-Turbo"
+  ],
+  "configuration_counts": {
+    "E1": 125,
+    "E2_additional": 4250,
+    "E4_including_E1": 2875,
+    "E1_E2_E4_unique": 7125
+  },
+  "protocol_document": "D:\\USTC\\Gen\\outputs\\v3_标注手册与最新方案同步_20260924\\最新协议_20260924.md",
+  "historical_artifacts": [
+    "nonoverlap_patch_manifests",
+    "69_run_three_seed_LOSO_results"
+  ],
+  "tutorial_records_allowed": false,
+  "annotation_protocol": {
+    "mode": "automatic_candidates_human_review_with_blind_human_subset",
+    "stage": "pilot",
+    "pilot_views": 12,
+    "pilot_candidates": 120,
+    "pilot_h1_points": 36,
+    "pilot_h2_points": 36,
+    "pilot_excluded_from_formal_validation": true,
+    "formal_counts_provisional": true,
+    "formal_h1_random_target": 420,
+    "formal_human_selected_target": 30,
+    "formal_h2_target": 90,
+    "machine_is_independent_ground_truth": false,
+    "supplement": "D:\\USTC\\Gen\\outputs\\v3_混合标注试运行_20260924\\混合协议补充.md"
+  }
+}

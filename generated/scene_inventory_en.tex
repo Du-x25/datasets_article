@@ -1,22 +1,16 @@
-\begin{table}[htbp]
-\centering
-\caption{Scene-level data inventory generated from the validated manifest.}
+\begin{table}[htbp]\centering\small
+\caption{Mosaic inventory. Dimensions are taken from the current validated image manifest. Final pools await real annotation acceptance; historical tile counts are not reused.}
 \label{tab:scene-inventory}
-\small
-\begin{tabular}{lrrrrl}
-\toprule
-Scene & Width & Height & TIFFs & Usable patches & Fixed split \\
-\midrule
-C1 & 5983 & 3636 & 6 & 322 & Train \\
-C2 & 5095 & 3037 & 6 & 209 & Test \\
-C3 & 4245 & 1596 & 6 & 96 & Train \\
-C4 & 3839 & 1617 & 6 & 84 & Train \\
-C5 & 7189 & 1598 & 6 & 168 & Train \\
-C6 & 5192 & 1590 & 6 & 120 & Train \\
-C7 & 11451 & 1499 & 6 & 220 & Train \\
-C8 & 7126 & 2707 & 6 & 270 & Validation \\
-C9 & 2663 & 4710 & 6 & 180 & Test \\
-C10 & 6753 & 1706 & 6 & 131 & Train \\
-\bottomrule
-\end{tabular}
-\end{table}
+\begin{tabular}{llcl}\toprule
+Site & Width x height (output pixels) & Modalities & Final training pool\\\midrule
+C1 & 5983$\times$3636 & 6 & Pending freeze\\
+C2 & 5400$\times$3152 & 6 & Pending freeze\\
+C3 & 4245$\times$1596 & 6 & Pending freeze\\
+C4 & 3839$\times$1617 & 6 & Pending freeze\\
+C5 & 8121$\times$1626 & 6 & Pending freeze\\
+C6 & 5192$\times$1590 & 6 & Pending freeze\\
+C7 & 11451$\times$1499 & 6 & Pending freeze\\
+C8 & 7126$\times$2707 & 6 & Pending freeze\\
+C9 & 2663$\times$4710 & 6 & Pending freeze\\
+C10 & 6753$\times$1706 & 6 & Pending freeze\\
+\bottomrule\end{tabular}\end{table}

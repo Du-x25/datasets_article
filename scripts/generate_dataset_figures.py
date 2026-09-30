@@ -634,6 +634,8 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> None:
+    if (REPO / "docs" / "current_protocol.json").exists():
+        raise SystemExit("Legacy generator blocked in current v3 tree. It writes old patch/benchmark assumptions. Run in an isolated historical copy; see README.md.")
     args = parse_args()
     SOURCE_DATA.mkdir(parents=True, exist_ok=True)
     GENERATED.mkdir(parents=True, exist_ok=True)

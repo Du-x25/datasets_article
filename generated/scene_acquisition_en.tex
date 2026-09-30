@@ -1,22 +1,16 @@
-\begin{table}[htbp]
-\centering
-\caption{Per-scene acquisition and mosaic-construction record, generated from \texttt{metadata/acquisition\_provenance.csv}. Dates were recovered from the modification times of the read-only source files and each scene maps to a single calendar date. Pose edges are the accepted inter-position feature matches entering the pose graph; coverage is the fraction of the uncropped canvas on which all six modalities are valid.}
+\begin{table}[htbp]\centering\small
+\caption{Acquisition inventory. C1--C10 are ten distinct physical sites (author confirmation, 24 September 2026). C8 uses the accepted date correction; file-time evidence for other dates is retained and is not a hardware timestamp.}
 \label{tab:acquisition}
-\small
-\begin{tabular}{@{}llrrrrlrr@{}}
-\toprule
-Scene & Date & Pos. & RGB frames & SWIR frames & Pose edges & Pose model & Canvas (px) & Coverage \\
-\midrule
-C1 & 2025-11-27 & 29 & 29 & 145 & 171 & affine & 5983$\times$3636 & 0.887 \\
-C2 & 2025-11-27 & 22 & 22 & 110 & 127 & affine & 5095$\times$3037 & 0.817 \\
-C3 & 2025-11-27 & 4 & 4 & 20 & 5 & affine & 4245$\times$1596 & 0.885 \\
-C4 & 2025-11-27 & 6 & 6 & 30 & 13 & affine & 3839$\times$1617 & 0.825 \\
-C5 & 2025-11-28 & 9 & 9 & 45 & 17 & affine & 7189$\times$1598 & 0.902 \\
-C6 & 2025-11-28 & 6 & 6 & 30 & 9 & affine & 5192$\times$1590 & 0.892 \\
-C7 & 2025-11-28 & 15 & 15 & 75 & 27 & affine & 11451$\times$1499 & 0.864 \\
-C8 & 2025-04-29 & 23 & 230 (10/pos) & 115 & 142 & homography+BA & 7126$\times$2707 & 0.826 \\
-C9 & 2025-05-22 & 11 & 110 (10/pos) & 55 & 29 & homography+BA & 2663$\times$4710 & 0.801 \\
-C10 & 2025-07-03 & 15 & 150 (10/pos) & 75 & 51 & affine & 6753$\times$1706 & 0.712 \\
-\bottomrule
-\end{tabular}
-\end{table}
+\begin{tabular}{lrrrr}\toprule
+Site & Acquisition date & Views & RGB frames & SWIR frames\\\midrule
+C1 & 2025-11-27 & 29 & 29 & 145\\
+C2 & 2025-11-27 & 22 & 22 & 110\\
+C3 & 2025-11-27 & 4 & 4 & 20\\
+C4 & 2025-11-27 & 6 & 6 & 30\\
+C5 & 2025-11-28 & 9 & 9 & 45\\
+C6 & 2025-11-28 & 6 & 6 & 30\\
+C7 & 2025-11-28 & 15 & 15 & 75\\
+C8 & 2025-04-30 & 23 & 230 & 115\\
+C9 & 2025-05-22 & 11 & 110 & 55\\
+C10 & 2025-07-03 & 15 & 150 & 75\\
+\bottomrule\end{tabular}\end{table}

@@ -396,6 +396,27 @@ def load_loso_references(benchmark: Path, frame: pd.DataFrame) -> pd.DataFrame:
     return frame
 
 
+def load_native_metrics(benchmark: Path, frame: pd.DataFrame) -> pd.DataFrame:
+    path = benchmark / "native_grid_metrics.csv"
+    if not path.is_file():
+        raise SystemExit(f"Missing {path}; run evaluate_native_grid.py first.")
+    native = pd.read_csv(path)
+    native.to_csv(
+        SOURCE_DATA / "native_grid_metrics.csv", index=False, encoding="utf-8-sig"
+    )
+    trained = native[native["Kind"] == "trained"].groupby("Scene")[
+        ["PSNR_native_grid", "SSIM_native_grid"]
+    ].mean()
+    linear = native[native["Kind"] == "linear"].set_index("Scene")["PSNR_native_grid"]
+    frame = frame.copy()
+    frame["native_psnr"] = frame["Test_Scene"].map(trained["PSNR_native_grid"])
+    frame["native_ssim"] = frame["Test_Scene"].map(trained["SSIM_native_grid"])
+    frame["native_linear_psnr"] = frame["Test_Scene"].map(linear)
+    if frame[["native_psnr", "native_ssim", "native_linear_psnr"]].isna().any().any():
+        raise SystemExit("Native-grid metrics are incomplete.")
+    return frame
+
+
 def scene_bootstrap(benchmark: Path, n_iter: int = 10000, seed: int = 2026) -> dict:
     runs = pd.read_csv(benchmark / "run_metrics.csv")
     runs = runs[runs["stage"] == "scene"]
@@ -433,6 +454,7 @@ def figure_scene(summary: pd.DataFrame, benchmark: Path) -> None:
     )
     frame = frame.sort_values("scene_number").reset_index(drop=True)
     frame = load_loso_references(benchmark, frame)
+    frame = load_native_metrics(benchmark, frame)
     SOURCE_DATA.mkdir(parents=True, exist_ok=True)
     frame.to_csv(
         SOURCE_DATA / "fig6_scene_benchmark.csv",
@@ -527,6 +549,9 @@ def write_scene_latex(frame: pd.DataFrame, bootstrap: dict) -> None:
         rf"\newcommand{{\LOSOPSNRCIHigh}}{{{bootstrap['psnr_high']:.2f}}}",
         rf"\newcommand{{\LOSOSSIMCILow}}{{{bootstrap['ssim_low']:.3f}}}",
         rf"\newcommand{{\LOSOSSIMCIHigh}}{{{bootstrap['ssim_high']:.3f}}}",
+        rf"\newcommand{{\NativeMeanPSNR}}{{{frame['native_psnr'].mean():.2f}}}",
+        rf"\newcommand{{\NativeMeanSSIM}}{{{frame['native_ssim'].mean():.3f}}}",
+        rf"\newcommand{{\NativeLinearMeanPSNR}}{{{frame['native_linear_psnr'].mean():.2f}}}",
     ]
     (GENERATED / "scene_benchmark_macros.tex").write_text(
         "\n".join(macros) + "\n", encoding="utf-8"
