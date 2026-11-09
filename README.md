@@ -6,14 +6,22 @@
 
 当前中文稿整合了 225 次地点隔离训练、45 次随机窗口对照及目标地点配对颜色校准，归档 PDF 为 19 页。英文稿尚未同步这次结果更新。
 
-- [中文源稿](main_zh.tex) · [2026-11-09 中文 PDF](output/pdf/多波段SWIR_RGB数据集_中文稿_实验整合_20261109.pdf)
+- [最新版中文 PDF](output/pdf/main_zh_latest.pdf) · [中文源稿](main_zh.tex) · [2026-11-09 历史版本](output/pdf/多波段SWIR_RGB数据集_中文稿_实验整合_20261109.pdf)
 - [参考文献](refs.bib) · [中文图表](figures/zh/) · [表格与数值宏](generated/)
 - [实验整合说明](docs/revision_20261109.md) · [论文检查记录](docs/verification_20261109.json)
 - [新电脑使用流程的安装与编译验证](docs/setup_verification_20261109.md)
 
 **在新电脑上编译论文只需要本仓库和 LaTeX 工具链，不需要原始图像、模型权重、GPU、PyTorch 或原电脑的 `D:` 盘目录。** Python 环境用于数值核验、PDF 检查及可选的图表重建。以下以 Windows PowerShell 为主，Git、Conda 和编译命令也可在 macOS/Linux 终端运行。
 
-## 自动编译与下载 PDF
+## 日常方式：本地交付，云端复核
+
+每次修改论文正文、参考文献或图表后，**在本地重新编译和检查，将最新版 PDF 与源稿一起提交并推送**。固定 PDF 入口为 [`output/pdf/main_zh_latest.pdf`](output/pdf/main_zh_latest.pdf)，可直接在 GitHub 文件页面预览或下载，也会随 `git pull` 一起取得。
+
+GitHub Actions 在推送成功后，使用 GitHub 托管的 Ubuntu 云端运行器独立复核。它不占用本地电脑的编译资源；推送后可关闭本地电脑，也可以继续推送或拉取。检查失败会显示红色状态，不会撤销已经成功的推送。当前工作流只有仓库读取权限，没有修改分支的步骤；也未为本流程设置要求 CI 通过的分支规则。
+
+项目操作约定保存在 [AGENTS.md](AGENTS.md)。
+
+## 后台自动检查与备用 PDF
 
 [Chinese paper PDF 工作流](https://github.com/Du-x25/datasets_article/actions/workflows/chinese-paper.yml) 会在每次推送和 Pull Request 更新时运行，也可在该页面点击 **Run workflow** 手动触发。
 
@@ -23,7 +31,7 @@
 - `Float too large`、横向/纵向 `Overfull` 警告，以及 PDF 文字是否越过页面边界。
 - 已有的源稿结构、文件范围、数值证据和表格一致性。
 
-任何编译或检查失败都会使工作流失败，**只有全部通过才发布论文 PDF**。自动检查能发现上述编译及边界问题，图内文字重叠、字号和整体视觉质量仍需人工看 PDF。
+任何编译或检查失败都会使工作流失败，**只有全部通过才上传云端备用 PDF 产物**，不影响已提交的本地 PDF。自动检查能发现上述编译及边界问题，图内文字重叠、字号和整体视觉质量仍需人工看 PDF。
 
 下载步骤：
 
@@ -126,13 +134,13 @@ python scripts/qa_manuscripts.py --language zh
 
 检查覆盖数值证据、验证集选择、表格、图号和文献键、PDF 是否新于源文件，以及未定义引用与超页/溢出信息。还应打开 PDF 查看修改页的图表、图注和分页；自动检查不能替代目视检查。单纯编译可以跳过 Python 环境及检查；已装 Python 时可用 `python scripts/check_environment.py --compile-only` 单独检查 TeX 工具链。
 
-`build/` 是临时目录，不提交。需要归档新版本时，确认 PDF 检查通过后另存，并更新本 README 的入口，例如：
+`build/` 是临时目录，不提交。每次论文修改通过检查后，都更新固定的最新版 PDF：
 
 ```powershell
 Copy-Item -LiteralPath "build/zh/main_zh.pdf" -Destination "output/pdf/main_zh_latest.pdf"
 ```
 
-已归档的 `20261109` PDF 和验证记录属于该版本，不随本地编译自动更新。不同系统字体可能改变分页，19 页是当前 Windows/TeX Live 2026 归档版本的页数。
+将 `output/pdf/main_zh_latest.pdf` 与本次源稿修改一起提交。已归档的 `20261109` PDF 和验证记录继续保留为历史版本；需要额外里程碑归档时再创建日期命名副本。不同系统字体可能改变分页，19 页是当前 Windows/TeX Live 2026 归档版本的页数。
 
 ## 5. 可选：复算结果与重新出图
 
@@ -190,13 +198,13 @@ conda activate mswir-paper
 
 ### 修改、检查、提交和推送
 
-主要修改入口是 `main_zh.tex`、`refs.bib` 和图表脚本。编译、PDF 检查通过后，按实际修改选择文件暂存，例如：
+主要修改入口是 `main_zh.tex`、`refs.bib` 和图表脚本。编译、PDF 检查通过并更新 `output/pdf/main_zh_latest.pdf` 后，将源稿和 PDF 一起暂存，例如：
 
 ```powershell
 git diff --stat
 git diff -- main_zh.tex refs.bib
-git add -- main_zh.tex refs.bib README.md
-# 如果重新出图或归档 PDF，再逐项 git add 对应文件。
+git add -- main_zh.tex refs.bib output/pdf/main_zh_latest.pdf
+# 如果修改了 README 或重新出图，再逐项 git add 对应文件。
 git diff --cached --stat
 python scripts/check_repository.py
 git diff --cached --check
