@@ -145,13 +145,11 @@ def generate(d):
     import matplotlib
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
-    from matplotlib import font_manager
+    from plot_fonts import select_plot_font
     from pypdf import PdfReader
     from PIL import Image
-    for f in [Path('C:/Windows/Fonts/msyh.ttc'), Path('C:/Windows/Fonts/msyhbd.ttc')]:
-        if f.exists():
-            font_manager.fontManager.addfont(str(f))
-    plt.rcParams.update({'font.family': ['Microsoft YaHei', 'DejaVu Sans'], 'font.size': 9,
+    family, _ = select_plot_font()
+    plt.rcParams.update({'font.family': [family, 'DejaVu Sans'], 'font.size': 9,
                          'axes.unicode_minus': False, 'pdf.fonttype': 42, 'ps.fonttype': 42,
                          'svg.fonttype': 'none', 'axes.spines.top': False, 'axes.spines.right': False,
                          'axes.linewidth': 0.7, 'lines.linewidth': 1.3, 'savefig.facecolor': 'white'})

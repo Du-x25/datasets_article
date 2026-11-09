@@ -1,0 +1,8 @@
+# Python 3.11; current Chinese-paper figures and evidence/PDF checks.
+# Native tools (Git, TeX Live/MacTeX, Poppler) are documented in README.md.
+# These are compatibility ranges, not a lockfile for training experiments.
+numpy>=1.24,<3
+pandas>=2,<3
+matplotlib>=3.8,<4
+Pillow>=10,<12
+pypdf>=5,<6

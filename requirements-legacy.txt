@@ -1,0 +1,5 @@
+# Optional historical plotting/audit scripts; some also need external data.
+-r requirements.txt
+seaborn>=0.13,<1
+PyYAML>=6,<7
+pytest>=7,<9
