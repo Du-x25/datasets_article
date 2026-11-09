@@ -16,3 +16,52 @@ __pycache__/
 .pytest_cache/
 .vscode/
 .idea/
+
+# Local delivery, review and reproduction packages (kept on disk only).
+/automation_completion_20261015/
+/delivery_zh_20261015/
+/figures/zh/qa_six_figures/
+
+# Raw data, model weights and generated experiment outputs.
+data/
+datasets/
+raw/
+raw_data/
+checkpoints/
+weights/
+predictions/
+runs/
+outputs/
+*.tif
+*.tiff
+*.npy
+*.npz
+*.h5
+*.hdf5
+*.mat
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.onnx
+*.pkl
+*.pickle
+*.joblib
+
+# Archives and local history backups.
+*.zip
+*.7z
+*.rar
+*.tar
+*.gz
+*.bz2
+*.xz
+*.bundle
+
+# Local environments and credentials.
+.venv/
+venv/
+.env
+.env.*
+*.pem
+*.key

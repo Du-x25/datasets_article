@@ -1,0 +1,325 @@
+{
+  "contract": "Display-luminance and saved-prediction PSNR of the 20 committed visual-review windows; read-only diagnostic, no new measurement.",
+  "windows": [
+    {
+      "scene": "C8",
+      "crop": "A",
+      "xywh": [
+        3456,
+        1408,
+        256,
+        256
+      ],
+      "rgb_mean": 111.9,
+      "rgb_p1": 40.0,
+      "rgb_p99": 233.0,
+      "Restormer / B1-5": 8.64,
+      "U-Net / B1-5": 8.09,
+      "pix2pix / B1-5": 8.07
+    },
+    {
+      "scene": "C4",
+      "crop": "A",
+      "xywh": [
+        1792,
+        640,
+        256,
+        256
+      ],
+      "rgb_mean": 94.7,
+      "rgb_p1": 75.0,
+      "rgb_p99": 117.0,
+      "Restormer / B1-5": 11.96,
+      "U-Net / B1-5": 12.88,
+      "pix2pix / B1-5": 12.28
+    },
+    {
+      "scene": "C7",
+      "crop": "A",
+      "xywh": [
+        8832,
+        1024,
+        256,
+        256
+      ],
+      "rgb_mean": 94.2,
+      "rgb_p1": 61.0,
+      "rgb_p99": 118.0,
+      "Restormer / B1-5": 19.05,
+      "U-Net / B1-5": 15.03,
+      "pix2pix / B1-5": 14.14
+    },
+    {
+      "scene": "C10",
+      "crop": "B",
+      "xywh": [
+        6144,
+        1408,
+        256,
+        256
+      ],
+      "rgb_mean": 86.1,
+      "rgb_p1": 26.0,
+      "rgb_p99": 171.0,
+      "Restormer / B1-5": 17.94,
+      "U-Net / B1-5": 13.3,
+      "pix2pix / B1-5": 12.37
+    },
+    {
+      "scene": "C1",
+      "crop": "A",
+      "xywh": [
+        3456,
+        3072,
+        256,
+        256
+      ],
+      "rgb_mean": 85.0,
+      "rgb_p1": 23.0,
+      "rgb_p99": 184.0,
+      "Restormer / B1-5": 15.43,
+      "U-Net / B1-5": 14.42,
+      "pix2pix / B1-5": 14.4
+    },
+    {
+      "scene": "C1",
+      "crop": "B",
+      "xywh": [
+        3200,
+        3072,
+        256,
+        256
+      ],
+      "rgb_mean": 79.9,
+      "rgb_p1": 26.0,
+      "rgb_p99": 147.0,
+      "Restormer / B1-5": 15.18,
+      "U-Net / B1-5": 14.28,
+      "pix2pix / B1-5": 14.25
+    },
+    {
+      "scene": "C2",
+      "crop": "A",
+      "xywh": [
+        2816,
+        512,
+        256,
+        256
+      ],
+      "rgb_mean": 71.3,
+      "rgb_p1": 25.0,
+      "rgb_p99": 153.0,
+      "Restormer / B1-5": 10.06,
+      "U-Net / B1-5": 13.17,
+      "pix2pix / B1-5": 12.43
+    },
+    {
+      "scene": "C3",
+      "crop": "B",
+      "xywh": [
+        3072,
+        640,
+        256,
+        256
+      ],
+      "rgb_mean": 70.0,
+      "rgb_p1": 17.0,
+      "rgb_p99": 198.0,
+      "Restormer / B1-5": 16.44,
+      "U-Net / B1-5": 13.45,
+      "pix2pix / B1-5": 12.35
+    },
+    {
+      "scene": "C4",
+      "crop": "B",
+      "xywh": [
+        2688,
+        256,
+        256,
+        256
+      ],
+      "rgb_mean": 67.3,
+      "rgb_p1": 34.0,
+      "rgb_p99": 145.0,
+      "Restormer / B1-5": 17.75,
+      "U-Net / B1-5": 16.47,
+      "pix2pix / B1-5": 15.89
+    },
+    {
+      "scene": "C6",
+      "crop": "A",
+      "xywh": [
+        2432,
+        640,
+        256,
+        256
+      ],
+      "rgb_mean": 61.9,
+      "rgb_p1": 17.0,
+      "rgb_p99": 154.0,
+      "Restormer / B1-5": 11.68,
+      "U-Net / B1-5": 10.95,
+      "pix2pix / B1-5": 11.11
+    },
+    {
+      "scene": "C2",
+      "crop": "B",
+      "xywh": [
+        4224,
+        896,
+        256,
+        256
+      ],
+      "rgb_mean": 58.5,
+      "rgb_p1": 21.0,
+      "rgb_p99": 146.0,
+      "Restormer / B1-5": 12.94,
+      "U-Net / B1-5": 14.1,
+      "pix2pix / B1-5": 14.66
+    },
+    {
+      "scene": "C6",
+      "crop": "B",
+      "xywh": [
+        4096,
+        384,
+        256,
+        256
+      ],
+      "rgb_mean": 56.8,
+      "rgb_p1": 11.0,
+      "rgb_p99": 127.0,
+      "Restormer / B1-5": 17.54,
+      "U-Net / B1-5": 15.36,
+      "pix2pix / B1-5": 15.29
+    },
+    {
+      "scene": "C3",
+      "crop": "A",
+      "xywh": [
+        2048,
+        640,
+        256,
+        256
+      ],
+      "rgb_mean": 55.3,
+      "rgb_p1": 21.0,
+      "rgb_p99": 130.0,
+      "Restormer / B1-5": 18.85,
+      "U-Net / B1-5": 17.43,
+      "pix2pix / B1-5": 17.05
+    },
+    {
+      "scene": "C7",
+      "crop": "B",
+      "xywh": [
+        1024,
+        1024,
+        256,
+        256
+      ],
+      "rgb_mean": 54.9,
+      "rgb_p1": 12.0,
+      "rgb_p99": 148.0,
+      "Restormer / B1-5": 19.06,
+      "U-Net / B1-5": 16.25,
+      "pix2pix / B1-5": 16.11
+    },
+    {
+      "scene": "C5",
+      "crop": "B",
+      "xywh": [
+        7680,
+        0,
+        256,
+        256
+      ],
+      "rgb_mean": 53.4,
+      "rgb_p1": 3.0,
+      "rgb_p99": 158.0,
+      "Restormer / B1-5": 13.11,
+      "U-Net / B1-5": 16.86,
+      "pix2pix / B1-5": 15.81
+    },
+    {
+      "scene": "C8",
+      "crop": "B",
+      "xywh": [
+        4992,
+        1152,
+        256,
+        256
+      ],
+      "rgb_mean": 51.9,
+      "rgb_p1": 32.0,
+      "rgb_p99": 114.0,
+      "Restormer / B1-5": 19.0,
+      "U-Net / B1-5": 16.79,
+      "pix2pix / B1-5": 15.94
+    },
+    {
+      "scene": "C10",
+      "crop": "A",
+      "xywh": [
+        768,
+        768,
+        256,
+        256
+      ],
+      "rgb_mean": 42.6,
+      "rgb_p1": 12.0,
+      "rgb_p99": 107.0,
+      "Restormer / B1-5": 15.78,
+      "U-Net / B1-5": 17.42,
+      "pix2pix / B1-5": 17.73
+    },
+    {
+      "scene": "C9",
+      "crop": "B",
+      "xywh": [
+        2176,
+        2432,
+        256,
+        256
+      ],
+      "rgb_mean": 34.5,
+      "rgb_p1": 24.0,
+      "rgb_p99": 49.0,
+      "Restormer / B1-5": 23.72,
+      "U-Net / B1-5": 23.4,
+      "pix2pix / B1-5": 25.4
+    },
+    {
+      "scene": "C9",
+      "crop": "A",
+      "xywh": [
+        2048,
+        2176,
+        256,
+        256
+      ],
+      "rgb_mean": 31.6,
+      "rgb_p1": 13.0,
+      "rgb_p99": 51.0,
+      "Restormer / B1-5": 18.1,
+      "U-Net / B1-5": 8.08,
+      "pix2pix / B1-5": 7.72
+    },
+    {
+      "scene": "C5",
+      "crop": "A",
+      "xywh": [
+        7680,
+        256,
+        256,
+        256
+      ],
+      "rgb_mean": 24.9,
+      "rgb_p1": 3.0,
+      "rgb_p99": 68.0,
+      "Restormer / B1-5": 15.25,
+      "U-Net / B1-5": 16.68,
+      "pix2pix / B1-5": 15.77
+    }
+  ]
+}

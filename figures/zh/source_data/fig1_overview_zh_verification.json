@@ -1,0 +1,29 @@
+{
+  "operation": "只替换英文标题及标题字体；保留现有全部图像对象、显示分位、顺序与放置矩阵",
+  "source_pdf": "D:\\USTC\\Articles\\datasets_article\\figures\\fig1_scene_modality_overview.pdf",
+  "source_pdf_sha256": "0574ae3dff0320031006b87df7526f54e0fc79249f74c95fb392a3d0f3714d7e",
+  "source_svg_sha256": "17fc5bf4253602e0cf505a38d61765955b22e40c3bf5983f14bf1dcd4a32718b",
+  "translated_title": "十个地点的RGB与五波段SWIR成图",
+  "font": "C:\\Windows\\Fonts\\msyhbd.ttc",
+  "embedded_images": 60,
+  "all_image_arrays_and_placement_matrices_identical": true,
+  "all_non_title_text_preserved": true,
+  "title_baseline_adjustment_pt": -3,
+  "ToUnicode_repair": "Only actual title CIDs mapped to valid UTF-16BE strings; unused invalid full-font entries removed",
+  "ToUnicode_mapping_count": 17,
+  "pypdf_strict_parse_stderr": "",
+  "page_render_identical_to_before_CMap_fix": true,
+  "page_rect": [
+    0.0,
+    0.0,
+    526.7994995117188,
+    719.427001953125
+  ],
+  "percentile_provenance_csv_sha256": "01da02224499a60d731c3d342b5dad3b6f13de4754a420682b83084397c00a8a",
+  "csv_identical_to_original": true,
+  "outputs": {
+    "fig1_scene_modality_overview_zh.pdf": "b91c1f886555208f5097302458f06432e1620bc8330f152dd2ea0529332e81ce",
+    "fig1_scene_modality_overview_zh.svg": "a43a2853e9db93096a32f8cc5b67d48d94465132fce6d0eaa3b29eff5855e13b",
+    "fig1_scene_modality_overview_zh.png": "436f93d5b258531ee848db4ca20de907429fc69a009ca01aa3bef84bf9d2d544"
+  }
+}

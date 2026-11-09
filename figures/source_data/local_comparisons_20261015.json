@@ -1,0 +1,215 @@
+{
+  "contract": "Illustrative plates from already-saved seed-11 test predictions and the published mosaics. No training, no inference, no new metric.",
+  "selection_rule": "Over 256x256 windows of the published output grid with fully valid shared support, keep windows whose three displayed saved predictions are all at or above 17.5 dB, then take the highest saved pix2pix (five-band) PSNR per scene. No exposure screen: bright windows are systematically harder to reconstruct.",
+  "display": "One joint linear display map per row from the 2.0%--98.0% luminance percentiles of the row's RGB target together with the panels drawn beside it; the same map applies to every panel of the row. No per-panel stretch, equalisation, gamma or sharpening. Stored PSNR values are computed on the unmodified arrays.",
+  "selected_windows": [
+    {
+      "scene": "C3",
+      "fold": 4,
+      "xywh": [
+        2816,
+        640,
+        256,
+        256
+      ],
+      "rgb_display_mean": 67.2,
+      "rgb_display_p1": 21.0,
+      "rgb_display_p99": 177.0,
+      "psnr_db": {
+        "U-Net / B1-5": 14.4359,
+        "pix2pix / B1-5": 14.5473,
+        "Restormer / B1-5": 17.3396
+      },
+      "panel_sha256": {
+        "RGB": "a96ccd60c01d0f3224551b14e467e558f53a4cf7dcaad9fa1ba2092b65fe398e",
+        "B1": "50b5f8b8116ab2cb142ba006e310e9324997b206f57df8e66cd63cc6120d2230",
+        "B2": "8e62063e958ee368b74707713dfd3255ae855636420113400bc090e27d9caa48",
+        "B3": "eb1d0394b717d6125b1599fceb395ab49f2c98e51e6e451a4138b4bd5aa2ed41",
+        "B4": "dd8cdab49c2613324b24527c3a0f4bb233bb149fd133fdcaadeaa9b08ab77980",
+        "B5": "19799d75a8bc165104cbd77bd9f8cd308544bea5cb8e721f2fab923db10d8dc0",
+        "U-Net / B1-5": "3d7d842c845f24570c5478b32d2429b8b6c309fb2fde2dcf05285b1727416f1b",
+        "pix2pix / B1-5": "2daf9895b9b13420502ebe7263c7223699466424d147a4a4d2dd79553c6af550",
+        "Restormer / B1-5": "303da2d2f67cbeccab847c47bf589a9169212f000419cd5e540d64b0a4fc2da5"
+      }
+    },
+    {
+      "scene": "C6",
+      "fold": 4,
+      "xywh": [
+        128,
+        1024,
+        256,
+        256
+      ],
+      "rgb_display_mean": 63.5,
+      "rgb_display_p1": 14.0,
+      "rgb_display_p99": 183.0,
+      "psnr_db": {
+        "U-Net / B1-5": 15.1765,
+        "pix2pix / B1-5": 14.1219,
+        "Restormer / B1-5": 17.169
+      },
+      "panel_sha256": {
+        "RGB": "55ecabfd6e498fcdde871bebcdd389ba7172f7ea0f704c82648acbe675e2e092",
+        "B1": "aef875c075feb865a271e246138bb804cfc9a64018de46899c44f770e1f91077",
+        "B2": "01e60abfd5cca0c988af5d24702309813c3f1a0fc1d45ee25e3953cc0cde33d4",
+        "B3": "4457b83e74a07973c27acc2b53bc4ebba1f108d6a83f04bbc6dd1aa0af3a6162",
+        "B4": "1998a765dced47bd55e8fbc78b6da064a6f2522cb8d07b0878ce6c9a4381bd0e",
+        "B5": "5e0141a3a0063f999912696e42fd334c12c9ae21b07c8da8b73ca86803ff6ac2",
+        "U-Net / B1-5": "1a5140bcca249637e46692e14364e1ee1dbea97c893e2001b36f18795508ffd5",
+        "pix2pix / B1-5": "294645cdb25a12d824022e1180d1f0993f089302f78e082fd0b677b2ee7c9c9d",
+        "Restormer / B1-5": "c2f9a30f0ffccb0077475a07f8163a8f06fd27c1c9f78e068f3dde35b78b6be9"
+      }
+    },
+    {
+      "scene": "C4",
+      "fold": 5,
+      "xywh": [
+        2816,
+        384,
+        256,
+        256
+      ],
+      "rgb_display_mean": 72.6,
+      "rgb_display_p1": 36.0,
+      "rgb_display_p99": 177.0,
+      "psnr_db": {
+        "U-Net / B1-5": 14.9231,
+        "pix2pix / B1-5": 14.2292,
+        "Restormer / B1-5": 17.2597
+      },
+      "panel_sha256": {
+        "RGB": "8378733456c694c88aab3cc453743a7f3e591440dd0c1cbfca3f151722c9ba63",
+        "B1": "ab6b7d698127e64394d9c0ca033915d2f9219b2bbdb06194595c1dadb1462f3d",
+        "B2": "e17e37fe24050694a8a65823e2093565eb83934cb95a15c08027d462af1b616d",
+        "B3": "7c601a5ae8bd53cba26fa4db7e4654cc774f0d70db9b98003559ddf6414b30ff",
+        "B4": "85e92904ceabbedb5dd8636f01170d1c84e645005961156ec974197ecf6f8e99",
+        "B5": "d2a2eff749503bb1099de5659b9542c96e947fa6408e409ba32c63f0c9de7a6a",
+        "U-Net / B1-5": "d31e524fbb508b3b01a8fb7628fc98579f3f47cf6a101b757e6198459f864b97",
+        "pix2pix / B1-5": "78ad0db019655e7858d937aa5da5e462621bca4ac449183ef09f3f6b1b9d4c26",
+        "Restormer / B1-5": "940f391ab6521041caa02a3d94ee5f04d442061bcef572617e96b9144020e52d"
+      }
+    }
+  ],
+  "sources": {
+    "C3": {
+      "mask_path": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_support_v2_20261002\\C3.png",
+      "mask_sha256": "fdad00fb3674c70f519eaa6ad94de5578f3a2606c47f206ee85ab2ae9177e92d",
+      "rgb_path": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C3\\scene3.tif",
+      "rgb_sha256": "261e122b98e5caa9e82b5c8da07084ccc4dc0051037805825e7fcedaa4710fc2",
+      "prediction_paths": {
+        "U-Net / B1-5": {
+          "path": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold4_seed11_bands1-2-3-4-5\\prediction_C3.npy",
+          "sha256": "7d92219e6fa85beef04f019b84fd72070e882d7b65fa9634d700a4bc837b4d4f"
+        },
+        "pix2pix / B1-5": {
+          "path": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold4_seed11_bands1-2-3-4-5\\prediction_C3.npy",
+          "sha256": "c9082c45e6c8890fc5ec7975f9e72432dbc9e872dfb778d6451d02bcfe100fc8"
+        },
+        "Restormer / B1-5": {
+          "path": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold4_seed11_bands1-2-3-4-5\\prediction_C3.npy",
+          "sha256": "efc4cd780c1e5e9e125d3f74559ed80ed44faaeb0f5b75e3c10554d24ff4bbba"
+        }
+      },
+      "panel_sha256": {
+        "RGB": "a96ccd60c01d0f3224551b14e467e558f53a4cf7dcaad9fa1ba2092b65fe398e",
+        "B1": "50b5f8b8116ab2cb142ba006e310e9324997b206f57df8e66cd63cc6120d2230",
+        "B2": "8e62063e958ee368b74707713dfd3255ae855636420113400bc090e27d9caa48",
+        "B3": "eb1d0394b717d6125b1599fceb395ab49f2c98e51e6e451a4138b4bd5aa2ed41",
+        "B4": "dd8cdab49c2613324b24527c3a0f4bb233bb149fd133fdcaadeaa9b08ab77980",
+        "B5": "19799d75a8bc165104cbd77bd9f8cd308544bea5cb8e721f2fab923db10d8dc0",
+        "U-Net / B1-5": "3d7d842c845f24570c5478b32d2429b8b6c309fb2fde2dcf05285b1727416f1b",
+        "pix2pix / B1-5": "2daf9895b9b13420502ebe7263c7223699466424d147a4a4d2dd79553c6af550",
+        "Restormer / B1-5": "303da2d2f67cbeccab847c47bf589a9169212f000419cd5e540d64b0a4fc2da5"
+      }
+    },
+    "C6": {
+      "mask_path": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_support_v2_20261002\\C6.png",
+      "mask_sha256": "e6f319b5a981a02d7b1d92f07d62c1f3c85d0e48bd6e4fe272a26f8809c0b4d9",
+      "rgb_path": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C6\\scene6.tif",
+      "rgb_sha256": "7f64439bdf4d24194627eb4d918d3de0658ca16b7cc5219a96fe8814dcaf5f38",
+      "prediction_paths": {
+        "U-Net / B1-5": {
+          "path": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold4_seed11_bands1-2-3-4-5\\prediction_C6.npy",
+          "sha256": "59faede4c954444fc3e23cd0a60ede9c5f553ac6801d82d0d11582c3fb66f4bc"
+        },
+        "pix2pix / B1-5": {
+          "path": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold4_seed11_bands1-2-3-4-5\\prediction_C6.npy",
+          "sha256": "ec07d0464b23eef2b134909191410edb2b8571271d99368e7de261a3d4c7ae60"
+        },
+        "Restormer / B1-5": {
+          "path": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold4_seed11_bands1-2-3-4-5\\prediction_C6.npy",
+          "sha256": "3292d3025c877119169d4c174b09dc99dd6562b573fc41a6b276040f32384f8e"
+        }
+      },
+      "panel_sha256": {
+        "RGB": "55ecabfd6e498fcdde871bebcdd389ba7172f7ea0f704c82648acbe675e2e092",
+        "B1": "aef875c075feb865a271e246138bb804cfc9a64018de46899c44f770e1f91077",
+        "B2": "01e60abfd5cca0c988af5d24702309813c3f1a0fc1d45ee25e3953cc0cde33d4",
+        "B3": "4457b83e74a07973c27acc2b53bc4ebba1f108d6a83f04bbc6dd1aa0af3a6162",
+        "B4": "1998a765dced47bd55e8fbc78b6da064a6f2522cb8d07b0878ce6c9a4381bd0e",
+        "B5": "5e0141a3a0063f999912696e42fd334c12c9ae21b07c8da8b73ca86803ff6ac2",
+        "U-Net / B1-5": "1a5140bcca249637e46692e14364e1ee1dbea97c893e2001b36f18795508ffd5",
+        "pix2pix / B1-5": "294645cdb25a12d824022e1180d1f0993f089302f78e082fd0b677b2ee7c9c9d",
+        "Restormer / B1-5": "c2f9a30f0ffccb0077475a07f8163a8f06fd27c1c9f78e068f3dde35b78b6be9"
+      }
+    },
+    "C4": {
+      "mask_path": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_support_v2_20261002\\C4.png",
+      "mask_sha256": "9d853cb96a53a756f1abe0c929f86459b5572ca5a99192ddd569fd0b9e693784",
+      "rgb_path": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C4\\scene4.tif",
+      "rgb_sha256": "2be7b95e4cce48ae8c367df5a27e6026a783608be67fd1a1a8cdb80ca826f486",
+      "prediction_paths": {
+        "U-Net / B1-5": {
+          "path": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold5_seed11_bands1-2-3-4-5\\prediction_C4.npy",
+          "sha256": "df3c2e0dcef9e250d2495aea67c3e742e62c21abfe094308a7558746dec6f1c6"
+        },
+        "pix2pix / B1-5": {
+          "path": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold5_seed11_bands1-2-3-4-5\\prediction_C4.npy",
+          "sha256": "df5fe7f922a12319651bdf86f1e6f77ab4b998fd3fc72f2fef903f6d6bc736be"
+        },
+        "Restormer / B1-5": {
+          "path": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold5_seed11_bands1-2-3-4-5\\prediction_C4.npy",
+          "sha256": "abe63e08f759db00a89b2fd5bf4560d674acf469835597986b83c58e76bfb5a3"
+        }
+      },
+      "panel_sha256": {
+        "RGB": "8378733456c694c88aab3cc453743a7f3e591440dd0c1cbfca3f151722c9ba63",
+        "B1": "ab6b7d698127e64394d9c0ca033915d2f9219b2bbdb06194595c1dadb1462f3d",
+        "B2": "e17e37fe24050694a8a65823e2093565eb83934cb95a15c08027d462af1b616d",
+        "B3": "7c601a5ae8bd53cba26fa4db7e4654cc774f0d70db9b98003559ddf6414b30ff",
+        "B4": "85e92904ceabbedb5dd8636f01170d1c84e645005961156ec974197ecf6f8e99",
+        "B5": "d2a2eff749503bb1099de5659b9542c96e947fa6408e409ba32c63f0c9de7a6a",
+        "U-Net / B1-5": "d31e524fbb508b3b01a8fb7628fc98579f3f47cf6a101b757e6198459f864b97",
+        "pix2pix / B1-5": "78ad0db019655e7858d937aa5da5e462621bca4ac449183ef09f3f6b1b9d4c26",
+        "Restormer / B1-5": "940f391ab6521041caa02a3d94ee5f04d442061bcef572617e96b9144020e52d"
+      }
+    }
+  },
+  "exports": {
+    "fig_local_modalities_20261015_zh.pdf": {
+      "sha256": "27276e0b59d512373480201e8a5a05772cfdecdf165df58523bc988916f9e177",
+      "bytes": 534763
+    },
+    "fig_local_modalities_20261015_zh.png": {
+      "sha256": "cec45e41bcac94b868f4575f12c4b0c083e803d32d3abaa16985c0be9e6bfe3d",
+      "bytes": 796015
+    },
+    "fig_local_modalities_20261015_zh.svg": {
+      "sha256": "b40ed890f87661d223331b43fdf72d38013dd02600a987a38571fd07574db185",
+      "bytes": 744194
+    },
+    "fig_local_predictions_20261015_zh.pdf": {
+      "sha256": "4886649c5d12b9acd8d6147b0ad3bfd04459a6f7eca97918c4eb4f83a4630072",
+      "bytes": 1051699
+    },
+    "fig_local_predictions_20261015_zh.png": {
+      "sha256": "cf7511e49be17e1868def9017465effb14c92d96ebf0e46cb1d4e189813b945f",
+      "bytes": 1614840
+    },
+    "fig_local_predictions_20261015_zh.svg": {
+      "sha256": "0f45f0e2960250325b8010bce1171f81bc3c58b298eb7c1e50df2a195a6261a2",
+      "bytes": 1513260
+    }
+  }
+}

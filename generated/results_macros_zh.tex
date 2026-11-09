@@ -1,0 +1,43 @@
+% 主结果宏：数值来自 outputs/summary_v2_20261005/main_table.csv（十地点等权）
+% 核对日期 2026-10-15；口径：单种子 11、暂定共同支持、固定末步检查点
+% 中英文共用；宏名只含字母。数值由 scripts/qa_manuscripts.py 对源表核验。
+\newcommand{\SupportPixelCount}{88861466}
+\newcommand{\QualifiedWindowCount}{5893}
+\newcommand{\LpipsRectCount}{1541}
+\newcommand{\TrainRunCount}{30}
+\newcommand{\SensitivityRecordCount}{330}
+\newcommand{\GeneralizationGap}{11.78}
+
+% 主表 PSNR（十地点等权）
+\newcommand{\PsnrLinearFive}{14.1083}
+\newcommand{\PsnrRestormerFive}{13.7961}
+\newcommand{\PsnrUnetFive}{12.8229}
+\newcommand{\PsnrTfdFive}{12.8283}
+\newcommand{\PsnrPixFive}{12.5993}
+\newcommand{\PsnrPixBOne}{12.9972}
+\newcommand{\PsnrPixBOneTwoFour}{13.0413}
+\newcommand{\PsnrChannelFive}{10.6005}
+
+% SSIM
+\newcommand{\SsimRestormerFive}{0.5612}
+\newcommand{\SsimLinearFive}{0.5589}
+\newcommand{\SsimLinearBOne}{0.5743}
+\newcommand{\SsimPixBOne}{0.5014}
+
+% LPIPS
+\newcommand{\LpipsLinearFive}{0.4606}
+\newcommand{\LpipsRestormerFive}{0.5016}
+
+% DeltaE00
+\newcommand{\DeltaELinearFive}{19.7135}
+\newcommand{\DeltaERestormerFive}{20.5228}
+
+% 跨地点泛化
+\newcommand{\SeenPsnr}{25.37}
+\newcommand{\HeldoutPsnr}{13.59}
+\newcommand{\SeenWindowCount}{89}
+\newcommand{\HeldoutWindowCount}{43}
+
+% 聚合口径敏感性（像素汇总）
+\newcommand{\PooledPsnrLinear}{13.3762}
+\newcommand{\PooledPsnrRestormer}{13.5359}

@@ -1,0 +1,2206 @@
+{
+  "date": "2026-10-15",
+  "contract": {
+    "claim": "Same-coordinate local input, target and saved prediction views expose examples of retained structure and color/detail differences; they do not estimate prevalence, alignment accuracy or model superiority.",
+    "archetype": "image plate comparison grid",
+    "backend": "Python matplotlib",
+    "main_subset": "A windows for every third site in numerical order: C1, C4, C7, C10. Deterministic illustrative subset of the existing 20 windows; not selected by model score.",
+    "all_windows": "Supplement contains both already-selected windows at each of all 10 sites and all six saved model/input conditions.",
+    "selection_timing_boundary": "The existing retrospective selection was committed before loading predictions in that visual-review procedure; not experiment preregistration.",
+    "display": "RGB and B1–B5 uint8 values unchanged; saved float32 predictions converted with round(255*x) only. No histogram stretch, gamma, sharpening, smoothing or selective contrast. Excluded support is RGB(140,140,140). Native-pixel imshow interpolation=none.",
+    "scale": "256×256 output-grid pixels per panel; 64 output-pixel bar, not a physical scale or native sensor-pixel calibration.",
+    "statistics": "No new measurement or statistical comparison; no model execution, fitting or inference.",
+    "identity": "Full source TIFF, mask, result JSON and prediction NPY hashes recomputed. Sampled raw float32 crop hashes also compared with previous review."
+  },
+  "python": "3.11.15 | packaged by Anaconda, Inc. | (main, Jun 11 2026, 15:12:53) [MSC v.1942 64 bit (AMD64)]",
+  "matplotlib": "3.11.1",
+  "selection_rule": {
+    "candidate_pool": "256x256 windows from the existing support manifest; scored only by the binary common support mask.",
+    "A": "Maximize valid pixel count, then minimize squared distance between window center and image center (0.5W,0.5H), then y, then x.",
+    "B": "Exclude windows with positive-area overlap with A; maximize valid pixel count, then minimize squared distance to fixed upper-right quarter point (0.75W,0.25H), then y, then x.",
+    "timing": "All 20 coordinates are committed in visual_selection.json before any prediction is loaded."
+  },
+  "sources": {
+    "D:\\USTC\\Gen\\outputs\\experiment_review_20261005\\visual_selection.json": {
+      "sha256": "83aabae36fdb73e3455aeca3975de9a1cc025df677901d4185083d9ebb5f6a9c",
+      "bytes": 8379
+    },
+    "D:\\USTC\\Gen\\outputs\\experiment_review_20261005\\visual_provenance.json": {
+      "sha256": "fbe586a7fd135b02993b6489c0136ceea0241c4207f496fdfe81ed9c53d05e79",
+      "bytes": 108571
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\configs\\v3_scene_manifest.json": {
+      "sha256": "7899f5a053c10fd2766cd743259387fc45b700ff925db1967a5271e1ecb592e8",
+      "bytes": 14995
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_support_v2_20261002\\manifest.json": {
+      "sha256": "ecc64c2308cab08ea3560be9513056325880ceecb22c68677ac6211044642193",
+      "bytes": 654370
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_support_v2_20261002\\C1.png": {
+      "sha256": "4f306bd1f5896104e0fff440677bc415729f6059b0023d829b882302d7d6db7a",
+      "bytes": 1311270
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C1\\scene1.tif": {
+      "sha256": "af0fa07cce34f53df946e28b1ed8f69d38f08600ad87f15147b225edd371c187",
+      "bytes": 65262788
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C1\\scene1_band1.tif": {
+      "sha256": "467609bcc4fa39088cdb05e40d4a1dc0db188219fc6c69200579daa2186d96c5",
+      "bytes": 21754396
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C1\\scene1_band2.tif": {
+      "sha256": "961b51d64d188db422c1421412fcd589c1c29aa1146566598c1de6a91b447dc2",
+      "bytes": 21754396
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C1\\scene1_band3.tif": {
+      "sha256": "5187313cb34427bd3abe4ed9d67f699cf0d517210e253b57dd21617c1ff42ae8",
+      "bytes": 21754396
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C1\\scene1_band4.tif": {
+      "sha256": "d5e9c0ee5a4e2230a84983ea940f90ec3172238131266b8558af0b017d5b1d1d",
+      "bytes": 21754396
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C1\\scene1_band5.tif": {
+      "sha256": "c2c15929ef767c4893eca6e63e7a74f5eea0a6b9a0c8455e6b0e9a07c7331f3b",
+      "bytes": 21754396
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold1_seed11_bands1-2-3-4-5\\result.json": {
+      "sha256": "5df8fecfe6617e4fef7c2d4476d48bf6b0d1b97b6eb932557f38f70ffc893f9f",
+      "bytes": 101879
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold1_seed11_bands1-2-3-4-5\\prediction_C1.npy": {
+      "sha256": "e78f97af20e54660caf002dff7c6823a2df3eaf45c2fd4fc56b18a6fb5f8b3f6",
+      "bytes": 261050384
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold1_seed11_bands1-2-3-4-5\\result.json": {
+      "sha256": "c80831500a9b97f386192cda0f2ff40ae3da4049e66bd57df760fc3ae159c535",
+      "bytes": 101795
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold1_seed11_bands1-2-3-4-5\\prediction_C1.npy": {
+      "sha256": "f1df4dda3a626c08bb41ad65de895e0856e3b70cb9ca4af45ea20625d300e813",
+      "bytes": 261050384
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold1_seed11_bands1-2-3-4-5\\result.json": {
+      "sha256": "5136a3f5a6d1d10f379ada0a11378246b4d9960696104d0051eb8875f8f47349",
+      "bytes": 100214
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold1_seed11_bands1-2-3-4-5\\prediction_C1.npy": {
+      "sha256": "13f878f550cbb8b8e952e3153763a8b9ed20e493cb120907ec5d9726223e3de2",
+      "bytes": 261050384
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold1_seed11_bands1-2-3-4-5\\result.json": {
+      "sha256": "d8280bbc12539521cda43ca8bd328cb752f4bafcf560242277d0c4195e8d804b",
+      "bytes": 105895
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold1_seed11_bands1-2-3-4-5\\prediction_C1.npy": {
+      "sha256": "6660df6a3ee0347509220a8714dd325f77c985ce96b913b2be64f635a14ca415",
+      "bytes": 261050384
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold1_seed11_bands1\\result.json": {
+      "sha256": "535d72e464922118e51a0f5560a9556445c07dc12e1f96a53bd0ee1b9ec5cff8",
+      "bytes": 101714
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold1_seed11_bands1\\prediction_C1.npy": {
+      "sha256": "4b3cd5d62fb4bff0e5a91917d3ef392dbc409f48430185eeed9482127d8fce48",
+      "bytes": 261050384
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold1_seed11_bands1-2-4\\result.json": {
+      "sha256": "85eb94b9020b82df7297fc65725e83fb17817e3dd0ac1ecd2d1362229d67f20e",
+      "bytes": 101659
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold1_seed11_bands1-2-4\\prediction_C1.npy": {
+      "sha256": "064b3d6e5ae2476e5ff271906f9cc847fcb20c6625d65ddaab5d7dcde122a1e0",
+      "bytes": 261050384
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_support_v2_20261002\\C2.png": {
+      "sha256": "6174ce4d030a67ddcdf356089f87badef430dd17e0007163c6e395dafadbc14e",
+      "bytes": 1281560
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C2\\scene2.tif": {
+      "sha256": "524da287ceeb508b438a8ea6b7bcdc9c3e2b5d8cdfbec382fea960bc2a34f5f8",
+      "bytes": 51062624
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C2\\scene2_band1.tif": {
+      "sha256": "87d7bea25654869e1f66a90210e00bdda40fbdd0ca474e63d41d98b49d288ab5",
+      "bytes": 17021008
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C2\\scene2_band2.tif": {
+      "sha256": "06102265797c76dadc1530562ba9c090a800d8a1047499643a235b45a00ea062",
+      "bytes": 17021008
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C2\\scene2_band3.tif": {
+      "sha256": "ae1a87871272b0ba466c431b8bca470719b9692693b4b79f4e2af1e74dea33e1",
+      "bytes": 17021008
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C2\\scene2_band4.tif": {
+      "sha256": "216444694f2157668233dd6799559ab65ccdb43dd3a9cb70026018d84e292b1f",
+      "bytes": 17021008
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C2\\scene2_band5.tif": {
+      "sha256": "afe4cc073445948c4734348029ae09b2bde738d25b4e91dcb2665f48dbd05fec",
+      "bytes": 17021008
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold2_seed11_bands1-2-3-4-5\\result.json": {
+      "sha256": "fa671ee114a4524b347e3319ac5f7be025bfffebfe447f9d63df6dba46c10fc1",
+      "bytes": 39148
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold2_seed11_bands1-2-3-4-5\\prediction_C2.npy": {
+      "sha256": "fdd684d426778934f2fb86a0ad2323b9a5f7f2e1ae7b5b852ffafcbf81344756",
+      "bytes": 204249728
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold2_seed11_bands1-2-3-4-5\\result.json": {
+      "sha256": "26f0ef524cdbccc939004e078d94fe06f393ba43fea8298f3336d2a834df261e",
+      "bytes": 39177
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold2_seed11_bands1-2-3-4-5\\prediction_C2.npy": {
+      "sha256": "8aac74100ad243d59a6d013d4c47c1bdfc7d61f30c31dcd927cb557589f4e7d2",
+      "bytes": 204249728
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold2_seed11_bands1-2-3-4-5\\result.json": {
+      "sha256": "f4920792b45a877847460cb1cac294a030969a8e38a23d61a1408d7d836e0037",
+      "bytes": 37541
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold2_seed11_bands1-2-3-4-5\\prediction_C2.npy": {
+      "sha256": "57399c935ba6c6725261aba95004c812c9f46cc777254b0e37f46f5725485ecb",
+      "bytes": 204249728
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold2_seed11_bands1-2-3-4-5\\result.json": {
+      "sha256": "1ca5008587457552a74dba1e4248cb90aa231d20d45bc901e7ec413de91ddc61",
+      "bytes": 43241
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold2_seed11_bands1-2-3-4-5\\prediction_C2.npy": {
+      "sha256": "817c3e826e676c881ecd01b46b9e9a434d5e650b50109497a2f4d81cc45595cd",
+      "bytes": 204249728
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold2_seed11_bands1\\result.json": {
+      "sha256": "16ac082a04cb8c757eb9837e640c38de3fd228a976127ff75864922be3136fcd",
+      "bytes": 39119
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold2_seed11_bands1\\prediction_C2.npy": {
+      "sha256": "c293a0a28528d951d624f4f32840891d645538f6675c5c0aa4f09b950d3ba30b",
+      "bytes": 204249728
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold2_seed11_bands1-2-4\\result.json": {
+      "sha256": "eb5e5c308fa167deef401f25e956d48cb2a68151026619d07e8e7b32b33a5a83",
+      "bytes": 39152
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold2_seed11_bands1-2-4\\prediction_C2.npy": {
+      "sha256": "c4e74bcbb9cb961997bfb7368983411dfe0a2b79c7765523dc549af2854d36dc",
+      "bytes": 204249728
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_support_v2_20261002\\C3.png": {
+      "sha256": "fdad00fb3674c70f519eaa6ad94de5578f3a2606c47f206ee85ab2ae9177e92d",
+      "bytes": 230360
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C3\\scene3.tif": {
+      "sha256": "261e122b98e5caa9e82b5c8da07084ccc4dc0051037805825e7fcedaa4710fc2",
+      "bytes": 20325284
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C3\\scene3_band1.tif": {
+      "sha256": "195cb9d8b97146d017a68ce1a96647f981b2a92d7ccca46e427a695331774a33",
+      "bytes": 6775228
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C3\\scene3_band2.tif": {
+      "sha256": "87406501e8f0c2101fcf662fbe677995c81b44214e524e5d843218f6301f07d3",
+      "bytes": 6775228
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C3\\scene3_band3.tif": {
+      "sha256": "6725db50b815d0df1c5543fae27127d031ca1fc46166215d8d5d088084fe8b78",
+      "bytes": 6775228
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C3\\scene3_band4.tif": {
+      "sha256": "b5563c2eeac919ca90a2f648d1f780727c77a24028e8eae6966aadd0de14271a",
+      "bytes": 6775228
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C3\\scene3_band5.tif": {
+      "sha256": "01ba9ec53015839848b7441a8077544ea8628e3f9c711bdd76e31e022e30e4e3",
+      "bytes": 6775228
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold4_seed11_bands1-2-3-4-5\\result.json": {
+      "sha256": "6cd7ec3b01880dbc999c680deb74c6683b1d4c835791c244eed3deac1bb1f811",
+      "bytes": 52171
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold4_seed11_bands1-2-3-4-5\\prediction_C3.npy": {
+      "sha256": "7d92219e6fa85beef04f019b84fd72070e882d7b65fa9634d700a4bc837b4d4f",
+      "bytes": 81300368
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold4_seed11_bands1-2-3-4-5\\result.json": {
+      "sha256": "79120825aa21e5e80a26a47c229d805686f22421ee3d393e652bc0a5d117c650",
+      "bytes": 52192
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold4_seed11_bands1-2-3-4-5\\prediction_C3.npy": {
+      "sha256": "c9082c45e6c8890fc5ec7975f9e72432dbc9e872dfb778d6451d02bcfe100fc8",
+      "bytes": 81300368
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold4_seed11_bands1-2-3-4-5\\result.json": {
+      "sha256": "2c97019bb0f137e8c23491c949a9804412c88dba59ede542ce14e9007584de3b",
+      "bytes": 50554
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold4_seed11_bands1-2-3-4-5\\prediction_C3.npy": {
+      "sha256": "6260b05bf98da9c096c5aeb83c2f9bc534d77dac2c64ff7821612eab34bbb5b0",
+      "bytes": 81300368
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold4_seed11_bands1-2-3-4-5\\result.json": {
+      "sha256": "bf2aa37d0be2a6c4fa2f33b913b9b51c51bff3e807f3c5418cf43d2bae9f213a",
+      "bytes": 56282
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold4_seed11_bands1-2-3-4-5\\prediction_C3.npy": {
+      "sha256": "efc4cd780c1e5e9e125d3f74559ed80ed44faaeb0f5b75e3c10554d24ff4bbba",
+      "bytes": 81300368
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold4_seed11_bands1\\result.json": {
+      "sha256": "1a07416546efa51aed63dff1d940fe1f05e9aabef71e2b968faf03632741103b",
+      "bytes": 52096
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold4_seed11_bands1\\prediction_C3.npy": {
+      "sha256": "c0bed354d580b1cf923315c193e16b8c5d8378650fbfeba71dc33f60fd93567a",
+      "bytes": 81300368
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold4_seed11_bands1-2-4\\result.json": {
+      "sha256": "b9127fad2b8d31964fe4477f819ffcb333b1d370c932ae0dd643a1a505c3f3b3",
+      "bytes": 52162
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold4_seed11_bands1-2-4\\prediction_C3.npy": {
+      "sha256": "9c9f7e76a177ef3b45658fe1018e46dd15b10427cc5e9800e1c321a4cb5a9282",
+      "bytes": 81300368
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_support_v2_20261002\\C4.png": {
+      "sha256": "9d853cb96a53a756f1abe0c929f86459b5572ca5a99192ddd569fd0b9e693784",
+      "bytes": 88953
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C4\\scene4.tif": {
+      "sha256": "2be7b95e4cce48ae8c367df5a27e6026a783608be67fd1a1a8cdb80ca826f486",
+      "bytes": 18623213
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C4\\scene4_band1.tif": {
+      "sha256": "836e7d22df7b3392edcb815d6a807dad24ccdd5a5a5e1e62fee0a170a8cf4004",
+      "bytes": 6207871
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C4\\scene4_band2.tif": {
+      "sha256": "bf5b9a1785724257403cf0db99ce52a5d3e2a2c6c3c52c263c1fde3d3ceeb5b1",
+      "bytes": 6207871
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C4\\scene4_band3.tif": {
+      "sha256": "114489127902d334b0d0166d7ccd44ff817850460bd2bb171e5a5123739aa09c",
+      "bytes": 6207871
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C4\\scene4_band4.tif": {
+      "sha256": "73447f78ad4d80ae6b120def1f9e6f38c962e1402b3c530cc0f02a7b2634bf6d",
+      "bytes": 6207871
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C4\\scene4_band5.tif": {
+      "sha256": "5c490dd10e04e089ce21eeca84b2a4070fa961e2fa491b2309b323d8dce11f92",
+      "bytes": 6207871
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold5_seed11_bands1-2-3-4-5\\result.json": {
+      "sha256": "c2c2f8caa3a8f475712a0819e403bd554c57feff198627fc48f6ebf63db50110",
+      "bytes": 52658
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold5_seed11_bands1-2-3-4-5\\prediction_C4.npy": {
+      "sha256": "df3c2e0dcef9e250d2495aea67c3e742e62c21abfe094308a7558746dec6f1c6",
+      "bytes": 74492084
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold5_seed11_bands1-2-3-4-5\\result.json": {
+      "sha256": "32d38b6b8832234264dcf7a5448cf2b9a382fe524f7016071a2cbeaf3312b46f",
+      "bytes": 52661
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold5_seed11_bands1-2-3-4-5\\prediction_C4.npy": {
+      "sha256": "df5fe7f922a12319651bdf86f1e6f77ab4b998fd3fc72f2fef903f6d6bc736be",
+      "bytes": 74492084
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold5_seed11_bands1-2-3-4-5\\result.json": {
+      "sha256": "10afa2a5a1351dba5106e448d2413d268be9aaa91999630ae6a2a91e83c7e09d",
+      "bytes": 51125
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold5_seed11_bands1-2-3-4-5\\prediction_C4.npy": {
+      "sha256": "8547581a0a3520df45af06f93fbb6ecade4a16a4eacd511006b1d06df7a9bb90",
+      "bytes": 74492084
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold5_seed11_bands1-2-3-4-5\\result.json": {
+      "sha256": "1ca1b9c35a3bf71305a9fe67055093b148d4492db70f56127723789c96f2edda",
+      "bytes": 56766
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold5_seed11_bands1-2-3-4-5\\prediction_C4.npy": {
+      "sha256": "abe63e08f759db00a89b2fd5bf4560d674acf469835597986b83c58e76bfb5a3",
+      "bytes": 74492084
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold5_seed11_bands1\\result.json": {
+      "sha256": "6ecfe0b4453ac40cbae080ddf055efafccf070064d5b2fc439277cb15ed4f17c",
+      "bytes": 52597
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold5_seed11_bands1\\prediction_C4.npy": {
+      "sha256": "4282771754b69ef6e52a32f8117f1995282ffbdccddeb7ad2954dec4c1c6b68f",
+      "bytes": 74492084
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold5_seed11_bands1-2-4\\result.json": {
+      "sha256": "7ecb6b37d62b3a229f45f91001e7feb3febad10683ec434e66ae5431f084ca38",
+      "bytes": 52645
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold5_seed11_bands1-2-4\\prediction_C4.npy": {
+      "sha256": "b8e88723643831947f10299365b8412b39c32c7699cfeade7c495eb5f798d583",
+      "bytes": 74492084
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_support_v2_20261002\\C5.png": {
+      "sha256": "bad12379e37712bbe749b88ddedf6a803520ba8e291bf01b13a30b60df47cb2c",
+      "bytes": 590526
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C5\\scene5.tif": {
+      "sha256": "7a946f8ae1befa83568444f91f90ed73e38ac9946b3089fcb684aed5e302c61b",
+      "bytes": 39614378
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C5\\scene5_band1.tif": {
+      "sha256": "e3276ab8af019b4a5a550d49b56d7b1ec6a5622c5a8370ffb320474faa9a1fc9",
+      "bytes": 13204868
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C5\\scene5_band2.tif": {
+      "sha256": "46490e2540b18f7ad00b1f4548c2f30721268db37ac905765021644d98d2f48a",
+      "bytes": 13204868
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C5\\scene5_band3.tif": {
+      "sha256": "41ef3d191d00fddb081a6a771aa74014df75934c829302a99260bd8ab3185318",
+      "bytes": 13204868
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C5\\scene5_band4.tif": {
+      "sha256": "b37ec390ac0d926d8aa42ad1cea47fd05f2aa1443edce621a244d05576cdaa2d",
+      "bytes": 13204868
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C5\\scene5_band5.tif": {
+      "sha256": "a2f6a8ad3bfd43da82fe26526556596b5b92604948b0941f9fc94b0919ed941c",
+      "bytes": 13204868
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold3_seed11_bands1-2-3-4-5\\result.json": {
+      "sha256": "ea1649e52f7d88fe6487b637d11e805dedaaea6127e811ed45bfc84bd1534f75",
+      "bytes": 19228
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold3_seed11_bands1-2-3-4-5\\prediction_C5.npy": {
+      "sha256": "aacac6e58c04912dab7f604353ae4c71db42fc875943d72da132381a1bd8df89",
+      "bytes": 158457080
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold3_seed11_bands1-2-3-4-5\\result.json": {
+      "sha256": "679f239df73b82e14e47fbe1ad111faba718759bb8becf2c82936b24621d913e",
+      "bytes": 19216
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold3_seed11_bands1-2-3-4-5\\prediction_C5.npy": {
+      "sha256": "56f2b2ff5b996480b825264eaf14b6bbba85f25058af2b88defe77489b17112c",
+      "bytes": 158457080
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold3_seed11_bands1-2-3-4-5\\result.json": {
+      "sha256": "8ad2cda25e300427640abc835871d7af2e0d5654556b3ff2ee6ec690864cb770",
+      "bytes": 17621
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold3_seed11_bands1-2-3-4-5\\prediction_C5.npy": {
+      "sha256": "257f1df97b664fdd952dac9407476452ca1ec9bb324c1e7fc005eba7cf25932f",
+      "bytes": 158457080
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold3_seed11_bands1-2-3-4-5\\result.json": {
+      "sha256": "f43e913d56930791c5d247798dacdd03db4464bcc36df4c5220b414713e3709d",
+      "bytes": 23271
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold3_seed11_bands1-2-3-4-5\\prediction_C5.npy": {
+      "sha256": "df40b1c4964ae32a8cca0545ec56107cbe179cde58af7dd1aba58a584210d247",
+      "bytes": 158457080
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold3_seed11_bands1\\result.json": {
+      "sha256": "643cf75387216a5ceb6612cf16d58aa6881088d27367989d00dbd2586305bec0",
+      "bytes": 19177
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold3_seed11_bands1\\prediction_C5.npy": {
+      "sha256": "cfa5a11e0f01e33fcb0e901603cd403bcd66680dac8a381be25c1eadebbfad0f",
+      "bytes": 158457080
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold3_seed11_bands1-2-4\\result.json": {
+      "sha256": "684347467167a847aa183b3e107265b4e393676ad60f948e8f15a8e1662baf28",
+      "bytes": 19194
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold3_seed11_bands1-2-4\\prediction_C5.npy": {
+      "sha256": "b1b028ba8da6035e752f63e1139bdfd37d8dfb8f2ee19ebff4e544eac8e9479f",
+      "bytes": 158457080
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_support_v2_20261002\\C6.png": {
+      "sha256": "e6f319b5a981a02d7b1d92f07d62c1f3c85d0e48bd6e4fe272a26f8809c0b4d9",
+      "bytes": 210806
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C6\\scene6.tif": {
+      "sha256": "7f64439bdf4d24194627eb4d918d3de0658ca16b7cc5219a96fe8814dcaf5f38",
+      "bytes": 24766064
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C6\\scene6_band1.tif": {
+      "sha256": "c089d7f9360a1d77a76711a48df605978a498d340bce1b9270568b8826f4f276",
+      "bytes": 8255488
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C6\\scene6_band2.tif": {
+      "sha256": "ce71f7ca5ed35b2d7ad5023e0dc17c23ac71783dda956e197cabb2e9ba4595b7",
+      "bytes": 8255488
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C6\\scene6_band3.tif": {
+      "sha256": "644f0d78ac526ef2be412cc36255cde2e8a342f6518cc14e7a7dc94994e62f7b",
+      "bytes": 8255488
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C6\\scene6_band4.tif": {
+      "sha256": "661c7c43f632727dbe17cd3c9fab20556cfba2a1ade6cf37252fc6aaf3ea030b",
+      "bytes": 8255488
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C6\\scene6_band5.tif": {
+      "sha256": "b7542f7c8cd6e8bb0fc644e1222de336178ad70fd3a5a94799e9139823756eb3",
+      "bytes": 8255488
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold4_seed11_bands1-2-3-4-5\\prediction_C6.npy": {
+      "sha256": "59faede4c954444fc3e23cd0a60ede9c5f553ac6801d82d0d11582c3fb66f4bc",
+      "bytes": 99063488
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold4_seed11_bands1-2-3-4-5\\prediction_C6.npy": {
+      "sha256": "ec07d0464b23eef2b134909191410edb2b8571271d99368e7de261a3d4c7ae60",
+      "bytes": 99063488
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold4_seed11_bands1-2-3-4-5\\prediction_C6.npy": {
+      "sha256": "0eec44edb267dbb5aeedd19dc109f9b595878095f87615cae30c20dd691e31fa",
+      "bytes": 99063488
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold4_seed11_bands1-2-3-4-5\\prediction_C6.npy": {
+      "sha256": "3292d3025c877119169d4c174b09dc99dd6562b573fc41a6b276040f32384f8e",
+      "bytes": 99063488
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold4_seed11_bands1\\prediction_C6.npy": {
+      "sha256": "9633c9406dedc5c9b39f139114cb1f45e4fb5c670df2ca7f6d370b8077dfa5ff",
+      "bytes": 99063488
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold4_seed11_bands1-2-4\\prediction_C6.npy": {
+      "sha256": "4a76930c4a411817afef1714c9ed2c94c8df907f7a2faeb56bff3c6738f13568",
+      "bytes": 99063488
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_support_v2_20261002\\C7.png": {
+      "sha256": "e133c46a186d9bb0e6c4a6aa57b6c90c26233a5d6e45b4051bee901e057959f0",
+      "bytes": 680935
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C7\\scene7.tif": {
+      "sha256": "3e39bbda3fa627ddb0aafe99083fef60904e8ef4d604e9a2873530e1e9727710",
+      "bytes": 51495371
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C7\\scene7_band1.tif": {
+      "sha256": "ea92528952b1f31f3e55db5b841fa8e6bba5897e3fd1a001151fa59878967e57",
+      "bytes": 17165257
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C7\\scene7_band2.tif": {
+      "sha256": "ab4952b8bdccbc87e913b39ea34189c980e0f42357be72ff62c3092083fcb955",
+      "bytes": 17165257
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C7\\scene7_band3.tif": {
+      "sha256": "70c5664a5328a4b23cf4d07f5caf76514c53a004ff2710b50b479f612718714d",
+      "bytes": 17165257
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C7\\scene7_band4.tif": {
+      "sha256": "2b01bf6d62ec40ba14edaa0cac53ddcca23bc03f286b5bde5ee6a66f82c5e301",
+      "bytes": 17165257
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C7\\scene7_band5.tif": {
+      "sha256": "e7273bff56d756d9c6bfb1dc7d66e59d844a4d37ae97f0d9f50b44093fd7f12d",
+      "bytes": 17165257
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold5_seed11_bands1-2-3-4-5\\prediction_C7.npy": {
+      "sha256": "d58041ba28baade9b7626818c9d00e2968b9239f8d121dbd0a242f7adfa99c8c",
+      "bytes": 205980716
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold5_seed11_bands1-2-3-4-5\\prediction_C7.npy": {
+      "sha256": "443c5c3d0016434effaf94e678434a1aad072f50a54ae675dda0e99b62801437",
+      "bytes": 205980716
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold5_seed11_bands1-2-3-4-5\\prediction_C7.npy": {
+      "sha256": "4d6f3b864cce31e7fdad962dfdbaca50fb5f090200a89b03e1a1d62034a188b7",
+      "bytes": 205980716
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold5_seed11_bands1-2-3-4-5\\prediction_C7.npy": {
+      "sha256": "b1467cf1a6aa8d454b75709c87ae4493e58cb3c079b3f05a315a5714725c7432",
+      "bytes": 205980716
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold5_seed11_bands1\\prediction_C7.npy": {
+      "sha256": "95ffef31c59bbe0374c0dfbc15a852a4b48d29cb4c4ca34c33a0f8d5ce3d0953",
+      "bytes": 205980716
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold5_seed11_bands1-2-4\\prediction_C7.npy": {
+      "sha256": "f2d412b2db729df3a0053bd4d1a4cb3b2e47be0ed9d6bd9663ad644918059b73",
+      "bytes": 205980716
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_support_v2_20261002\\C8.png": {
+      "sha256": "0284114a0aa84a27c6fbeacca885627fd78000ff4d02970b47f8c68ea7dd438a",
+      "bytes": 73538
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C8\\scene8.tif": {
+      "sha256": "f3ee1b071a7b88f93e4fbea2ef776f8212635fba7533812847bd51fdf2886f68",
+      "bytes": 57870470
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C8\\scene8_band1.tif": {
+      "sha256": "dc8f7268c05622b0d0cb26b2a2cef9421325c028c930a007eaf8c32369e61e64",
+      "bytes": 19290290
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C8\\scene8_band2.tif": {
+      "sha256": "a24fbaf61c35ab09ba7a76b7f5257ecc79e076a1b674a37dc8dfdb8baa6021fd",
+      "bytes": 19290290
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C8\\scene8_band3.tif": {
+      "sha256": "f631d3c67dd3bad25eb54978f6d33c6aa007bdae34fc4f1f7919d5b1c10e5995",
+      "bytes": 19290290
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C8\\scene8_band4.tif": {
+      "sha256": "fa91b3934b43a543ab28532b7c3fb299e79396333948c05c6ca1d2041b161630",
+      "bytes": 19290290
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C8\\scene8_band5.tif": {
+      "sha256": "85e0aa4ac9efbb7a38a8431fbda68087d6ec4d3938d2abc5cac293c083e38e61",
+      "bytes": 19290290
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold1_seed11_bands1-2-3-4-5\\prediction_C8.npy": {
+      "sha256": "05d83303fd8454eb9e47d216f0eca90b907855e5f019c2b3eeed9f2fa8d4d86b",
+      "bytes": 231481112
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold1_seed11_bands1-2-3-4-5\\prediction_C8.npy": {
+      "sha256": "249c364b9fb10474ac473e250f9911abb2b4e7137f417809d2d0d5cff64be88e",
+      "bytes": 231481112
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold1_seed11_bands1-2-3-4-5\\prediction_C8.npy": {
+      "sha256": "0ab6a048f3563d3a55a62892973734bee743e7fe880fc08a1c32b0a5d3a57a71",
+      "bytes": 231481112
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold1_seed11_bands1-2-3-4-5\\prediction_C8.npy": {
+      "sha256": "fce57b53dd65ffcf71513fa0b2283bef0fa46211cfb2800cedf7c8c3eb712c1e",
+      "bytes": 231481112
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold1_seed11_bands1\\prediction_C8.npy": {
+      "sha256": "eb27ca33c5592b48debd72308b30ed319e0565ca75dea94f393875834714bfdf",
+      "bytes": 231481112
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold1_seed11_bands1-2-4\\prediction_C8.npy": {
+      "sha256": "2056f229f20a5e4f8fdddd590ca322574b6758c9c99a83706052101f7873e114",
+      "bytes": 231481112
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_support_v2_20261002\\C9.png": {
+      "sha256": "d1f61dec433b27a63c24fc42c57e17e57d6219d08c77b575ade63a76922b4c4e",
+      "bytes": 952553
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C9\\scene9.tif": {
+      "sha256": "4436d413fb76409714a042af048bce5d73d570d7b8bac4c3899ceb15ac3621ac",
+      "bytes": 37628414
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C9\\scene9_band1.tif": {
+      "sha256": "dd424ab6743d1698b6814e50659180aa0cfce9c193c46f0cd2cfba0bee5035df",
+      "bytes": 12542938
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C9\\scene9_band2.tif": {
+      "sha256": "53e6a3fba1eda60c7e2478aadd3230be59496e16bb47a5b62de458da143f2bd7",
+      "bytes": 12542938
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C9\\scene9_band3.tif": {
+      "sha256": "6914a0fbe006b10f22af89bf6317db6437c1add6fbc9ca2e4c1607d8ce960c7f",
+      "bytes": 12542938
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C9\\scene9_band4.tif": {
+      "sha256": "8de4a0dcd3a6ecaeb21c01b8df9fa9ae88d7c7655e55f153daafa6c0cf7d8d0f",
+      "bytes": 12542938
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C9\\scene9_band5.tif": {
+      "sha256": "f25b3f9f49c6074547e7b6481be65d1656c6fbf04c7c1117c128a1e5d0e8ad07",
+      "bytes": 12542938
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold2_seed11_bands1-2-3-4-5\\prediction_C9.npy": {
+      "sha256": "5fd7b5fb94159c4f4d47356d7953985dbcf43d1691e9fdf6792fabbc38ac9694",
+      "bytes": 150512888
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold2_seed11_bands1-2-3-4-5\\prediction_C9.npy": {
+      "sha256": "0e58a4c058f35d2bcf748975577e4d4c96f9688e730ce82a0c545bc68462040f",
+      "bytes": 150512888
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold2_seed11_bands1-2-3-4-5\\prediction_C9.npy": {
+      "sha256": "2b164d3b4897f5609d3da77c9bb588bbbd9b75c9dd3d0d04622b05b077fb7801",
+      "bytes": 150512888
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold2_seed11_bands1-2-3-4-5\\prediction_C9.npy": {
+      "sha256": "c7c65b3c2f520ecbc96d9d05f5aa7e7255227b716599d35683c88cf3053eea07",
+      "bytes": 150512888
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold2_seed11_bands1\\prediction_C9.npy": {
+      "sha256": "05b93a5f981cb4cf89700cc2952a1f395b900d421ec29ba07c850b585aa33bc6",
+      "bytes": 150512888
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold2_seed11_bands1-2-4\\prediction_C9.npy": {
+      "sha256": "94a74decfee1777a36f9759d100dbcb91268709bcda946c80c1cefcdd9ceb197",
+      "bytes": 150512888
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_support_v2_20261002\\C10.png": {
+      "sha256": "3bdc43a004d3c0d3392190641bafedaebd21fae6d21d8a51b82a4d2336741f77",
+      "bytes": 791523
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C10\\scene10.tif": {
+      "sha256": "f4e970621cbcf904a4080c204053e0518a5ed8c117436e16a65b6e95a330af50",
+      "bytes": 34562078
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C10\\scene10_band1.tif": {
+      "sha256": "13c0e97d2f6acf0dc1668e042fb78b8fb72db5337b5d995fa9d3363ccf177de9",
+      "bytes": 11520826
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C10\\scene10_band2.tif": {
+      "sha256": "3398d3139c01b377fdc1bf794823f4653a7fbec46b908569eee539c6d696b9cf",
+      "bytes": 11520826
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C10\\scene10_band3.tif": {
+      "sha256": "5467857e01088dec5f5ffc8e06ad1a46f7a4ed774468a31a0b00644c72746dda",
+      "bytes": 11520826
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C10\\scene10_band4.tif": {
+      "sha256": "1ee0993fa96594604749822ceed34651ef6cba1bb6edd9da666003cdca6a7ac5",
+      "bytes": 11520826
+    },
+    "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C10\\scene10_band5.tif": {
+      "sha256": "aa9a1dc16254a5cd1b18eead3716436a3c4c3ff5941d8a7753914b99e0e124ab",
+      "bytes": 11520826
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold3_seed11_bands1-2-3-4-5\\prediction_C10.npy": {
+      "sha256": "45c981e214a8cdbbf4d311f5f89f9071278b7e2bc85f00a687aef68a595c92a1",
+      "bytes": 138247544
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold3_seed11_bands1-2-3-4-5\\prediction_C10.npy": {
+      "sha256": "e7aa2452db7dd216aa6fc43b83d2395f2a3c774dad8cb130cb3d892e2259726a",
+      "bytes": 138247544
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold3_seed11_bands1-2-3-4-5\\prediction_C10.npy": {
+      "sha256": "fa67aa2abf007078c6cfbc77c220667fd7a4bb179d7bddd3c84b7c830b9f92bc",
+      "bytes": 138247544
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold3_seed11_bands1-2-3-4-5\\prediction_C10.npy": {
+      "sha256": "93bb1639f6a3a882440727e5ba522b6de45b1a64c1d480f69e1c41262f3957ee",
+      "bytes": 138247544
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold3_seed11_bands1\\prediction_C10.npy": {
+      "sha256": "8ddd8f53a62c59174f4c6bc61e4935bfd9e6b1c117e07d289453ab205d8e627b",
+      "bytes": 138247544
+    },
+    "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold3_seed11_bands1-2-4\\prediction_C10.npy": {
+      "sha256": "f21e257cea65359ad14d85e1eae66de7fdca69f40bd8d974716cadc9b12509a3",
+      "bytes": 138247544
+    },
+    "D:\\USTC\\Articles\\datasets_article\\scripts\\make_local_comparisons_20261015.py": {
+      "sha256": "411471f7181a8b7c931602013e8dbd944c73c406457ecba789363fb883705111",
+      "bytes": 12397
+    }
+  },
+  "windows": [
+    {
+      "scene": "C1",
+      "window": "A",
+      "fold": 1,
+      "x": 3456,
+      "y": 3072,
+      "width": 256,
+      "height": 256,
+      "valid_pixels": 65536,
+      "valid_fraction": 1.0,
+      "main_figure": true,
+      "panels": {
+        "RGB": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C1\\scene1.tif",
+          "uint8_crop_sha256": "685ea9f15b0eebca504054636333cf3e48447fd09bb505b0e7f77c9ea1068d9c"
+        },
+        "B1": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C1\\scene1_band1.tif",
+          "uint8_crop_sha256": "8c37c5b4ceb71f27f416c149b861bea51c95102494203b0a49cb753374056858"
+        },
+        "B2": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C1\\scene1_band2.tif",
+          "uint8_crop_sha256": "962c9cc781f21e4646218b191cfba523f5de1e25e6e2ddcdc4eab8f3fa383126"
+        },
+        "B3": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C1\\scene1_band3.tif",
+          "uint8_crop_sha256": "89148177ac61f6b96b167f8ef4c5fca9b9bd788993c19817bffc8fba5d64ce8d"
+        },
+        "B4": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C1\\scene1_band4.tif",
+          "uint8_crop_sha256": "87458cfe268ecf5c614b7a64d28dad2e0b763a78bc28a1b768ae3b9ab293968b"
+        },
+        "B5": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C1\\scene1_band5.tif",
+          "uint8_crop_sha256": "e6dd62d7004f15e3b2316af75865cd0949a9485d66147739e7ccfa04c8bbff9d"
+        },
+        "U-Net / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold1_seed11_bands1-2-3-4-5\\prediction_C1.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold1_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "e14590b76ae680ec88d5d039910a86cae8d0af41a71e7b0089bc9f5128ff1d8f",
+          "run": "unet_fold1_seed11_bands1-2-3-4-5"
+        },
+        "pix2pix / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold1_seed11_bands1-2-3-4-5\\prediction_C1.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold1_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "b2c1a83a8a5bb0ef90c8521c866ea851b8eb9f158efad0f9db17403667d0393c",
+          "run": "pix2pix_fold1_seed11_bands1-2-3-4-5"
+        },
+        "TFD / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold1_seed11_bands1-2-3-4-5\\prediction_C1.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold1_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "b60f6537926f4f95ad97d0fbe1b000610ae7573ac970a27c4b63a95ecbbeef73",
+          "run": "tfd_fold1_seed11_bands1-2-3-4-5"
+        },
+        "Restormer / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold1_seed11_bands1-2-3-4-5\\prediction_C1.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold1_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "dba2822b952b1b69eaa3bcbc9ff88c70821ffeb6242324d03960c48ffbf65897",
+          "run": "restormer_fold1_seed11_bands1-2-3-4-5"
+        },
+        "pix2pix / B1": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold1_seed11_bands1\\prediction_C1.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold1_seed11_bands1\\result.json",
+          "float32_crop_sha256": "231e1180f90ba71d00ce6ed15950f14ba784701255af1269db29ad4e042bff0a",
+          "run": "pix2pix_fold1_seed11_bands1"
+        },
+        "pix2pix / B1,2,4": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold1_seed11_bands1-2-4\\prediction_C1.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold1_seed11_bands1-2-4\\result.json",
+          "float32_crop_sha256": "6a30d06e5c48f7addfec03dec42b11c3d47031d9e75c61b541dca826efe8038f",
+          "run": "pix2pix_fold1_seed11_bands1-2-4"
+        }
+      }
+    },
+    {
+      "scene": "C1",
+      "window": "B",
+      "fold": 1,
+      "x": 3200,
+      "y": 3072,
+      "width": 256,
+      "height": 256,
+      "valid_pixels": 65533,
+      "valid_fraction": 0.9999542236328125,
+      "main_figure": false,
+      "panels": {
+        "RGB": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C1\\scene1.tif",
+          "uint8_crop_sha256": "fe76d0e40ac9433589b3716465df4d92603bc1721a3ca6081dcdc402cba1241d"
+        },
+        "B1": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C1\\scene1_band1.tif",
+          "uint8_crop_sha256": "01b6c202c95c136b09f8b0b14e8c9f00a8b5179ae7dd981e6b91e2aef5564cb3"
+        },
+        "B2": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C1\\scene1_band2.tif",
+          "uint8_crop_sha256": "5676f1c10cd2777b6da68593d36b7997ecdd9a374e3e367188122616dbb65442"
+        },
+        "B3": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C1\\scene1_band3.tif",
+          "uint8_crop_sha256": "17b82a6d459638ce56d3f21d35a7e59db624021dbf7fcae1e25945c2a75f99c8"
+        },
+        "B4": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C1\\scene1_band4.tif",
+          "uint8_crop_sha256": "2288b717a80a189ae5c39fd4a084b8de81b1fafea6443e36144bb4adcf191cf3"
+        },
+        "B5": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C1\\scene1_band5.tif",
+          "uint8_crop_sha256": "0e49f621796bf5e71f0b9ed3f8808273d3f184b6b1f2b346bb1059f656719084"
+        },
+        "U-Net / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold1_seed11_bands1-2-3-4-5\\prediction_C1.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold1_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "14b29651e2dc418973e1cda3d5eda9d4b7eed033eb3a92ab0a3548afd729f775",
+          "run": "unet_fold1_seed11_bands1-2-3-4-5"
+        },
+        "pix2pix / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold1_seed11_bands1-2-3-4-5\\prediction_C1.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold1_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "658c57b128e76c16b19c3721a5dcd6c5646437e38e9ab5996143649fe3ea68e2",
+          "run": "pix2pix_fold1_seed11_bands1-2-3-4-5"
+        },
+        "TFD / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold1_seed11_bands1-2-3-4-5\\prediction_C1.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold1_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "da928020221f4c52827000fd1bf35291c6aee5a98452a4ab3502439b00b5b21e",
+          "run": "tfd_fold1_seed11_bands1-2-3-4-5"
+        },
+        "Restormer / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold1_seed11_bands1-2-3-4-5\\prediction_C1.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold1_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "6a548a0ec494c11ed1142136a39fc94fb02a35d8887948daf82e49c9f8d97a91",
+          "run": "restormer_fold1_seed11_bands1-2-3-4-5"
+        },
+        "pix2pix / B1": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold1_seed11_bands1\\prediction_C1.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold1_seed11_bands1\\result.json",
+          "float32_crop_sha256": "b2aecdcb84029ac619427b4bb325cee43f435acfb68f340a3eed473c37ccc10b",
+          "run": "pix2pix_fold1_seed11_bands1"
+        },
+        "pix2pix / B1,2,4": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold1_seed11_bands1-2-4\\prediction_C1.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold1_seed11_bands1-2-4\\result.json",
+          "float32_crop_sha256": "5d942ed7bbce7200af9d2aa7c59a4906b2ff9a2c1701aafbbe7df3b9417d74e3",
+          "run": "pix2pix_fold1_seed11_bands1-2-4"
+        }
+      }
+    },
+    {
+      "scene": "C2",
+      "window": "A",
+      "fold": 2,
+      "x": 2816,
+      "y": 512,
+      "width": 256,
+      "height": 256,
+      "valid_pixels": 65536,
+      "valid_fraction": 1.0,
+      "main_figure": false,
+      "panels": {
+        "RGB": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C2\\scene2.tif",
+          "uint8_crop_sha256": "fe9f4ca538dc9d53b97d01c4006b5a1bbc6a56f8f94fb1903d08d4067a30383c"
+        },
+        "B1": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C2\\scene2_band1.tif",
+          "uint8_crop_sha256": "a7d6b0f47be35a128018005d556c71002bbd061fe1de9e9943b80d2c4d9632c6"
+        },
+        "B2": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C2\\scene2_band2.tif",
+          "uint8_crop_sha256": "35f7c94e0d07a8217e28ceda49c89c103df3f3616540831a08815d93be46aa61"
+        },
+        "B3": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C2\\scene2_band3.tif",
+          "uint8_crop_sha256": "e985e2513fbaca309fbdacb3a268efafc7064aadb0b2d295e0bb9ac1c7c1b6d5"
+        },
+        "B4": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C2\\scene2_band4.tif",
+          "uint8_crop_sha256": "291e35c50d63cf907c104dafdee8e6df3d44102f12eac08fa1c914188b5a7dcb"
+        },
+        "B5": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C2\\scene2_band5.tif",
+          "uint8_crop_sha256": "10cba7f8fc6bf70a04acb51b21ddea37fbd4e5c2e22ea49dee61c893d2a37abb"
+        },
+        "U-Net / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold2_seed11_bands1-2-3-4-5\\prediction_C2.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold2_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "6b0f1a8a0c8dfdf7bc797b3fdba63c79e34d43d3d068c53b2b39d3a93d43494e",
+          "run": "unet_fold2_seed11_bands1-2-3-4-5"
+        },
+        "pix2pix / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold2_seed11_bands1-2-3-4-5\\prediction_C2.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold2_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "78754ec3acb3a9953196317c0422bfd85830df17b51f41e645bc227b421785cf",
+          "run": "pix2pix_fold2_seed11_bands1-2-3-4-5"
+        },
+        "TFD / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold2_seed11_bands1-2-3-4-5\\prediction_C2.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold2_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "9f68626e992a3e983cdc23ad03ffaa744b51df20d08a397ab631b2b1fcdfc794",
+          "run": "tfd_fold2_seed11_bands1-2-3-4-5"
+        },
+        "Restormer / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold2_seed11_bands1-2-3-4-5\\prediction_C2.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold2_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "0032071bf9aea1d5104c9b80ea82a3b77f351857a521086e8656a29d47d9878b",
+          "run": "restormer_fold2_seed11_bands1-2-3-4-5"
+        },
+        "pix2pix / B1": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold2_seed11_bands1\\prediction_C2.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold2_seed11_bands1\\result.json",
+          "float32_crop_sha256": "940fb5813712069fd27e74cf43eca241a35a016fdf6bc5c49bbddbf069c9692e",
+          "run": "pix2pix_fold2_seed11_bands1"
+        },
+        "pix2pix / B1,2,4": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold2_seed11_bands1-2-4\\prediction_C2.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold2_seed11_bands1-2-4\\result.json",
+          "float32_crop_sha256": "9eed2edbbcd69cad24c12b4504bd22b90c996315db52b6996fbe1c72c3b6456f",
+          "run": "pix2pix_fold2_seed11_bands1-2-4"
+        }
+      }
+    },
+    {
+      "scene": "C2",
+      "window": "B",
+      "fold": 2,
+      "x": 4224,
+      "y": 896,
+      "width": 256,
+      "height": 256,
+      "valid_pixels": 65536,
+      "valid_fraction": 1.0,
+      "main_figure": false,
+      "panels": {
+        "RGB": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C2\\scene2.tif",
+          "uint8_crop_sha256": "fc0e4ca24d51e1a973c1514141fe2f6f7cedd9a492944995d92bdf883ebdf4cf"
+        },
+        "B1": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C2\\scene2_band1.tif",
+          "uint8_crop_sha256": "8ae7a7028c3d07245f217042b8779c6ff68248fb243a9c1ba0fc669b9fdc9790"
+        },
+        "B2": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C2\\scene2_band2.tif",
+          "uint8_crop_sha256": "d09e8199b5b7b7fc4238b000fad3073e8e264ec151c97ee5f84a4b75bfb5e6b8"
+        },
+        "B3": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C2\\scene2_band3.tif",
+          "uint8_crop_sha256": "4de0d277cd9abeb5b0cf7116e91b4ceec7d1629090b024904d7ed5ef1f08a8ea"
+        },
+        "B4": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C2\\scene2_band4.tif",
+          "uint8_crop_sha256": "2a3c2554995c7455f8903f0bdbb41101d22ed0e15423e9318d22fd51359f71ad"
+        },
+        "B5": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C2\\scene2_band5.tif",
+          "uint8_crop_sha256": "7ecf0d524c3e0a993055459073187941b1a905b8d67a49f6648854f869a1a45b"
+        },
+        "U-Net / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold2_seed11_bands1-2-3-4-5\\prediction_C2.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold2_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "cb1eac4d9cde4735070204e8a7c873dcd88cee06e5916e7eb4d1a1296b458d61",
+          "run": "unet_fold2_seed11_bands1-2-3-4-5"
+        },
+        "pix2pix / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold2_seed11_bands1-2-3-4-5\\prediction_C2.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold2_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "1fbc07e709ef8c5d34ee865923d7f80aa7bbf96112ae14392684a5b28a741e47",
+          "run": "pix2pix_fold2_seed11_bands1-2-3-4-5"
+        },
+        "TFD / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold2_seed11_bands1-2-3-4-5\\prediction_C2.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold2_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "437d83988e51b7bcac60e6d145cdfa45c83e70e2aeee80f7c952504c11ebc65f",
+          "run": "tfd_fold2_seed11_bands1-2-3-4-5"
+        },
+        "Restormer / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold2_seed11_bands1-2-3-4-5\\prediction_C2.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold2_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "2dd6fed75b4a76f58418c883002e5c4a33806db22324e7afc30d2b21c540cfa5",
+          "run": "restormer_fold2_seed11_bands1-2-3-4-5"
+        },
+        "pix2pix / B1": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold2_seed11_bands1\\prediction_C2.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold2_seed11_bands1\\result.json",
+          "float32_crop_sha256": "8c88052f56c88e1a65971e3b5135fa1582296cb2c981ba7f405fcf9cc83686d4",
+          "run": "pix2pix_fold2_seed11_bands1"
+        },
+        "pix2pix / B1,2,4": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold2_seed11_bands1-2-4\\prediction_C2.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold2_seed11_bands1-2-4\\result.json",
+          "float32_crop_sha256": "47f608d3f1fe6a49714a78cd1cef00358232aacfcd772f14028cde2dbc0880d3",
+          "run": "pix2pix_fold2_seed11_bands1-2-4"
+        }
+      }
+    },
+    {
+      "scene": "C3",
+      "window": "A",
+      "fold": 4,
+      "x": 2048,
+      "y": 640,
+      "width": 256,
+      "height": 256,
+      "valid_pixels": 65536,
+      "valid_fraction": 1.0,
+      "main_figure": false,
+      "panels": {
+        "RGB": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C3\\scene3.tif",
+          "uint8_crop_sha256": "599217f8320615d811e571cee0442ec23d924e7eff5537e37c83eede006f653e"
+        },
+        "B1": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C3\\scene3_band1.tif",
+          "uint8_crop_sha256": "1ff720325470502169b5b023240e102938b4d65a720fb404c5f4bb5dff9fa1fb"
+        },
+        "B2": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C3\\scene3_band2.tif",
+          "uint8_crop_sha256": "7e09a0621de817d0037bf2a7859fc115d3e6b5dac141d4a1e3f6475dacaff0a8"
+        },
+        "B3": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C3\\scene3_band3.tif",
+          "uint8_crop_sha256": "5424a394a75bbd5ed59129001c1b69d43904d13cdca0d13a0a819eae5098eaab"
+        },
+        "B4": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C3\\scene3_band4.tif",
+          "uint8_crop_sha256": "eef186589ec89561d5a69fa3a15263febebcf15b36f35e894aa42cf671bea8c7"
+        },
+        "B5": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C3\\scene3_band5.tif",
+          "uint8_crop_sha256": "aada38ac9ed9ab62338aeed0dd6af15b5e21395e29e938e137a0cd363523469c"
+        },
+        "U-Net / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold4_seed11_bands1-2-3-4-5\\prediction_C3.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold4_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "ad4db042320330ef0d78b04b24b35ba7df6016da345448d8685f07e1b4a7f7ed",
+          "run": "unet_fold4_seed11_bands1-2-3-4-5"
+        },
+        "pix2pix / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold4_seed11_bands1-2-3-4-5\\prediction_C3.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold4_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "d381bdf8c1062c2d4ee41141727b2da7cbe8deaf903ffd352a7fc1989cd56aad",
+          "run": "pix2pix_fold4_seed11_bands1-2-3-4-5"
+        },
+        "TFD / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold4_seed11_bands1-2-3-4-5\\prediction_C3.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold4_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "4721d550483e53c34f055744d66e2b64c5c64ab13828cd2159fa49d5c15b1458",
+          "run": "tfd_fold4_seed11_bands1-2-3-4-5"
+        },
+        "Restormer / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold4_seed11_bands1-2-3-4-5\\prediction_C3.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold4_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "3109367b85d38b1a084b5810823f010409904d7bf71159ee5d7274085279284f",
+          "run": "restormer_fold4_seed11_bands1-2-3-4-5"
+        },
+        "pix2pix / B1": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold4_seed11_bands1\\prediction_C3.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold4_seed11_bands1\\result.json",
+          "float32_crop_sha256": "81091d5ca4dd52874fabfce0b5f779faa16e18cf3915830e2b3e2756358c5b6a",
+          "run": "pix2pix_fold4_seed11_bands1"
+        },
+        "pix2pix / B1,2,4": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold4_seed11_bands1-2-4\\prediction_C3.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold4_seed11_bands1-2-4\\result.json",
+          "float32_crop_sha256": "564e55171ad20f5822aa8cc398629f343648cda5eb433f66564f03e334f6b548",
+          "run": "pix2pix_fold4_seed11_bands1-2-4"
+        }
+      }
+    },
+    {
+      "scene": "C3",
+      "window": "B",
+      "fold": 4,
+      "x": 3072,
+      "y": 640,
+      "width": 256,
+      "height": 256,
+      "valid_pixels": 65536,
+      "valid_fraction": 1.0,
+      "main_figure": false,
+      "panels": {
+        "RGB": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C3\\scene3.tif",
+          "uint8_crop_sha256": "4a4d4d66e2d6aef21465b1ceefe14077b22e2d63c23be51d9b882aeea20bf56b"
+        },
+        "B1": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C3\\scene3_band1.tif",
+          "uint8_crop_sha256": "fa4a8ba35baca6676527544399ffb7628f321dcdbd15de3fe07537c0adf2acc8"
+        },
+        "B2": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C3\\scene3_band2.tif",
+          "uint8_crop_sha256": "54ddddc5f983ac5f89f40bfa5e7043bd6de1e59547130c344c30b227a91bed43"
+        },
+        "B3": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C3\\scene3_band3.tif",
+          "uint8_crop_sha256": "cf64d1b4e2b83bfb4ab4b458fd2f74cb5ede967d00a25155c1bdbb28924348fc"
+        },
+        "B4": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C3\\scene3_band4.tif",
+          "uint8_crop_sha256": "77088a43a0e0dd9974d3a99767d22fb55013d221e95ab09123a6ec5af5f61b4b"
+        },
+        "B5": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C3\\scene3_band5.tif",
+          "uint8_crop_sha256": "e632a586456266b4199dfb65172e9691e744f4b0cd180fdb291305f731b5c203"
+        },
+        "U-Net / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold4_seed11_bands1-2-3-4-5\\prediction_C3.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold4_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "f749db7468d7d107385ed54b48e2f57de2e1f7c246a6ab36897106e158dcc43e",
+          "run": "unet_fold4_seed11_bands1-2-3-4-5"
+        },
+        "pix2pix / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold4_seed11_bands1-2-3-4-5\\prediction_C3.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold4_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "dc79caa8901fb66643ee610d683943b9ea3fd36327ec60ee38a6092991322a41",
+          "run": "pix2pix_fold4_seed11_bands1-2-3-4-5"
+        },
+        "TFD / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold4_seed11_bands1-2-3-4-5\\prediction_C3.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold4_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "2219c294a4d829fbe10f10237f36ccabf2ae8cdb324f7ec5e21168493ef8b10a",
+          "run": "tfd_fold4_seed11_bands1-2-3-4-5"
+        },
+        "Restormer / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold4_seed11_bands1-2-3-4-5\\prediction_C3.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold4_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "f206daf6da554d4dc4d115956c1853cfa313a54fd8314a2e8d315c79797bc3d2",
+          "run": "restormer_fold4_seed11_bands1-2-3-4-5"
+        },
+        "pix2pix / B1": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold4_seed11_bands1\\prediction_C3.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold4_seed11_bands1\\result.json",
+          "float32_crop_sha256": "8894618d7932c9d35d099684545f83e001dba28f37b3b748586fd0e0ab857e5a",
+          "run": "pix2pix_fold4_seed11_bands1"
+        },
+        "pix2pix / B1,2,4": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold4_seed11_bands1-2-4\\prediction_C3.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold4_seed11_bands1-2-4\\result.json",
+          "float32_crop_sha256": "6151beca5c163a2f26ba0a2d779f0186b6aaeab02e35d6d89bd8fe8b44843285",
+          "run": "pix2pix_fold4_seed11_bands1-2-4"
+        }
+      }
+    },
+    {
+      "scene": "C4",
+      "window": "A",
+      "fold": 5,
+      "x": 1792,
+      "y": 640,
+      "width": 256,
+      "height": 256,
+      "valid_pixels": 65536,
+      "valid_fraction": 1.0,
+      "main_figure": true,
+      "panels": {
+        "RGB": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C4\\scene4.tif",
+          "uint8_crop_sha256": "b4e3e1d49daf16732275958bf905fb2c1a95d7e23cf7c42cf60596c1ab9d016a"
+        },
+        "B1": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C4\\scene4_band1.tif",
+          "uint8_crop_sha256": "7df0ba0806c81a261e10afb454f8c283afcdb4f82fc6114e9a57d0bfeea622d3"
+        },
+        "B2": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C4\\scene4_band2.tif",
+          "uint8_crop_sha256": "0b5a7d2f9b07bd23d84ac0b37d5ccfcf715c0a3f9d6be05c4faa1034ed2f235e"
+        },
+        "B3": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C4\\scene4_band3.tif",
+          "uint8_crop_sha256": "32605cc9ce8b220b143bb42848c63e35363f9df107daaa65a52674327b6c7e76"
+        },
+        "B4": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C4\\scene4_band4.tif",
+          "uint8_crop_sha256": "3f08e810cfdc67008a885fb251749186e311fbcc1b706218ac18c9bff4a4383e"
+        },
+        "B5": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C4\\scene4_band5.tif",
+          "uint8_crop_sha256": "455dacffdac0a8f183094bd24994d54ecb7068ec4b472980b53ac1823ef41dd5"
+        },
+        "U-Net / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold5_seed11_bands1-2-3-4-5\\prediction_C4.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold5_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "842f4dbc4c1028dd3336f499c599e856d94cf408bb9fd986614aea62c0cad138",
+          "run": "unet_fold5_seed11_bands1-2-3-4-5"
+        },
+        "pix2pix / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold5_seed11_bands1-2-3-4-5\\prediction_C4.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold5_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "607847c77ae3903b4086a6c046898bd2d92c70ff3f5a3631818efb024e34e2ec",
+          "run": "pix2pix_fold5_seed11_bands1-2-3-4-5"
+        },
+        "TFD / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold5_seed11_bands1-2-3-4-5\\prediction_C4.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold5_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "092813cf7f12bbcb63fe641ac748c213c95727cdf5893b28c2a0a64efb997a8a",
+          "run": "tfd_fold5_seed11_bands1-2-3-4-5"
+        },
+        "Restormer / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold5_seed11_bands1-2-3-4-5\\prediction_C4.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold5_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "4cff9090064dfd97b94f466eb53d2e4c2882c72346ab25ec30516a0dfd88e2c8",
+          "run": "restormer_fold5_seed11_bands1-2-3-4-5"
+        },
+        "pix2pix / B1": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold5_seed11_bands1\\prediction_C4.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold5_seed11_bands1\\result.json",
+          "float32_crop_sha256": "fa3b99538294da9f16d1ab1d1b732b0fd669812cce0e6f18a3e6211e35556d90",
+          "run": "pix2pix_fold5_seed11_bands1"
+        },
+        "pix2pix / B1,2,4": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold5_seed11_bands1-2-4\\prediction_C4.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold5_seed11_bands1-2-4\\result.json",
+          "float32_crop_sha256": "6c7f24f8fadc1ec5ce4e920e769fc09a8815c751fa6598e9fbc8ae9ceb2797c6",
+          "run": "pix2pix_fold5_seed11_bands1-2-4"
+        }
+      }
+    },
+    {
+      "scene": "C4",
+      "window": "B",
+      "fold": 5,
+      "x": 2688,
+      "y": 256,
+      "width": 256,
+      "height": 256,
+      "valid_pixels": 65536,
+      "valid_fraction": 1.0,
+      "main_figure": false,
+      "panels": {
+        "RGB": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C4\\scene4.tif",
+          "uint8_crop_sha256": "5d30e26298cd81b2da5777043ae912d4032b2b6fe072a7c1ac6fe2ce66d8fac1"
+        },
+        "B1": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C4\\scene4_band1.tif",
+          "uint8_crop_sha256": "e4e5c645748589da3a996c256b8f3aae939a0ef4c2d10b006fa73a349d30632a"
+        },
+        "B2": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C4\\scene4_band2.tif",
+          "uint8_crop_sha256": "100e4d9572673c1dfc7eb4a71acb20676597cb9d8bad6b46333eb976a5af7679"
+        },
+        "B3": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C4\\scene4_band3.tif",
+          "uint8_crop_sha256": "d023d271bd24f410b124aa5119e40d44f5e5ce2d2d5802c80a8d41348e04a9c7"
+        },
+        "B4": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C4\\scene4_band4.tif",
+          "uint8_crop_sha256": "3b2a39f4d2a604ffc44d21e41cd6f0e970429f2494a64b729578d62de0925020"
+        },
+        "B5": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C4\\scene4_band5.tif",
+          "uint8_crop_sha256": "d9470104cc0b1ed722a5f2ca6735419110db2e43019b39c92a009752ccec0eed"
+        },
+        "U-Net / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold5_seed11_bands1-2-3-4-5\\prediction_C4.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold5_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "b8097ea10f9ccd46cd969a340384a5156d1c24823e017bd16066c86c0714c701",
+          "run": "unet_fold5_seed11_bands1-2-3-4-5"
+        },
+        "pix2pix / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold5_seed11_bands1-2-3-4-5\\prediction_C4.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold5_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "fa718be859aeb9719de1c79a382264d19ca80c8366af5dc86d6f9f49763f4c00",
+          "run": "pix2pix_fold5_seed11_bands1-2-3-4-5"
+        },
+        "TFD / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold5_seed11_bands1-2-3-4-5\\prediction_C4.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold5_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "945f433092a18cdcb67ae668f75d33a8d8d5f2b53452e4fb77f0cd69f4495124",
+          "run": "tfd_fold5_seed11_bands1-2-3-4-5"
+        },
+        "Restormer / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold5_seed11_bands1-2-3-4-5\\prediction_C4.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold5_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "9d95fa35b0fbe55654b7390411dcae649eb913a590b1630766ad6bce76f360c3",
+          "run": "restormer_fold5_seed11_bands1-2-3-4-5"
+        },
+        "pix2pix / B1": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold5_seed11_bands1\\prediction_C4.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold5_seed11_bands1\\result.json",
+          "float32_crop_sha256": "2c85c8a5f01be41cf32f637eda83f48804d9773c4f0759bde4ea459a09811bb5",
+          "run": "pix2pix_fold5_seed11_bands1"
+        },
+        "pix2pix / B1,2,4": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold5_seed11_bands1-2-4\\prediction_C4.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold5_seed11_bands1-2-4\\result.json",
+          "float32_crop_sha256": "e67afa7bc911157b7d38d663878e8a0867f6392a923cbf47a0a3bfc2112d4f56",
+          "run": "pix2pix_fold5_seed11_bands1-2-4"
+        }
+      }
+    },
+    {
+      "scene": "C5",
+      "window": "A",
+      "fold": 3,
+      "x": 7680,
+      "y": 256,
+      "width": 256,
+      "height": 256,
+      "valid_pixels": 65536,
+      "valid_fraction": 1.0,
+      "main_figure": false,
+      "panels": {
+        "RGB": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C5\\scene5.tif",
+          "uint8_crop_sha256": "94ce606b2a4c67ad2b1883551323cf0d4548903fae94812439cdc3710072580c"
+        },
+        "B1": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C5\\scene5_band1.tif",
+          "uint8_crop_sha256": "3bb634205c9751ad91ca2b8cfa89d26fa5d110c1de7a3c4bf375b6401cb3b215"
+        },
+        "B2": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C5\\scene5_band2.tif",
+          "uint8_crop_sha256": "612a0fc4c847b91b7058f7b8219cb95588450b9518e2f7c9b3d490aa01b0fd7d"
+        },
+        "B3": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C5\\scene5_band3.tif",
+          "uint8_crop_sha256": "c81d7f0b5561309d0d404d3342567885c44acd82b9e821a08a76be244b880205"
+        },
+        "B4": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C5\\scene5_band4.tif",
+          "uint8_crop_sha256": "393534e960c3d6b68230d1ff57247e6eb909eee64a25e1d6c079dadd1acbcf79"
+        },
+        "B5": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C5\\scene5_band5.tif",
+          "uint8_crop_sha256": "88cabb09a2266df2ad32a63ee00c7f786b9f9ff1825daf4b3dec0abda8f9a3f4"
+        },
+        "U-Net / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold3_seed11_bands1-2-3-4-5\\prediction_C5.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold3_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "8e2dc28c82330c2a5815dd51c327fc8ffab7c1e598bf0d1ba0bdd003f03760f9",
+          "run": "unet_fold3_seed11_bands1-2-3-4-5"
+        },
+        "pix2pix / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold3_seed11_bands1-2-3-4-5\\prediction_C5.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold3_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "23a96ae9df781247035ecfd3b42c92448c6078a60ed6888e4fd707a3a12e8c15",
+          "run": "pix2pix_fold3_seed11_bands1-2-3-4-5"
+        },
+        "TFD / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold3_seed11_bands1-2-3-4-5\\prediction_C5.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold3_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "6a270a40365bede5af41f5d046328ab3bcfb45671ff5c262b822697f83cdadf4",
+          "run": "tfd_fold3_seed11_bands1-2-3-4-5"
+        },
+        "Restormer / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold3_seed11_bands1-2-3-4-5\\prediction_C5.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold3_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "906e08c183753db1c2f0df08761404d57bf7952245f57e83a88182a08593c6b4",
+          "run": "restormer_fold3_seed11_bands1-2-3-4-5"
+        },
+        "pix2pix / B1": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold3_seed11_bands1\\prediction_C5.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold3_seed11_bands1\\result.json",
+          "float32_crop_sha256": "44afb6caed9eefb3b04e9973abc395de7e039ac75a6120c9d70fe635887ccb59",
+          "run": "pix2pix_fold3_seed11_bands1"
+        },
+        "pix2pix / B1,2,4": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold3_seed11_bands1-2-4\\prediction_C5.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold3_seed11_bands1-2-4\\result.json",
+          "float32_crop_sha256": "f048f1cd6c56cd6a349bc8225d57249718cf932a8df65343539ecd8b7353a8be",
+          "run": "pix2pix_fold3_seed11_bands1-2-4"
+        }
+      }
+    },
+    {
+      "scene": "C5",
+      "window": "B",
+      "fold": 3,
+      "x": 7680,
+      "y": 0,
+      "width": 256,
+      "height": 256,
+      "valid_pixels": 65535,
+      "valid_fraction": 0.9999847412109375,
+      "main_figure": false,
+      "panels": {
+        "RGB": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C5\\scene5.tif",
+          "uint8_crop_sha256": "fac4c39e14016538282535853729fd30f9f386fa29b1280c9d3810be0e8f505b"
+        },
+        "B1": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C5\\scene5_band1.tif",
+          "uint8_crop_sha256": "dce5136ae9ee984ddf0818fd1cc228faf39698024fd71cab9d04c6c0fbe6f772"
+        },
+        "B2": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C5\\scene5_band2.tif",
+          "uint8_crop_sha256": "19997fdae6f884ce6c334cf5aa5339e4af423d8c9c18b31fcc2259dbbc199eeb"
+        },
+        "B3": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C5\\scene5_band3.tif",
+          "uint8_crop_sha256": "e3c68b170b8dadfeba4c2e9697eb81ee91fb73bfd01ba7dbf3bd6f040ad889a1"
+        },
+        "B4": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C5\\scene5_band4.tif",
+          "uint8_crop_sha256": "b2351fd6eb06d21d2b14cc446cbaa0e7ff3ab1456b65486ee397f23f983545b9"
+        },
+        "B5": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C5\\scene5_band5.tif",
+          "uint8_crop_sha256": "39a7e67c1238a95da7d076d6006ff7076d733aa485206b75b6475692125ffe20"
+        },
+        "U-Net / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold3_seed11_bands1-2-3-4-5\\prediction_C5.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold3_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "5d31d0caa6294059b4b3fb16bad8f931d6a786f886bc50d83c45cf5229bbf992",
+          "run": "unet_fold3_seed11_bands1-2-3-4-5"
+        },
+        "pix2pix / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold3_seed11_bands1-2-3-4-5\\prediction_C5.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold3_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "6a0e8ce8d6e32728a017607bff876993dc7d26879320366d1ea83f13b1feeb97",
+          "run": "pix2pix_fold3_seed11_bands1-2-3-4-5"
+        },
+        "TFD / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold3_seed11_bands1-2-3-4-5\\prediction_C5.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold3_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "a20a795a45418b87cf9b50f430b27c0316020a82fcb27dc7e34214e70f4bc6b9",
+          "run": "tfd_fold3_seed11_bands1-2-3-4-5"
+        },
+        "Restormer / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold3_seed11_bands1-2-3-4-5\\prediction_C5.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold3_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "de44b3006dac6e641d7ce2e0e45c00ad4da9d2299d1edbecf10c6be8e2fbc6ff",
+          "run": "restormer_fold3_seed11_bands1-2-3-4-5"
+        },
+        "pix2pix / B1": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold3_seed11_bands1\\prediction_C5.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold3_seed11_bands1\\result.json",
+          "float32_crop_sha256": "4d61f428ce565129b9f84cf3fbcf9bfef640baf1efe0bbd48c6d26f5b65dc1fd",
+          "run": "pix2pix_fold3_seed11_bands1"
+        },
+        "pix2pix / B1,2,4": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold3_seed11_bands1-2-4\\prediction_C5.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold3_seed11_bands1-2-4\\result.json",
+          "float32_crop_sha256": "1de40c60aa99afa479ee61621bc4f5d9a21f076064806938e4264291261c8b7d",
+          "run": "pix2pix_fold3_seed11_bands1-2-4"
+        }
+      }
+    },
+    {
+      "scene": "C6",
+      "window": "A",
+      "fold": 4,
+      "x": 2432,
+      "y": 640,
+      "width": 256,
+      "height": 256,
+      "valid_pixels": 65536,
+      "valid_fraction": 1.0,
+      "main_figure": false,
+      "panels": {
+        "RGB": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C6\\scene6.tif",
+          "uint8_crop_sha256": "3da99c316834138c6f56315204a20a00ad242e55412c373134ee2ad4ac419d20"
+        },
+        "B1": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C6\\scene6_band1.tif",
+          "uint8_crop_sha256": "cb39ca8627a2ac574da98b73b1876d7a7c738f4f42a176c0a5900e2cb26d312d"
+        },
+        "B2": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C6\\scene6_band2.tif",
+          "uint8_crop_sha256": "df259f40f07789f19c72af24176df7b5c17b6b3530a2546b302b2ad85d159f8e"
+        },
+        "B3": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C6\\scene6_band3.tif",
+          "uint8_crop_sha256": "dbffb4651340c6c77167cdd7d9c2e36e6fa83127ed5f41f3953c47e4788910aa"
+        },
+        "B4": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C6\\scene6_band4.tif",
+          "uint8_crop_sha256": "513c2e7a0fb91ff62b2e21bb2d72bb0bb87771e08d46588ad376a57fb63a5e53"
+        },
+        "B5": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C6\\scene6_band5.tif",
+          "uint8_crop_sha256": "d761833dd0df89153363257171945e90ae3a0f0669f0d26dc3c1ef9cf21be6a5"
+        },
+        "U-Net / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold4_seed11_bands1-2-3-4-5\\prediction_C6.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold4_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "06c09d1cfb2d4db0f7710cf6fd5a49faf5c594f15ec9b58c9fe4aa6fabde5a99",
+          "run": "unet_fold4_seed11_bands1-2-3-4-5"
+        },
+        "pix2pix / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold4_seed11_bands1-2-3-4-5\\prediction_C6.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold4_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "ebac21ea57cc8e53b09b3484757c5692b7df14aec3675124a3b00bb849352fd9",
+          "run": "pix2pix_fold4_seed11_bands1-2-3-4-5"
+        },
+        "TFD / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold4_seed11_bands1-2-3-4-5\\prediction_C6.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold4_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "be1abd3e5a277f53d62373e0e001fe0ba5c08955dd8be7817bf1b6463b708425",
+          "run": "tfd_fold4_seed11_bands1-2-3-4-5"
+        },
+        "Restormer / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold4_seed11_bands1-2-3-4-5\\prediction_C6.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold4_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "609dc27020438b3136923b685283c72fe470723febcb0e8884d098c26195bcc2",
+          "run": "restormer_fold4_seed11_bands1-2-3-4-5"
+        },
+        "pix2pix / B1": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold4_seed11_bands1\\prediction_C6.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold4_seed11_bands1\\result.json",
+          "float32_crop_sha256": "98abe29d2c3b6fce336884a6f67879518fe7fa9d26a7fdb223d5edb4317a7df3",
+          "run": "pix2pix_fold4_seed11_bands1"
+        },
+        "pix2pix / B1,2,4": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold4_seed11_bands1-2-4\\prediction_C6.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold4_seed11_bands1-2-4\\result.json",
+          "float32_crop_sha256": "f75fdebcc3128c6403bca5080f25d0cd0cedb3559d288425966f562c553f5c43",
+          "run": "pix2pix_fold4_seed11_bands1-2-4"
+        }
+      }
+    },
+    {
+      "scene": "C6",
+      "window": "B",
+      "fold": 4,
+      "x": 4096,
+      "y": 384,
+      "width": 256,
+      "height": 256,
+      "valid_pixels": 65536,
+      "valid_fraction": 1.0,
+      "main_figure": false,
+      "panels": {
+        "RGB": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C6\\scene6.tif",
+          "uint8_crop_sha256": "a4d5ef5d51abeac4e8bf3d25920c846252c20f2cff2bff6cea6c9f824d79e197"
+        },
+        "B1": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C6\\scene6_band1.tif",
+          "uint8_crop_sha256": "6e1113ee4ba7aab5910c0ac05ca42c6869f17b806dfef287ae6fea7fa7d87346"
+        },
+        "B2": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C6\\scene6_band2.tif",
+          "uint8_crop_sha256": "4ab6cf3546b5f74cc24a7b348a94fa2da96785b11c9e4c0bc1e6338fb1e8b718"
+        },
+        "B3": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C6\\scene6_band3.tif",
+          "uint8_crop_sha256": "30e6dfd1187a1662d3c74e65c766575c483c2a28373222f85b68112dda69f656"
+        },
+        "B4": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C6\\scene6_band4.tif",
+          "uint8_crop_sha256": "64191f80fbd902c3ed2ae81569a9b4f9df83adbf9bb898fe56b74fcb32ec328f"
+        },
+        "B5": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C6\\scene6_band5.tif",
+          "uint8_crop_sha256": "a3a3533262a0eef36e6ba68b4f34f252e8ab9eb9c2af2f0385b58e1969331a68"
+        },
+        "U-Net / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold4_seed11_bands1-2-3-4-5\\prediction_C6.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold4_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "a1586eb293e1c05e65c54929278a3d8bbac04384b13e10464325d0f333af9705",
+          "run": "unet_fold4_seed11_bands1-2-3-4-5"
+        },
+        "pix2pix / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold4_seed11_bands1-2-3-4-5\\prediction_C6.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold4_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "3267fecf589a2998da1fed1c224b60c0a35d3aa9fefdd7cb58a1276e4537ffa7",
+          "run": "pix2pix_fold4_seed11_bands1-2-3-4-5"
+        },
+        "TFD / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold4_seed11_bands1-2-3-4-5\\prediction_C6.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold4_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "e9cd82a01ef6a0b3c470b979aa2a869fa49ae7ab9dcddec22b841571fa22f027",
+          "run": "tfd_fold4_seed11_bands1-2-3-4-5"
+        },
+        "Restormer / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold4_seed11_bands1-2-3-4-5\\prediction_C6.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold4_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "e5a575cec38582eee19840160783eb68bb056a4d3cb3570c44455889b9ca0d14",
+          "run": "restormer_fold4_seed11_bands1-2-3-4-5"
+        },
+        "pix2pix / B1": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold4_seed11_bands1\\prediction_C6.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold4_seed11_bands1\\result.json",
+          "float32_crop_sha256": "6191b13cf8f8b60bd74ee1c7a7838d61896ef2db9540b4eb76aa1ba7ccd4b8df",
+          "run": "pix2pix_fold4_seed11_bands1"
+        },
+        "pix2pix / B1,2,4": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold4_seed11_bands1-2-4\\prediction_C6.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold4_seed11_bands1-2-4\\result.json",
+          "float32_crop_sha256": "4dd93b72fbe6a7a30255ff6e8b290673d6a0fab4b7c600d2b4615c3e0efcce01",
+          "run": "pix2pix_fold4_seed11_bands1-2-4"
+        }
+      }
+    },
+    {
+      "scene": "C7",
+      "window": "A",
+      "fold": 5,
+      "x": 8832,
+      "y": 1024,
+      "width": 256,
+      "height": 256,
+      "valid_pixels": 65536,
+      "valid_fraction": 1.0,
+      "main_figure": true,
+      "panels": {
+        "RGB": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C7\\scene7.tif",
+          "uint8_crop_sha256": "4ae56de56fba4eaf8ff55496ff8ae4f43ee4d3fdc82e9fb8ad72934a19457c74"
+        },
+        "B1": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C7\\scene7_band1.tif",
+          "uint8_crop_sha256": "9e3495915dae437264aaacda7c9d5580c37ca9fd198befe896be45de11fcfcd1"
+        },
+        "B2": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C7\\scene7_band2.tif",
+          "uint8_crop_sha256": "66a8e6bdf7204802efc32f2fc18541a03fc4a1d41476b382249631c9ac35b29c"
+        },
+        "B3": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C7\\scene7_band3.tif",
+          "uint8_crop_sha256": "e64c7317b50df89a2fc6b18a901573cf852a408af2e2e7b0a838256bbb535781"
+        },
+        "B4": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C7\\scene7_band4.tif",
+          "uint8_crop_sha256": "226a4b014ed5c166c3ece45188d006bc9448d00338cbe0a38b7e5f34f0e09f12"
+        },
+        "B5": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C7\\scene7_band5.tif",
+          "uint8_crop_sha256": "3347a91ab89fbc143389a99e7a683c07fbc7144172ca3ff49614eb1c1984fb99"
+        },
+        "U-Net / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold5_seed11_bands1-2-3-4-5\\prediction_C7.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold5_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "3be6f55d7b2ffb00ac4b69489017e2104ce35baaecce802ae2de3387e4850a5d",
+          "run": "unet_fold5_seed11_bands1-2-3-4-5"
+        },
+        "pix2pix / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold5_seed11_bands1-2-3-4-5\\prediction_C7.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold5_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "cf7b1683bef56aa7891c42bca835278476cb8c33b4cda944284a01f999c25abe",
+          "run": "pix2pix_fold5_seed11_bands1-2-3-4-5"
+        },
+        "TFD / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold5_seed11_bands1-2-3-4-5\\prediction_C7.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold5_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "997d6b336aed0a3c17861f2e094b164e1cb1ab4733c4e5ed706a631b28997ced",
+          "run": "tfd_fold5_seed11_bands1-2-3-4-5"
+        },
+        "Restormer / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold5_seed11_bands1-2-3-4-5\\prediction_C7.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold5_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "7660e833a7f4dc6b959635521632ce94fe96fe04ff0c0e55c0f3d9aa819c3535",
+          "run": "restormer_fold5_seed11_bands1-2-3-4-5"
+        },
+        "pix2pix / B1": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold5_seed11_bands1\\prediction_C7.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold5_seed11_bands1\\result.json",
+          "float32_crop_sha256": "f0a47958e75ffd646ca3d24c31005fdacb5a9a7e271055b81e678220273a41b4",
+          "run": "pix2pix_fold5_seed11_bands1"
+        },
+        "pix2pix / B1,2,4": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold5_seed11_bands1-2-4\\prediction_C7.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold5_seed11_bands1-2-4\\result.json",
+          "float32_crop_sha256": "ac403b3a9c9f612df2544c1cad25fb33918976d87b1b923690b0dba2fa5cec91",
+          "run": "pix2pix_fold5_seed11_bands1-2-4"
+        }
+      }
+    },
+    {
+      "scene": "C7",
+      "window": "B",
+      "fold": 5,
+      "x": 1024,
+      "y": 1024,
+      "width": 256,
+      "height": 256,
+      "valid_pixels": 65536,
+      "valid_fraction": 1.0,
+      "main_figure": false,
+      "panels": {
+        "RGB": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C7\\scene7.tif",
+          "uint8_crop_sha256": "47b38e08c82c7cce22e0951ccae76c2d850fc778012c091cc9f3ec9f81e4e487"
+        },
+        "B1": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C7\\scene7_band1.tif",
+          "uint8_crop_sha256": "06dabcfa78907f608c431b7e303a350be22fa616f757a1864e46830b14a8495c"
+        },
+        "B2": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C7\\scene7_band2.tif",
+          "uint8_crop_sha256": "ac052dde759cc59efc192ca776b6965b8733e72f85c8a2b8cbadd120ae0ceae4"
+        },
+        "B3": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C7\\scene7_band3.tif",
+          "uint8_crop_sha256": "c37b2dbde9fa4e672403f9839d62eccf205f8cf2ab41c7654fb22ac685d90439"
+        },
+        "B4": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C7\\scene7_band4.tif",
+          "uint8_crop_sha256": "979a85638e4cdf08f90b03fcb2de92ce93544390e3316f83906f21bf5d075e3b"
+        },
+        "B5": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C7\\scene7_band5.tif",
+          "uint8_crop_sha256": "22fda6f33eddb63080af6f1310427b8add8955b4728e223ca955af2c63266e8d"
+        },
+        "U-Net / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold5_seed11_bands1-2-3-4-5\\prediction_C7.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold5_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "a414fef505f48dc3d817c43e5008bf79a009e0ae78d0868551a97ba56af19398",
+          "run": "unet_fold5_seed11_bands1-2-3-4-5"
+        },
+        "pix2pix / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold5_seed11_bands1-2-3-4-5\\prediction_C7.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold5_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "36f194b03614471ce0fe1df4e9413b802b682a670a78fcfa17286aa9b129eff4",
+          "run": "pix2pix_fold5_seed11_bands1-2-3-4-5"
+        },
+        "TFD / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold5_seed11_bands1-2-3-4-5\\prediction_C7.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold5_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "062cbdbd9aecbdf2b4681a3804eaa9dfa6ded981399c0a6dff48919dc3333b84",
+          "run": "tfd_fold5_seed11_bands1-2-3-4-5"
+        },
+        "Restormer / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold5_seed11_bands1-2-3-4-5\\prediction_C7.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold5_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "84be8642146222504ded0cafa6472e766063891a0fd6830d8a22ae6e284c839c",
+          "run": "restormer_fold5_seed11_bands1-2-3-4-5"
+        },
+        "pix2pix / B1": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold5_seed11_bands1\\prediction_C7.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold5_seed11_bands1\\result.json",
+          "float32_crop_sha256": "d533d84024e0f33598dfb35b086c2311e6b547b81de7c73ec1591a11124c5836",
+          "run": "pix2pix_fold5_seed11_bands1"
+        },
+        "pix2pix / B1,2,4": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold5_seed11_bands1-2-4\\prediction_C7.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold5_seed11_bands1-2-4\\result.json",
+          "float32_crop_sha256": "523fcc750e60a590d9f110a0d43ee867b13a7127d3821868703e288f203d4b63",
+          "run": "pix2pix_fold5_seed11_bands1-2-4"
+        }
+      }
+    },
+    {
+      "scene": "C8",
+      "window": "A",
+      "fold": 1,
+      "x": 3456,
+      "y": 1408,
+      "width": 256,
+      "height": 256,
+      "valid_pixels": 65536,
+      "valid_fraction": 1.0,
+      "main_figure": false,
+      "panels": {
+        "RGB": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C8\\scene8.tif",
+          "uint8_crop_sha256": "cd5b5e59c54d175d1ab33b09fcfb38059941263f7dad11260a737d1391d6ab13"
+        },
+        "B1": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C8\\scene8_band1.tif",
+          "uint8_crop_sha256": "c37a169d037b055d973572899360899ee0bf5156975739b16bcb4c954d5eb09b"
+        },
+        "B2": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C8\\scene8_band2.tif",
+          "uint8_crop_sha256": "a4c80973fe1e81d6b8cb0a514a4b84ee4b3e96ebeef2fcfc8886b124df67fde5"
+        },
+        "B3": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C8\\scene8_band3.tif",
+          "uint8_crop_sha256": "18deb435e2e6236ffe8c0a21e66d6c0d64939c8e91d332c94a4dbc632c6dc914"
+        },
+        "B4": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C8\\scene8_band4.tif",
+          "uint8_crop_sha256": "530f6983ac4340687571302f859648089329460c4d4181f45c69d12114bab9b2"
+        },
+        "B5": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C8\\scene8_band5.tif",
+          "uint8_crop_sha256": "21fe41a44bbc9a39675c1e6c1f4a9a93872a7e822e684399ae5719227f2d01d3"
+        },
+        "U-Net / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold1_seed11_bands1-2-3-4-5\\prediction_C8.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold1_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "1e7cff8c7f9758c6bc7fac277735794b7b8ee615da2e482f3630f4e2cb239fe3",
+          "run": "unet_fold1_seed11_bands1-2-3-4-5"
+        },
+        "pix2pix / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold1_seed11_bands1-2-3-4-5\\prediction_C8.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold1_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "b298c7034636456ddec1fcc1efad00d9c64d3e36f849aed8655f50f61ce74a4f",
+          "run": "pix2pix_fold1_seed11_bands1-2-3-4-5"
+        },
+        "TFD / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold1_seed11_bands1-2-3-4-5\\prediction_C8.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold1_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "fc4d6eb958fabb23b96c236baa586e7fe3ebe84e448afb37e57becd6b7a0fdac",
+          "run": "tfd_fold1_seed11_bands1-2-3-4-5"
+        },
+        "Restormer / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold1_seed11_bands1-2-3-4-5\\prediction_C8.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold1_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "fe72ee3130e3e266d995aec1009a90b96d0b23f4724633cdd24584b455f3a9fe",
+          "run": "restormer_fold1_seed11_bands1-2-3-4-5"
+        },
+        "pix2pix / B1": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold1_seed11_bands1\\prediction_C8.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold1_seed11_bands1\\result.json",
+          "float32_crop_sha256": "6d40e2514ae5e2bbdfe0aba02851a63e6100ca526adfb6bbea1eccbd23bb1ddc",
+          "run": "pix2pix_fold1_seed11_bands1"
+        },
+        "pix2pix / B1,2,4": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold1_seed11_bands1-2-4\\prediction_C8.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold1_seed11_bands1-2-4\\result.json",
+          "float32_crop_sha256": "eadc49336cc76cefba2e5708f3e493e402151a38fe40103bb8e0c1e82b7e28df",
+          "run": "pix2pix_fold1_seed11_bands1-2-4"
+        }
+      }
+    },
+    {
+      "scene": "C8",
+      "window": "B",
+      "fold": 1,
+      "x": 4992,
+      "y": 1152,
+      "width": 256,
+      "height": 256,
+      "valid_pixels": 65536,
+      "valid_fraction": 1.0,
+      "main_figure": false,
+      "panels": {
+        "RGB": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C8\\scene8.tif",
+          "uint8_crop_sha256": "0cb965e90bf976d49c34956bf136c3a9615741183f7bfdb9672e7f5ce732fa3f"
+        },
+        "B1": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C8\\scene8_band1.tif",
+          "uint8_crop_sha256": "95cf09c4d12a38f1017d130229885ae98e8df13204e6b299c296095d06e6b95a"
+        },
+        "B2": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C8\\scene8_band2.tif",
+          "uint8_crop_sha256": "1d6aa8c6ec2c14d8f2761f27801436b2856d662702d74609c7162a006841d915"
+        },
+        "B3": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C8\\scene8_band3.tif",
+          "uint8_crop_sha256": "906e5163c65e177e0b924f54dfa58548ff22089fce57c49320e82fa01c7418f9"
+        },
+        "B4": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C8\\scene8_band4.tif",
+          "uint8_crop_sha256": "8cfc4b04d600b157e3102d43e92f45a87b531788f06a1b6347b128ddcceb4463"
+        },
+        "B5": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C8\\scene8_band5.tif",
+          "uint8_crop_sha256": "b2486094896946113c80630ccd1c6e994c3094b7e795e2b27200b7dce2c5d3b0"
+        },
+        "U-Net / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold1_seed11_bands1-2-3-4-5\\prediction_C8.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold1_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "f6333c579292e7007654c1ac323d106bb19eb92f60c96296024f40a657d486af",
+          "run": "unet_fold1_seed11_bands1-2-3-4-5"
+        },
+        "pix2pix / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold1_seed11_bands1-2-3-4-5\\prediction_C8.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold1_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "8e410fa9d23c045a30c15affd2dc2047e29393da6f2418bc022337731b1208c7",
+          "run": "pix2pix_fold1_seed11_bands1-2-3-4-5"
+        },
+        "TFD / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold1_seed11_bands1-2-3-4-5\\prediction_C8.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold1_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "556023879a3de115006bec374c164ddd98e84ef62d7b61b5b4079cd83a69750c",
+          "run": "tfd_fold1_seed11_bands1-2-3-4-5"
+        },
+        "Restormer / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold1_seed11_bands1-2-3-4-5\\prediction_C8.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold1_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "fe7c26de8283f2510be99314d5b3b380848b3e5da3263c5aa2834e625a6a088a",
+          "run": "restormer_fold1_seed11_bands1-2-3-4-5"
+        },
+        "pix2pix / B1": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold1_seed11_bands1\\prediction_C8.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold1_seed11_bands1\\result.json",
+          "float32_crop_sha256": "72245a702e70e8b1445557999c600d7f25afc569dee3cd695c99e0765e1491b8",
+          "run": "pix2pix_fold1_seed11_bands1"
+        },
+        "pix2pix / B1,2,4": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold1_seed11_bands1-2-4\\prediction_C8.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold1_seed11_bands1-2-4\\result.json",
+          "float32_crop_sha256": "86969b0d923a86a7fe22c59d2aae52a7c34c8488e49faa45aa3173423241421b",
+          "run": "pix2pix_fold1_seed11_bands1-2-4"
+        }
+      }
+    },
+    {
+      "scene": "C9",
+      "window": "A",
+      "fold": 2,
+      "x": 2048,
+      "y": 2176,
+      "width": 256,
+      "height": 256,
+      "valid_pixels": 65536,
+      "valid_fraction": 1.0,
+      "main_figure": false,
+      "panels": {
+        "RGB": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C9\\scene9.tif",
+          "uint8_crop_sha256": "e8ebafc8cacca09f0e28034825404bc1df3fe96576d399f4c503547f82cc91aa"
+        },
+        "B1": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C9\\scene9_band1.tif",
+          "uint8_crop_sha256": "60975301020d84a1973be544756b2c21eafaa0a8ca5eb70e6b5539859c18f885"
+        },
+        "B2": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C9\\scene9_band2.tif",
+          "uint8_crop_sha256": "da4971faf10cd52b05e8cd5121c3c66a2d08a7d8ec7df723160fc0eac94d3ceb"
+        },
+        "B3": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C9\\scene9_band3.tif",
+          "uint8_crop_sha256": "47f7d27e9c09ce66cd909bc83169ce4ce908e798cc9ee1726d3c2902f10e3aed"
+        },
+        "B4": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C9\\scene9_band4.tif",
+          "uint8_crop_sha256": "903a03e24cb5b39248ed60f2d376a7ab91b41b87deffc285440918122a114f67"
+        },
+        "B5": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C9\\scene9_band5.tif",
+          "uint8_crop_sha256": "2b3b23ad2192f378a530662acb7b904baa489a71bf728ffdd02ed40d089035f1"
+        },
+        "U-Net / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold2_seed11_bands1-2-3-4-5\\prediction_C9.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold2_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "7b436d46f2eeb32dd92e20a610c2c7703a26c6ed8f3876e6463bbcb7915924b8",
+          "run": "unet_fold2_seed11_bands1-2-3-4-5"
+        },
+        "pix2pix / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold2_seed11_bands1-2-3-4-5\\prediction_C9.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold2_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "835ecd513302194d7dea832d3b88edf95c439770d8bee69ca897a50de64d49ac",
+          "run": "pix2pix_fold2_seed11_bands1-2-3-4-5"
+        },
+        "TFD / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold2_seed11_bands1-2-3-4-5\\prediction_C9.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold2_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "65b52e6fa00129beefc7b38517a538128abe2fbad8a43be2d95b1d0382b046d3",
+          "run": "tfd_fold2_seed11_bands1-2-3-4-5"
+        },
+        "Restormer / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold2_seed11_bands1-2-3-4-5\\prediction_C9.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold2_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "6cf475a4654c9e86635ae3e1d8753fd8bc9b8606b7740068e89581e392dbd35b",
+          "run": "restormer_fold2_seed11_bands1-2-3-4-5"
+        },
+        "pix2pix / B1": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold2_seed11_bands1\\prediction_C9.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold2_seed11_bands1\\result.json",
+          "float32_crop_sha256": "e97875bb891f09226ef24e66fc01222df779f8adcae0c2bbacb578b435d111a8",
+          "run": "pix2pix_fold2_seed11_bands1"
+        },
+        "pix2pix / B1,2,4": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold2_seed11_bands1-2-4\\prediction_C9.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold2_seed11_bands1-2-4\\result.json",
+          "float32_crop_sha256": "bdaa69047f9c23fee6113b834ad9b8cdd9b7c78637dcf626c7510b687815e4a9",
+          "run": "pix2pix_fold2_seed11_bands1-2-4"
+        }
+      }
+    },
+    {
+      "scene": "C9",
+      "window": "B",
+      "fold": 2,
+      "x": 2176,
+      "y": 2432,
+      "width": 256,
+      "height": 256,
+      "valid_pixels": 65536,
+      "valid_fraction": 1.0,
+      "main_figure": false,
+      "panels": {
+        "RGB": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C9\\scene9.tif",
+          "uint8_crop_sha256": "dc4d1bcbf5d86f53e1ef158341cd8e27cc6c2f5cded85c8c33506398bfad8763"
+        },
+        "B1": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C9\\scene9_band1.tif",
+          "uint8_crop_sha256": "c425851bc2f3a820e464e1792e29a1f189239183c3252aadc780316b3a4c9d01"
+        },
+        "B2": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C9\\scene9_band2.tif",
+          "uint8_crop_sha256": "466ba2b1ad013705efe9de0689f3c1d1b85387a247d2f7f3c1bd8babed84f33d"
+        },
+        "B3": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C9\\scene9_band3.tif",
+          "uint8_crop_sha256": "253194e816d8c628ced5520aea9010fdebd086a7d411d893260fc12c676827f1"
+        },
+        "B4": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C9\\scene9_band4.tif",
+          "uint8_crop_sha256": "8921dedfc225637d945f67bdd94d7b9ceb737612d594d7c437e0c26c733d88fb"
+        },
+        "B5": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C9\\scene9_band5.tif",
+          "uint8_crop_sha256": "e79fbbbf369f0e3ef1d0bc2270add6f72861fecdb956c39b8b547690f7ce70ee"
+        },
+        "U-Net / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold2_seed11_bands1-2-3-4-5\\prediction_C9.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold2_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "f5ee7cff02c510817051f0a7537f51eb2998fdd2ebd5f18c72fff6e7ccb191af",
+          "run": "unet_fold2_seed11_bands1-2-3-4-5"
+        },
+        "pix2pix / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold2_seed11_bands1-2-3-4-5\\prediction_C9.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold2_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "0efe670fb6871c0cf3e2e94e193397b133c9fc6aa8faf3b5525e28f33ba8fef0",
+          "run": "pix2pix_fold2_seed11_bands1-2-3-4-5"
+        },
+        "TFD / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold2_seed11_bands1-2-3-4-5\\prediction_C9.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold2_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "358eae96b4cbb48a59e5b508e1d384d3e4a2f50074810e902aaac3db44f2e01d",
+          "run": "tfd_fold2_seed11_bands1-2-3-4-5"
+        },
+        "Restormer / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold2_seed11_bands1-2-3-4-5\\prediction_C9.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold2_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "d2876a0da12d0b8ac080f8414952e4d31a49a88db0390d4aa3af1c1606cc21fa",
+          "run": "restormer_fold2_seed11_bands1-2-3-4-5"
+        },
+        "pix2pix / B1": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold2_seed11_bands1\\prediction_C9.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold2_seed11_bands1\\result.json",
+          "float32_crop_sha256": "672060e53ec03f1b07a9bcd6d6741283281b36bc12843d03b11299f568debf83",
+          "run": "pix2pix_fold2_seed11_bands1"
+        },
+        "pix2pix / B1,2,4": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold2_seed11_bands1-2-4\\prediction_C9.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold2_seed11_bands1-2-4\\result.json",
+          "float32_crop_sha256": "38d7717176fab74be092e92f6d2bac18eb39290ff3783deee7a3f319d243146a",
+          "run": "pix2pix_fold2_seed11_bands1-2-4"
+        }
+      }
+    },
+    {
+      "scene": "C10",
+      "window": "A",
+      "fold": 3,
+      "x": 768,
+      "y": 768,
+      "width": 256,
+      "height": 256,
+      "valid_pixels": 65536,
+      "valid_fraction": 1.0,
+      "main_figure": true,
+      "panels": {
+        "RGB": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C10\\scene10.tif",
+          "uint8_crop_sha256": "1a9c1987a2573bc7a0e6139cc3360be98aa82f7c653082360078aa93ee2481fc"
+        },
+        "B1": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C10\\scene10_band1.tif",
+          "uint8_crop_sha256": "7d43e410d5b34a2294b6a22f1287e04045d4ab82cea748453b5f258498e1deb4"
+        },
+        "B2": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C10\\scene10_band2.tif",
+          "uint8_crop_sha256": "6f851a1b8c0d9863fed5bb7ea384f8c3a44cdae21cd28af784b69e1979631e67"
+        },
+        "B3": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C10\\scene10_band3.tif",
+          "uint8_crop_sha256": "a6b2c8c62e91adea85ff6c7e9da399f65a3550f244d06742fda8fd6b3702e0bf"
+        },
+        "B4": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C10\\scene10_band4.tif",
+          "uint8_crop_sha256": "bf1a9b12174396395e1e8b0339687ec04cc3ae1ab30b37a6502ff3a6756cd6b0"
+        },
+        "B5": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C10\\scene10_band5.tif",
+          "uint8_crop_sha256": "f01198a4fbb2a2a49f41d267cfaf9a3c15e234423e3e8f33bb5005277850a6c6"
+        },
+        "U-Net / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold3_seed11_bands1-2-3-4-5\\prediction_C10.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold3_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "594eddfa4cbbfeab9929667ffe77f798191ae0c1ad5e05e302cddf730b0f5b5b",
+          "run": "unet_fold3_seed11_bands1-2-3-4-5"
+        },
+        "pix2pix / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold3_seed11_bands1-2-3-4-5\\prediction_C10.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold3_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "27f82aa85ea41af63dd0100c55059ee579595c4989185aea81ec876b989b73a9",
+          "run": "pix2pix_fold3_seed11_bands1-2-3-4-5"
+        },
+        "TFD / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold3_seed11_bands1-2-3-4-5\\prediction_C10.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold3_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "8ed759d92b2f07b168a7d56688c052318f1f6074e7b4869130850f60d0e2234e",
+          "run": "tfd_fold3_seed11_bands1-2-3-4-5"
+        },
+        "Restormer / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold3_seed11_bands1-2-3-4-5\\prediction_C10.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold3_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "56f5f0c814483046c8032e53adb63ac64bda80f651a318c36d600b4e03c0c563",
+          "run": "restormer_fold3_seed11_bands1-2-3-4-5"
+        },
+        "pix2pix / B1": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold3_seed11_bands1\\prediction_C10.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold3_seed11_bands1\\result.json",
+          "float32_crop_sha256": "d09e0078702fe40e702e05257e2cc87a5e6a33f9a45b521c1dccdd55bce8d2e8",
+          "run": "pix2pix_fold3_seed11_bands1"
+        },
+        "pix2pix / B1,2,4": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold3_seed11_bands1-2-4\\prediction_C10.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold3_seed11_bands1-2-4\\result.json",
+          "float32_crop_sha256": "3f4f891507704a58c411c0a470a7877929befe9e52e2a6cb43b286ab4604cfb5",
+          "run": "pix2pix_fold3_seed11_bands1-2-4"
+        }
+      }
+    },
+    {
+      "scene": "C10",
+      "window": "B",
+      "fold": 3,
+      "x": 6144,
+      "y": 1408,
+      "width": 256,
+      "height": 256,
+      "valid_pixels": 65536,
+      "valid_fraction": 1.0,
+      "main_figure": false,
+      "panels": {
+        "RGB": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C10\\scene10.tif",
+          "uint8_crop_sha256": "4aefe4355ae38f0c083b945d74d8af111a7770375eedd19e59f1b182b84152e5"
+        },
+        "B1": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C10\\scene10_band1.tif",
+          "uint8_crop_sha256": "99329c859515935b69c2da56f7d00eec45545145dcc5e3a6c8264afd19d5b479"
+        },
+        "B2": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C10\\scene10_band2.tif",
+          "uint8_crop_sha256": "d3c0694bc7c01efaef40586d198de1bac21e1fb45c87f950b6fd83ce625a20cd"
+        },
+        "B3": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C10\\scene10_band3.tif",
+          "uint8_crop_sha256": "3c9b42e91b89adbaeab85519c86851139b0a1934cb336f4e869a9314fc337646"
+        },
+        "B4": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C10\\scene10_band4.tif",
+          "uint8_crop_sha256": "c00559683e84109649045fb14f554859f9a3e31004b9eb25431f4b344888ce23"
+        },
+        "B5": {
+          "source": "D:\\Data_dir\\SWIR-RGB\\datasets_article_auto_v3\\C10\\scene10_band5.tif",
+          "uint8_crop_sha256": "328ab3528c8b5cf1597fb3d669a915ef37c7f4b5ce1cf7dbaebd7b1be7ca0e33"
+        },
+        "U-Net / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold3_seed11_bands1-2-3-4-5\\prediction_C10.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\unet_fold3_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "65d2be70a45abad8fd24752a76d53e97b7ff364d7a0f9fe21b6ce98131d3cf9a",
+          "run": "unet_fold3_seed11_bands1-2-3-4-5"
+        },
+        "pix2pix / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold3_seed11_bands1-2-3-4-5\\prediction_C10.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold3_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "dde8c3e1da4b72880b90c556d47e5cf57625b746896bf23be18c4bde6e38c300",
+          "run": "pix2pix_fold3_seed11_bands1-2-3-4-5"
+        },
+        "TFD / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold3_seed11_bands1-2-3-4-5\\prediction_C10.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\tfd_fold3_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "87297ce76b68312e3352ced31e2ba987acb8d3a764a30fca0b0f70a4f568de17",
+          "run": "tfd_fold3_seed11_bands1-2-3-4-5"
+        },
+        "Restormer / B1-5": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold3_seed11_bands1-2-3-4-5\\prediction_C10.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\restormer_fold3_seed11_bands1-2-3-4-5\\result.json",
+          "float32_crop_sha256": "0123bb0525a651a6f08a4946ccec4bd92b5b9f0a74d99b41f2780298054ffd9f",
+          "run": "restormer_fold3_seed11_bands1-2-3-4-5"
+        },
+        "pix2pix / B1": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold3_seed11_bands1\\prediction_C10.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold3_seed11_bands1\\result.json",
+          "float32_crop_sha256": "435e7daa50e752e4fccbeb87de42ef7819fa62649eb226f9d5a48e3744334033",
+          "run": "pix2pix_fold3_seed11_bands1"
+        },
+        "pix2pix / B1,2,4": {
+          "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold3_seed11_bands1-2-4\\prediction_C10.npy",
+          "result": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\draft_runs_v2_20261002\\pix2pix_fold3_seed11_bands1-2-4\\result.json",
+          "float32_crop_sha256": "140fce9e2f2b56683d5516be469e596f68cca6ee32d9ed6359687c67b2223f0d",
+          "run": "pix2pix_fold3_seed11_bands1-2-4"
+        }
+      }
+    }
+  ],
+  "exports": {
+    "fig_local_modalities_20261015_zh.pdf": {
+      "sha256": "d51c41cb2fd9b41da7de46e9e4ab42470e19edce7dbe8d9569bde2c48d827495",
+      "bytes": 643384
+    },
+    "fig_local_modalities_20261015_zh.png": {
+      "sha256": "393fabc5e4e287bfd9224aef7151f3404a7abc5dc444c9393daf34a4855989e6",
+      "bytes": 993681
+    },
+    "fig_local_modalities_20261015_zh.svg": {
+      "sha256": "c23f64383c98d4c5bb4568588555f51eb11e984f172bb7d5a64bab874aaf3e1e",
+      "bytes": 942737
+    },
+    "fig_local_predictions_20261015_zh.pdf": {
+      "sha256": "dd1de3b5332be75d2af886f9a507c6ad274eb94cb98f7d0dec4d1156b8cfe81d",
+      "bytes": 1304535
+    },
+    "fig_local_predictions_20261015_zh.png": {
+      "sha256": "95763033b7054d3d67d02a97506b29c06fd7a0ff3a16f2386402c6ff14c6d555",
+      "bytes": 2058205
+    },
+    "fig_local_predictions_20261015_zh.svg": {
+      "sha256": "67b6e618bb83198ac04597cdae80a75b90825b9e8f514059ad7dea94941c15f5",
+      "bytes": 1920066
+    },
+    "supp_local_comparisons_zh.pdf": {
+      "sha256": "6676ac0b0227d00e7009c267c420b886374da9e4d5fc8f6744142de6ad7ef144",
+      "bytes": 12098464
+    }
+  },
+  "language": "zh-CN",
+  "label_only_adaptation": {
+    "original_script": "D:\\USTC\\Articles\\datasets_article\\scripts\\make_local_comparisons_20261015.py",
+    "original_script_sha256": "411471f7181a8b7c931602013e8dbd944c73c406457ecba789363fb883705111",
+    "translated_script": "D:\\USTC\\Articles\\datasets_article\\delivery_zh_20261015\\figures\\make_local_comparisons_zh.py",
+    "translated_script_sha256": "1f0144e6df6ae9ec6c75198464ae68f2989d45c7808fc773d7a5a6ee2bcef040",
+    "changes": "仅翻译文字、使用Microsoft YaHei字体及更换独立输出目录。裁剪、显示数值、坐标、图像布局、支持和预测来源保持不变。",
+    "missing_glyph_warnings": 0
+  }
+}

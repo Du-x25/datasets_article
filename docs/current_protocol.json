@@ -1,17 +1,13 @@
 {
-  "revision": "v3-hybrid-pilot-20260924",
-  "status": "protocol_current_results_pending",
+  "revision": "draft-v2-20261002",
+  "status": "exploratory_after_legacy_test_results",
   "physical_sites": 10,
   "site_identity": {
     "evidence": "author_confirmed_2026-09-24",
     "repeat_site_acquisition": false
   },
   "seeds": [
-    11,
-    23,
-    37,
-    53,
-    71
+    11
   ],
   "folds": [
     {
@@ -114,26 +110,32 @@
     "size": 256,
     "stride": 128,
     "append_last_start": true,
-    "all_pixels_valid": true
+    "geometry_privacy_all_pixels_valid": true,
+    "dynamic_range_minimum_fraction": 0.5,
+    "all_pixels_valid": false
   },
-  "formal_training_status": "not_run",
-  "human_annotations_status": "hybrid_pilot_ready_awaiting_humans",
-  "evaluation_support_status": "not_frozen",
-  "training_budget": null,
+  "formal_training_status": "human_frozen_submission_runs_pending",
+  "human_annotations_status": "pilot_h1_12_complete_h2_4_complete_1_draft_as_of_20261002",
+  "evaluation_support_status": "dynamic_range_common_provisional_not_human_frozen",
+  "training_budget": {
+    "unet": 20000,
+    "pix2pix": 20000,
+    "tfd": 12000,
+    "restormer": 40000
+  },
   "models": [
     "U-Net",
     "pix2pix",
     "TFD-GAN",
-    "Restormer",
-    "pix2pix-Turbo"
+    "Restormer"
   ],
   "configuration_counts": {
-    "E1": 125,
-    "E2_additional": 4250,
-    "E4_including_E1": 2875,
-    "E1_E2_E4_unique": 7125
+    "EX1_draft": 20,
+    "EX2_additional_draft": 10,
+    "EX3_fold_conditions": 165,
+    "EX4": "gated_on_human_pools"
   },
-  "protocol_document": "D:\\USTC\\Gen\\outputs\\v3_标注手册与最新方案同步_20260924\\最新协议_20260924.md",
+  "protocol_document": "D:\\USTC\\Articles\\datasets_article\\docs\\当前执行方案_20261002.md",
   "historical_artifacts": [
     "nonoverlap_patch_manifests",
     "69_run_three_seed_LOSO_results"
@@ -148,10 +150,22 @@
     "pilot_h2_points": 36,
     "pilot_excluded_from_formal_validation": true,
     "formal_counts_provisional": true,
-    "formal_h1_random_target": 420,
-    "formal_human_selected_target": 30,
-    "formal_h2_target": 90,
+    "formal_h1_random_target": null,
+    "formal_human_selected_target": null,
+    "formal_h2_target": null,
     "machine_is_independent_ground_truth": false,
-    "supplement": "D:\\USTC\\Gen\\outputs\\v3_混合标注试运行_20260924\\混合协议补充.md"
-  }
+    "supplement": "D:\\USTC\\Gen\\outputs\\v3_混合标注试运行_20260924\\混合协议补充.md",
+    "formal_points_per_view": [
+      3,
+      5
+    ],
+    "formal_h2_fraction": 0.25
+  },
+  "submission_seeds": [
+    11,
+    23,
+    37
+  ],
+  "draft_training_status": "revised_driver_verified_queue_prepared",
+  "active_plan": "D:\\USTC\\Gen\\v3_pipeline\\configs\\active_plan_20261002.json"
 }

@@ -1,0 +1,371 @@
+{
+  "revision_date": "2026-10-15",
+  "scope": "Saved measurements only; no training, inference, or new statistical tests",
+  "seed": 11,
+  "benchmark_folds": 5,
+  "benchmark_sites": 10,
+  "generalization": {
+    "left_source": "D:\\USTC\\Gen\\outputs\\fitting_diagnostic_20261015\\fitting_diagnostic.json",
+    "left_per_site": [
+      {
+        "group": "train_seen",
+        "site": "C3",
+        "n_windows": 34,
+        "window_mean_psnr": 25.2611,
+        "window_median_psnr": 25.745,
+        "window_std_psnr": 2.8263,
+        "gray_copy_baseline_psnr": 13.5819
+      },
+      {
+        "group": "train_seen",
+        "site": "C4",
+        "n_windows": 42,
+        "window_mean_psnr": 28.4879,
+        "window_median_psnr": 28.8349,
+        "window_std_psnr": 2.5225,
+        "gray_copy_baseline_psnr": 13.9511
+      },
+      {
+        "group": "train_seen",
+        "site": "C10",
+        "n_windows": 13,
+        "window_mean_psnr": 22.3706,
+        "window_median_psnr": 22.8999,
+        "window_std_psnr": 2.6036,
+        "gray_copy_baseline_psnr": 9.4804
+      },
+      {
+        "group": "test_heldout",
+        "site": "C1",
+        "n_windows": 1,
+        "window_mean_psnr": 12.8384,
+        "window_median_psnr": 12.8384,
+        "window_std_psnr": 0.0,
+        "gray_copy_baseline_psnr": 12.0042
+      },
+      {
+        "group": "test_heldout",
+        "site": "C8",
+        "n_windows": 42,
+        "window_mean_psnr": 14.3386,
+        "window_median_psnr": 13.6982,
+        "window_std_psnr": 4.2844,
+        "gray_copy_baseline_psnr": 11.5672
+      }
+    ],
+    "left_unit": "equal mean of within-site window-mean PSNR; first fold only",
+    "left_source_precision": "saved per-site values have four decimal places",
+    "left_model_means": [
+      25.373199999999997,
+      13.5885
+    ],
+    "left_gray_means": [
+      12.337800000000001,
+      11.7857
+    ],
+    "left_gains": [
+      13.035399999999996,
+      1.8027999999999995
+    ],
+    "left_gap": 11.784699999999997,
+    "right_source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\summary_v2_20261005\\site_records.csv",
+    "right_unit": "five-fold full-scene support PSNR per held-out site"
+  },
+  "baseline": {
+    "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\summary_v2_20261005\\site_records.csv",
+    "values": [
+      {
+        "condition": "reference_bands1,2,3,4,5",
+        "kind": "linear_reference",
+        "label": "线性参照（五波段）",
+        "psnr": 14.108249999999998
+      },
+      {
+        "condition": "reference_bands1,2,4",
+        "kind": "linear_reference",
+        "label": "线性参照（B1/B2/B4）",
+        "psnr": 13.94347
+      },
+      {
+        "condition": "restormer_bands1,2,3,4,5",
+        "kind": "model",
+        "label": "Restormer（五波段）",
+        "psnr": 13.79608
+      },
+      {
+        "condition": "reference_bands1",
+        "kind": "linear_reference",
+        "label": "线性参照（B1）",
+        "psnr": 13.679820000000001
+      },
+      {
+        "condition": "pix2pix_bands1,2,4",
+        "kind": "model",
+        "label": "pix2pix（B1/B2/B4）",
+        "psnr": 13.04129
+      },
+      {
+        "condition": "pix2pix_bands1",
+        "kind": "model",
+        "label": "pix2pix（B1）",
+        "psnr": 12.99724
+      },
+      {
+        "condition": "tfd_bands1,2,3,4,5",
+        "kind": "model",
+        "label": "TFD-GAN（五波段）",
+        "psnr": 12.82834
+      },
+      {
+        "condition": "unet_bands1,2,3,4,5",
+        "kind": "model",
+        "label": "U-Net（五波段）",
+        "psnr": 12.82295
+      },
+      {
+        "condition": "pix2pix_bands1,2,3,4,5",
+        "kind": "model",
+        "label": "pix2pix（五波段）",
+        "psnr": 12.59926
+      }
+    ],
+    "best_learned_label": "Restormer（五波段）",
+    "best_learned_psnr": 13.79608
+  },
+  "sensitivity": {
+    "source": "D:\\USTC\\Gen\\v3_pipeline\\outputs\\summary_v2_20261005\\ex3_sensitivity.csv",
+    "values": [
+      {
+        "mode": "B1_only",
+        "magnitude_px": "0.5",
+        "site_equal": "10 sites",
+        "psnr_drop": "-0.0040",
+        "deltaE00_rise": "0.0131",
+        "lpips_rise": "0.0030"
+      },
+      {
+        "mode": "B1_only",
+        "magnitude_px": "1.0",
+        "site_equal": "10 sites",
+        "psnr_drop": "0.0048",
+        "deltaE00_rise": "0.0757",
+        "lpips_rise": "0.0097"
+      },
+      {
+        "mode": "B1_only",
+        "magnitude_px": "2.0",
+        "site_equal": "10 sites",
+        "psnr_drop": "0.0569",
+        "deltaE00_rise": "0.2983",
+        "lpips_rise": "0.0207"
+      },
+      {
+        "mode": "B1_only",
+        "magnitude_px": "4.0",
+        "site_equal": "10 sites",
+        "psnr_drop": "0.2112",
+        "deltaE00_rise": "0.7877",
+        "lpips_rise": "0.0318"
+      },
+      {
+        "mode": "joint",
+        "magnitude_px": "0.5",
+        "site_equal": "10 sites",
+        "psnr_drop": "0.0144",
+        "deltaE00_rise": "0.0270",
+        "lpips_rise": "0.0008"
+      },
+      {
+        "mode": "joint",
+        "magnitude_px": "1.0",
+        "site_equal": "10 sites",
+        "psnr_drop": "0.0581",
+        "deltaE00_rise": "0.1144",
+        "lpips_rise": "0.0018"
+      },
+      {
+        "mode": "joint",
+        "magnitude_px": "2.0",
+        "site_equal": "10 sites",
+        "psnr_drop": "0.1836",
+        "deltaE00_rise": "0.3425",
+        "lpips_rise": "0.0043"
+      },
+      {
+        "mode": "joint",
+        "magnitude_px": "4.0",
+        "site_equal": "10 sites",
+        "psnr_drop": "0.4451",
+        "deltaE00_rise": "0.8212",
+        "lpips_rise": "0.0118"
+      }
+    ],
+    "definition": "PSNR drop = baseline minus perturbed; positive means degradation",
+    "aggregation": "four-direction average per site, then ten-site equal mean",
+    "zero": "zero displacement shown explicitly; drop is definitionally zero"
+  },
+  "aggregation": {
+    "condition_order": [
+      "linear_reference_five",
+      "restormer_five"
+    ],
+    "per_site": [
+      [
+        {
+          "site": "C1",
+          "psnr": 12.054912852923128,
+          "valid_pixels": 10652956,
+          "mse": 0.06230296492383776,
+          "mse_source": "saved full-precision RMSE squared"
+        },
+        {
+          "site": "C2",
+          "psnr": 12.80037969561964,
+          "valid_pixels": 13188695,
+          "mse": 0.05247615793114713,
+          "mse_source": "saved full-precision RMSE squared"
+        },
+        {
+          "site": "C3",
+          "psnr": 16.918822224974743,
+          "valid_pixels": 6224029,
+          "mse": 0.020329082461073962,
+          "mse_source": "saved full-precision RMSE squared"
+        },
+        {
+          "site": "C4",
+          "psnr": 18.360851627537432,
+          "valid_pixels": 5836547,
+          "mse": 0.014585282228870837,
+          "mse_source": "saved full-precision RMSE squared"
+        },
+        {
+          "site": "C5",
+          "psnr": 12.294932113114696,
+          "valid_pixels": 9463499,
+          "mse": 0.05895311922697605,
+          "mse_source": "saved full-precision RMSE squared"
+        },
+        {
+          "site": "C6",
+          "psnr": 14.358741626541441,
+          "valid_pixels": 4649842,
+          "mse": 0.03665437657573645,
+          "mse_source": "saved full-precision RMSE squared"
+        },
+        {
+          "site": "C7",
+          "psnr": 13.516357383489296,
+          "valid_pixels": 10479193,
+          "mse": 0.044500435547202954,
+          "mse_source": "saved full-precision RMSE squared"
+        },
+        {
+          "site": "C8",
+          "psnr": 12.486149614457423,
+          "valid_pixels": 12361441,
+          "mse": 0.056413758955716764,
+          "mse_source": "saved full-precision RMSE squared"
+        },
+        {
+          "site": "C9",
+          "psnr": 14.750314518057086,
+          "valid_pixels": 7774728,
+          "mse": 0.03349411816853631,
+          "mse_source": "saved full-precision RMSE squared"
+        },
+        {
+          "site": "C10",
+          "psnr": 13.541116397392637,
+          "valid_pixels": 8230536,
+          "mse": 0.04424746152177186,
+          "mse_source": "saved full-precision RMSE squared"
+        }
+      ],
+      [
+        {
+          "site": "C1",
+          "psnr": 13.163303082696672,
+          "valid_pixels": 10652956,
+          "mse": 0.04826915451161704,
+          "mse_source": "saved full-precision MSE"
+        },
+        {
+          "site": "C2",
+          "psnr": 13.425168247929742,
+          "valid_pixels": 13188695,
+          "mse": 0.04544469313591861,
+          "mse_source": "saved full-precision MSE"
+        },
+        {
+          "site": "C3",
+          "psnr": 16.11164521005668,
+          "valid_pixels": 6224029,
+          "mse": 0.024481356545608516,
+          "mse_source": "saved full-precision MSE"
+        },
+        {
+          "site": "C4",
+          "psnr": 13.356394327360285,
+          "valid_pixels": 5836547,
+          "mse": 0.04617007364260478,
+          "mse_source": "saved full-precision MSE"
+        },
+        {
+          "site": "C5",
+          "psnr": 14.507613417335465,
+          "valid_pixels": 9463499,
+          "mse": 0.035419192704508266,
+          "mse_source": "saved full-precision MSE"
+        },
+        {
+          "site": "C6",
+          "psnr": 13.654034030414904,
+          "valid_pixels": 4649842,
+          "mse": 0.043111843787583856,
+          "mse_source": "saved full-precision MSE"
+        },
+        {
+          "site": "C7",
+          "psnr": 13.312382409186549,
+          "valid_pixels": 10479193,
+          "mse": 0.046640345518654605,
+          "mse_source": "saved full-precision MSE"
+        },
+        {
+          "site": "C8",
+          "psnr": 12.174486198434115,
+          "valid_pixels": 12361441,
+          "mse": 0.06061099034405418,
+          "mse_source": "saved full-precision MSE"
+        },
+        {
+          "site": "C9",
+          "psnr": 14.749290459062841,
+          "valid_pixels": 7774728,
+          "mse": 0.033502016955798734,
+          "mse_source": "saved full-precision MSE"
+        },
+        {
+          "site": "C10",
+          "psnr": 13.50652968327044,
+          "valid_pixels": 8230536,
+          "mse": 0.04460125012332357,
+          "mse_source": "saved full-precision MSE"
+        }
+      ]
+    ],
+    "site_equal_psnr": [
+      14.10825780541075,
+      13.796084706574769
+    ],
+    "pixel_pooled_psnr": [
+      13.376201792781824,
+      13.535901735465847
+    ],
+    "definition": "pooled PSNR = -10 log10(sum(n_pixels * site_MSE) / sum(n_pixels)); intensity range 1",
+    "precision": "full-precision saved metrics; no pooling from rounded CSV RMSE"
+  },
+  "translation": "Chinese text only; numerical inputs and calculations retained from original generator",
+  "font": "Microsoft YaHei"
+}

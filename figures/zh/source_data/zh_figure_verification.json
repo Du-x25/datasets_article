@@ -1,0 +1,87 @@
+{
+  "results": [
+    {
+      "file": "fig_local_predictions_20261015_zh.pdf",
+      "pages": [
+        {
+          "page": 1,
+          "embedded_pixel_arrays_identical_to_original": true,
+          "png": "tmp\\fig_local_predictions_20261015_zh_p1.png"
+        }
+      ],
+      "page_count": 1,
+      "sha256": "dd1de3b5332be75d2af886f9a507c6ad274eb94cb98f7d0dec4d1156b8cfe81d"
+    },
+    {
+      "file": "fig_local_modalities_20261015_zh.pdf",
+      "pages": [
+        {
+          "page": 1,
+          "embedded_pixel_arrays_identical_to_original": true,
+          "png": "tmp\\fig_local_modalities_20261015_zh_p1.png"
+        }
+      ],
+      "page_count": 1,
+      "sha256": "d51c41cb2fd9b41da7de46e9e4ab42470e19edce7dbe8d9569bde2c48d827495"
+    },
+    {
+      "file": "supp_local_comparisons_zh.pdf",
+      "pages": [
+        {
+          "page": 1,
+          "embedded_pixel_arrays_identical_to_original": true,
+          "png": "tmp\\supp_local_comparisons_zh_p1.png"
+        },
+        {
+          "page": 2,
+          "embedded_pixel_arrays_identical_to_original": true,
+          "png": "tmp\\supp_local_comparisons_zh_p2.png"
+        },
+        {
+          "page": 3,
+          "embedded_pixel_arrays_identical_to_original": true,
+          "png": "tmp\\supp_local_comparisons_zh_p3.png"
+        },
+        {
+          "page": 4,
+          "embedded_pixel_arrays_identical_to_original": true,
+          "png": "tmp\\supp_local_comparisons_zh_p4.png"
+        },
+        {
+          "page": 5,
+          "embedded_pixel_arrays_identical_to_original": true,
+          "png": "tmp\\supp_local_comparisons_zh_p5.png"
+        },
+        {
+          "page": 6,
+          "embedded_pixel_arrays_identical_to_original": true,
+          "png": "tmp\\supp_local_comparisons_zh_p6.png"
+        },
+        {
+          "page": 7,
+          "embedded_pixel_arrays_identical_to_original": true,
+          "png": "tmp\\supp_local_comparisons_zh_p7.png"
+        },
+        {
+          "page": 8,
+          "embedded_pixel_arrays_identical_to_original": true,
+          "png": "tmp\\supp_local_comparisons_zh_p8.png"
+        },
+        {
+          "page": 9,
+          "embedded_pixel_arrays_identical_to_original": true,
+          "png": "tmp\\supp_local_comparisons_zh_p9.png"
+        },
+        {
+          "page": 10,
+          "embedded_pixel_arrays_identical_to_original": true,
+          "png": "tmp\\supp_local_comparisons_zh_p10.png"
+        }
+      ],
+      "page_count": 10,
+      "sha256": "6676ac0b0227d00e7009c267c420b886374da9e4d5fc8f6744142de6ad7ef144"
+    }
+  ],
+  "missing_glyph_warnings": 0,
+  "source_pixels_changed": false
+}
