@@ -8,6 +8,12 @@ parser=argparse.ArgumentParser(description='Verify manuscript evidence and compi
 parser.add_argument('--language',choices=['zh','en','both'],default='both')
 args=parser.parse_args()
 LANGUAGES=['zh','en'] if args.language=='both' else [args.language]
+if 'zh' in LANGUAGES and 'results_20261109_macros_zh.tex' in (ROOT/'main_zh.tex').read_text(encoding='utf-8'):
+    from qa_results_20261109 import validate
+    validate()
+    LANGUAGES.remove('zh')
+    if not LANGUAGES:
+        raise SystemExit(0)
 p=json.loads((ROOT/'docs/current_protocol.json').read_text(encoding='utf-8'))
 assert p['physical_sites']==10 and p['seeds']==[11] and p['submission_seeds']==[11,23,37]
 tests=[]

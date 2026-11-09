@@ -1,0 +1,157 @@
+{
+  "revision": "20261109",
+  "primary_source": "D:\\A_projects\\MSWIR_ABCDEF_handoff_20261106\\04_D_formal",
+  "files": [
+    {
+      "file": "EX2_main_table.csv",
+      "source": "D:\\A_projects\\MSWIR_ABCDEF_handoff_20261106\\04_D_formal\\tables\\EX2_main_table.csv",
+      "sha256": "7797c2c2b12ff55815d20b0c622abb41623a950bcfe3d6e2a85a23231d970c2a",
+      "bytes": 5380
+    },
+    {
+      "file": "per_site_metrics.csv",
+      "source": "D:\\A_projects\\MSWIR_ABCDEF_handoff_20261106\\04_D_formal\\tables\\per_site_metrics.csv",
+      "sha256": "f600d041072b8240d468c55bf78b6fc2384adc392f3c4e57f505a9bbacdcded7",
+      "bytes": 155193
+    },
+    {
+      "file": "validation_selections.csv",
+      "source": "D:\\A_projects\\MSWIR_ABCDEF_handoff_20261106\\04_D_formal\\tables\\validation_selections.csv",
+      "sha256": "8c53af5782afba71e0a0645362c72d72a88f1a75b2926fc17340a7cbb71bd036",
+      "bytes": 942
+    },
+    {
+      "file": "training_cost.csv",
+      "source": "D:\\A_projects\\MSWIR_ABCDEF_handoff_20261106\\04_D_formal\\tables\\training_cost.csv",
+      "sha256": "7f11add25e750ed4eaadf365404c1084ece5d77d864766a6bf21571e5984e805",
+      "bytes": 27427
+    },
+    {
+      "file": "EX3_shared_domain_protocol_pairs.csv",
+      "source": "D:\\A_projects\\MSWIR_ABCDEF_handoff_20261106\\04_D_formal\\tables\\EX3_shared_domain_protocol_pairs.csv",
+      "sha256": "f8efd739b96fbd0b9074ce2327642b139f53d75a401754012b96d55bb4450d9c",
+      "bytes": 160082
+    },
+    {
+      "file": "EX1_EX2A_baselines.csv",
+      "source": "D:\\A_projects\\MSWIR_ABCDEF_handoff_20261106\\04_D_formal\\tables\\EX1_EX2A_baselines.csv",
+      "sha256": "7274724ab03d72424bdaf56a6bf89b67af94913b024f9544cf5c1cba679d21f1",
+      "bytes": 51898
+    },
+    {
+      "file": "separated_calibration.csv",
+      "source": "D:\\A_projects\\MSWIR_ABCDEF_handoff_20261106\\04_D_formal\\calibration\\separated_calibration.csv",
+      "sha256": "25490c1fd4fa42408b56298b48651bb873b1156baa097481bdb31c079fe62718",
+      "bytes": 21573
+    },
+    {
+      "file": "disjoint_calibration.csv",
+      "source": "D:\\A_projects\\MSWIR_ABCDEF_handoff_20261106\\04_D_formal\\calibration\\disjoint_calibration.csv",
+      "sha256": "40872d7a6acfcb4eeb03e1404a29648aee8eadc8e5e183c09dfd649b6e4c1295",
+      "bytes": 10629
+    },
+    {
+      "file": "evidence_code/separated_calibration.py",
+      "source": "D:\\A_projects\\MSWIR_ABCDEF_handoff_20261106\\04_D_formal\\calibration\\separated_calibration.py",
+      "sha256": "733c41cc596d614f89c66274064e561f0ac37b5dcac8d4773d948e62d37be797",
+      "bytes": 9003
+    },
+    {
+      "file": "evidence_code/disjoint_calibration.py",
+      "source": "D:\\A_projects\\MSWIR_ABCDEF_handoff_20261106\\04_D_formal\\calibration\\disjoint_calibration.py",
+      "sha256": "62068e880d07384d025b0804af9a58855a69b71c9deb38f94fbb41562d4a5f9b",
+      "bytes": 13901
+    },
+    {
+      "file": "protocols.json",
+      "source": "D:\\A_projects\\MSWIR_ABCDEF_handoff_20261106\\04_D_formal\\protocols\\protocols.json",
+      "sha256": "464a73baf6446286f8dd2d9cb91b5e00b607b51f9fe5c8517a28766d752ee07c",
+      "bytes": 1270144
+    },
+    {
+      "file": "figure_selection_manifest.json",
+      "source": "D:\\A_projects\\MSWIR_ABCDEF_handoff_20261106\\04_D_formal\\reports\\figure_selection_manifest.json",
+      "sha256": "c43de5357bb92fcc16adc047a9e33b41a42fc202f5fad26cc26f4163c596a49b",
+      "bytes": 5008
+    },
+    {
+      "file": "plates/planned_F2_validation_selected_drunet_C1.pdf",
+      "source": "D:\\A_projects\\MSWIR_ABCDEF_handoff_20261106\\04_D_formal\\figures\\planned_F2_validation_selected_drunet_C1.pdf",
+      "sha256": "838af95d53de528edb4ef01ef1a375c79a4d5b2d37fc584c4536e87497247eff",
+      "bytes": 189234
+    },
+    {
+      "file": "plates/planned_F2_validation_selected_drunet_C1_source.csv",
+      "source": "D:\\A_projects\\MSWIR_ABCDEF_handoff_20261106\\04_D_formal\\figures\\planned_F2_validation_selected_drunet_C1_source.csv",
+      "sha256": "c5487d41a581626b7286398cf6aeef7d40f44ced36220a25b63c8f9375b1e8af",
+      "bytes": 975
+    },
+    {
+      "file": "plates/planned_F2_validation_selected_drunet_C5.pdf",
+      "source": "D:\\A_projects\\MSWIR_ABCDEF_handoff_20261106\\04_D_formal\\figures\\planned_F2_validation_selected_drunet_C5.pdf",
+      "sha256": "a4aba84e220aad82222864134d7aec176b96b36baf60f5cfb5e7c1532b482068",
+      "bytes": 226722
+    },
+    {
+      "file": "plates/planned_F2_validation_selected_drunet_C5_source.csv",
+      "source": "D:\\A_projects\\MSWIR_ABCDEF_handoff_20261106\\04_D_formal\\figures\\planned_F2_validation_selected_drunet_C5_source.csv",
+      "sha256": "84d800b0c1e429a33057e69ec7ef555157cc81d0ef5d27162effb8cd0e371e8d",
+      "bytes": 972
+    },
+    {
+      "file": "plates/planned_F2_validation_selected_drunet_C8.pdf",
+      "source": "D:\\A_projects\\MSWIR_ABCDEF_handoff_20261106\\04_D_formal\\figures\\planned_F2_validation_selected_drunet_C8.pdf",
+      "sha256": "8213dccc07605f46fefd15b51e04edadbcf22d377b323776b0c18ce42533d2f7",
+      "bytes": 167485
+    },
+    {
+      "file": "plates/planned_F2_validation_selected_drunet_C8_source.csv",
+      "source": "D:\\A_projects\\MSWIR_ABCDEF_handoff_20261106\\04_D_formal\\figures\\planned_F2_validation_selected_drunet_C8_source.csv",
+      "sha256": "294528fe3f77942103af831bd60cca687c5cebcad8d9f0248b9d4b41ef1d07fc",
+      "bytes": 975
+    },
+    {
+      "file": "evidence_code/training.py",
+      "source": "D:\\A_projects\\formal_analysis_bundle_20261026\\code\\mswir\\training.py",
+      "sha256": "15400ed8f6d4f6f0b1ce4eb32d72ec766a7f51090afd537d7ce9f7e7dd9ea917",
+      "bytes": 29471
+    },
+    {
+      "file": "evidence_code/modeling.py",
+      "source": "D:\\A_projects\\formal_analysis_bundle_20261026\\code\\mswir\\modeling.py",
+      "sha256": "d313b1e6a8191cea8b7e4909ed8486923e62ec5000198cf050d7bac29e37ae9f",
+      "bytes": 11586
+    },
+    {
+      "file": "evidence_code/data.py",
+      "source": "D:\\A_projects\\formal_analysis_bundle_20261026\\code\\mswir\\data.py",
+      "sha256": "65b49c342c6f67b031f808404be86e8ca92b5bf5a90143c4e65f51467939909c",
+      "bytes": 8275
+    },
+    {
+      "file": "evidence_code/evaluation.py",
+      "source": "D:\\A_projects\\formal_analysis_bundle_20261026\\code\\mswir\\evaluation.py",
+      "sha256": "73b37675002a3946fe462651bae5b21e267e3cb3cbd803ea55c5cd95fbe349cd",
+      "bytes": 24821
+    },
+    {
+      "file": "evidence_code/reporting.py",
+      "source": "D:\\A_projects\\formal_analysis_bundle_20261026\\code\\mswir\\reporting.py",
+      "sha256": "6bccd7e38ce738ca47fd0b65e698107720011ba4f87e6f67f68b4aedc41a5a5b",
+      "bytes": 55893
+    },
+    {
+      "file": "training_inventory.json",
+      "source": "D:\\A_projects\\formal_analysis_bundle_20261026\\formal\\tasks (extracted records only)",
+      "sha256": "36df73d22528f63b7a60168d7a43249b9ec57c6d3ec6c1eca1a6176341aab343",
+      "bytes": 461947
+    },
+    {
+      "file": "validation_curves_T124.csv",
+      "source": "D:\\A_projects\\formal_analysis_bundle_20261026\\formal\\tasks (extracted records only)",
+      "sha256": "6bc4a8670aea74b018a33fa41e536e3e11f732b82e562eaccbb6755a45923599",
+      "bytes": 30609
+    }
+  ],
+  "scope": "Saved-record aggregation; no training, inference or full-image metric recomputation."
+}

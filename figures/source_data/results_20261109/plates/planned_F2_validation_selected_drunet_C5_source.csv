@@ -1,0 +1,4 @@
+﻿site,x,y,width,height,selection_rule,display_min,display_max,deltaE_min,deltaE_max,edge_error_min,edge_error_max,data_identity,panel,task_id,model,input_id,fold,train_seed,prediction_sha256,selection_reason
+C5,4032,704,128,128,centre-nearest frozen support window; independent of predictions,0,1,0,50,0,0.25,64e46fbb1b370a9b1a05666a85c9ea15707f5b180b8a10c345b007b134888f47,RGB target,,,,,,,
+C5,4032,704,128,128,centre-nearest frozen support window; independent of predictions,0,1,0,50,0,0.25,64e46fbb1b370a9b1a05666a85c9ea15707f5b180b8a10c345b007b134888f47,Val-selected S3,EX2_drunet_S3_f3_s11,drunet,S3,3,11,46656297c08846222d58be123cbc6be8339d65e6ac996b646c62488b2ae7e3ae,
+C5,4032,704,128,128,centre-nearest frozen support window; independent of predictions,0,1,0,50,0,0.25,64e46fbb1b370a9b1a05666a85c9ea15707f5b180b8a10c345b007b134888f47,Val-selected T134,EX2_drunet_T134_f3_s11,drunet,T134,3,11,29e03eb3092a15ebdfbf0537907aa52289f2bf2300d86ec029f77b272e8e2211,

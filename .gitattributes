@@ -1,0 +1,4 @@
+# Preserve the exact bytes used by the bundled evidence SHA-256 manifest.
+# This also makes the portable audit independent of core.autocrlf on Windows.
+# Source snapshots retain original line endings and whitespace for provenance.
+figures/source_data/results_20261109/** -text -whitespace

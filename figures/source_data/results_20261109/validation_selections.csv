@@ -1,0 +1,16 @@
+﻿model,fold,best_single,best_single_validation_psnr,best_triple,selection_source
+drunet,1,S3,14.99413598243992,T234,validation PSNR only
+drunet,2,S3,13.229548676133525,T135,validation PSNR only
+drunet,3,S3,15.05157369722021,T134,validation PSNR only
+drunet,4,S3,15.027112528664293,T245,validation PSNR only
+drunet,5,S1,12.157911027116093,T125,validation PSNR only
+pix2pix,1,S1,15.108116141955826,T135,validation PSNR only
+pix2pix,2,S2,13.757813580816965,T125,validation PSNR only
+pix2pix,3,S4,14.187162256981996,T145,validation PSNR only
+pix2pix,4,S1,14.752981593117806,T124,validation PSNR only
+pix2pix,5,S4,12.382150028871711,T145,validation PSNR only
+tfd,1,S3,14.147207757469669,T134,validation PSNR only
+tfd,2,S1,12.931655859008432,T125,validation PSNR only
+tfd,3,S3,13.919388458085606,T124,validation PSNR only
+tfd,4,S1,14.068647002820303,T234,validation PSNR only
+tfd,5,S2,11.934262943833863,T134,validation PSNR only

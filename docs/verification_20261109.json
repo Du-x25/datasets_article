@@ -1,0 +1,20 @@
+{
+  "status": "passed",
+  "pages": 19,
+  "labels": 22,
+  "citations": 29,
+  "checked_text_boxes": 3441,
+  "undefined_references": 0,
+  "oversized_floats": 0,
+  "overfull_boxes": 0,
+  "completed_runs_verified": 270,
+  "scope": "Saved-record, source, table and PDF layout checks; no new inference.",
+  "date": "2026-11-09",
+  "pdf": "output/pdf/多波段SWIR_RGB数据集_中文稿_实验整合_20261109.pdf",
+  "pdf_sha256": "7b8594fd087dbc2fc49a2fdf9e4e1888fda0e5c5b8a1bb9191841fcd87e1e0e8",
+  "pdf_bytes": 1140562,
+  "compiler": "XeLaTeX / TeX Live 2026 via latexmk",
+  "visual_review": "All 19 final pages rendered and inspected, including tables, chart labels, captions, references and appendix continuation; no cropping or collisions found.",
+  "base_commit": "9b9f503feb2d32424fd0ee1d5894666a0d917d19",
+  "raw_data_weights_delivery_archives_included": false
+}
