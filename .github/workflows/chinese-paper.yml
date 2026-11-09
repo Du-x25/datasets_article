@@ -1,0 +1,102 @@
+name: Chinese paper PDF
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  compile:
+    name: Compile and check Chinese paper
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      PYTHONUTF8: '1'
+      MPLBACKEND: Agg
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Install TeX Live and Poppler
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            latexmk texlive-xetex texlive-lang-chinese \
+            texlive-latex-extra texlive-fonts-recommended poppler-utils
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install -r requirements.txt
+          python -m pip check
+
+      - name: Check environment and source
+        run: |
+          python scripts/check_environment.py
+          python -m unittest discover -s tests -p 'test_*.py' -v
+          python scripts/check_repository.py
+          python scripts/check_tex_structure.py
+
+      - name: Compile with XeLaTeX and BibTeX
+        run: |
+          mkdir -p build/zh
+          latexmk -norc -xelatex -bibtex -interaction=nonstopmode \
+            -halt-on-error -file-line-error -outdir=build/zh main_zh.tex \
+            2>&1 | tee build/zh/latexmk.log
+
+      - name: Check references, layout and evidence
+        run: |
+          python scripts/qa_manuscripts.py --language zh | tee build/zh/checks.json
+
+      - name: Upload checked PDF
+        id: pdf
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: chinese-paper-${{ github.sha }}
+          path: |
+            build/zh/main_zh.pdf
+            build/zh/checks.json
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Add PDF download to run summary
+        env:
+          PDF_ARTIFACT_URL: ${{ steps.pdf.outputs.artifact-url }}
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          report = json.loads(Path('build/zh/checks.json').read_text())
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a', encoding='utf-8') as summary:
+              summary.write('## Chinese paper PDF\n\n')
+              summary.write(f"[Download the checked PDF]({os.environ['PDF_ARTIFACT_URL']})\n\n")
+              summary.write(f"Pages: {report['pages']}; undefined references: 0; oversized floats: 0; overfull boxes: 0.\n\n")
+              summary.write('The artifact includes main_zh.pdf and checks.json and is retained for 30 days.\n')
+          PY
+
+      - name: Upload build diagnostics
+        if: ${{ always() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: chinese-paper-diagnostics-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            build/zh/*.log
+            build/zh/*.blg
+            build/zh/checks.json
+          if-no-files-found: ignore
+          retention-days: 14

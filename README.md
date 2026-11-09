@@ -1,5 +1,7 @@
 # M-SWIR-RGB 数据集论文
 
+[![Chinese paper PDF](https://github.com/Du-x25/datasets_article/actions/workflows/chinese-paper.yml/badge.svg?branch=main)](https://github.com/Du-x25/datasets_article/actions/workflows/chinese-paper.yml)
+
 本仓库保存《面向跨光谱图像生成的场景级 RGB 与五波段短波红外配对数据集》的论文源稿、必要图表、参考文献和最小数值证据。仓库已公开：**<https://github.com/Du-x25/datasets_article>**，日常使用 `main` 分支。
 
 当前中文稿整合了 225 次地点隔离训练、45 次随机窗口对照及目标地点配对颜色校准，归档 PDF 为 19 页。英文稿尚未同步这次结果更新。
@@ -10,6 +12,29 @@
 - [新电脑使用流程的安装与编译验证](docs/setup_verification_20261109.md)
 
 **在新电脑上编译论文只需要本仓库和 LaTeX 工具链，不需要原始图像、模型权重、GPU、PyTorch 或原电脑的 `D:` 盘目录。** Python 环境用于数值核验、PDF 检查及可选的图表重建。以下以 Windows PowerShell 为主，Git、Conda 和编译命令也可在 macOS/Linux 终端运行。
+
+## 自动编译与下载 PDF
+
+[Chinese paper PDF 工作流](https://github.com/Du-x25/datasets_article/actions/workflows/chinese-paper.yml) 会在每次推送和 Pull Request 更新时运行，也可在该页面点击 **Run workflow** 手动触发。
+
+工作流使用 Ubuntu 24.04、Python 3.11 和 TeX Live，从当前提交编译 `main_zh.tex`，然后检查：
+
+- 未定义的图表引用和文献引用、重复标签、仍需重跑的交叉引用及缺失字形。
+- `Float too large`、横向/纵向 `Overfull` 警告，以及 PDF 文字是否越过页面边界。
+- 已有的源稿结构、文件范围、数值证据和表格一致性。
+
+任何编译或检查失败都会使工作流失败，**只有全部通过才发布论文 PDF**。自动检查能发现上述编译及边界问题，图内文字重叠、字号和整体视觉质量仍需人工看 PDF。
+
+下载步骤：
+
+1. 打开仓库的 **Actions → Chinese paper PDF**。
+2. 选择对应提交且带绿色勾的运行记录。
+3. 点击摘要中的 **Download the checked PDF**，或在 **Artifacts** 下载 `chinese-paper-提交SHA`。
+4. 解压后得到 `main_zh.pdf` 和 `checks.json` 检查报告。
+
+PDF 产物保留 **30 天**，构建诊断日志 `chinese-paper-diagnostics-运行编号-尝试次数` 保留 **14 天**。失败时可查看步骤日志或下载已有诊断文件。下载 Actions 产物需要登录 GitHub，详见[官方说明](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/download-workflow-artifacts)。过期后可重新运行工作流；需要长期归档时，将确认后的版本另存到 `output/pdf/`。
+
+工作流只读取仓库并上传 Actions 产物，不会把编译缓存或 PDF 自动提交回仓库，也不会启动训练。云端使用 Linux 中文字体，页数可能与 Windows 归档版不同。配置位于 [.github/workflows/chinese-paper.yml](.github/workflows/chinese-paper.yml)。
 
 ## 1. 安装工具
 

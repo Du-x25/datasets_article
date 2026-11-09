@@ -7,6 +7,7 @@ import subprocess
 import xml.etree.ElementTree as ET
 from pypdf import PdfReader
 from build_results_20261109 import analyze, ROOT, SRC, MODELS, METRICS, NAMES
+from check_latex_log import find_issues
 
 
 def validate():
@@ -64,7 +65,7 @@ def validate():
     pdf=ROOT/'build/zh/main_zh.pdf'
     assert pdf.is_file() and pdf.stat().st_mtime >= max(p.stat().st_mtime for p in dependencies)
     log=(pdf.parent/'main_zh.log').read_text(encoding='utf-8',errors='replace')
-    issues=re.findall(r'^.*(?:undefined|Overfull \\[hv]box|Float too large|Citation.*Warning|Rerun to get|Missing character).*$' ,log,re.M|re.I)
+    issues=find_issues(log)
     assert not issues, issues
     reader=PdfReader(pdf)
     texts=[page.extract_text() for page in reader.pages]
