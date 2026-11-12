@@ -194,7 +194,8 @@ def generate(d):
     long = (r'\begin{longtable}{@{}llrrrrr@{}}' + '\n' +
             r'\caption{全部45种固定输入条件的十地点均值。PSNR单位为dB。}\label{tab:all-inputs-zh}\\' + '\n')
     header = r'\toprule 模型 & 输入 & PSNR↑ & SSIM↑ & LPIPS↓ & \dE{}↓ & MAE↓\\\midrule' + '\n'
-    long += header + r'\endfirsthead' + '\n' + header + r'\endhead' + '\n'
+    contlabel = r'\multicolumn{7}{r}{\small 续表~\thetable}\\' + '\n'
+    long += header + r'\endfirsthead' + '\n' + contlabel + header + r'\endhead' + '\n'
     long += r'\midrule\multicolumn{7}{r}{续下页}\\\endfoot\bottomrule\endlastfoot' + '\n'
     for m in MODELS:
         for i,r in d['recomputed'].loc[m].iterrows():

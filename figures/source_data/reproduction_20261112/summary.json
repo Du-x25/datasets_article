@@ -1,0 +1,39 @@
+{
+  "source_record": "D:/dh/chen_repro/EXPERIMENT_RECORD_ABCD.md",
+  "generated": "2026-11-12",
+  "metric": "canonical PNG unless noted; eval_tfd 8-bit rows are marked",
+  "protocol": {
+    "code": "Chen pix2pixhd-p-noshuffle, unchanged",
+    "input": "B1,B2,B3 stacked to RGB",
+    "load_size": 256,
+    "fine_size": 128,
+    "batch": 4,
+    "epochs": "200 (100 constant + 100 decay), continued 201-500",
+    "test_windows": 710
+  },
+  "reference": {
+    "chen_paper_psnr": 24.1562,
+    "chen_archive_ep500_psnr": 24.0050,
+    "our_repro_psnr": [23.7784, 23.8374],
+    "chen_same_budget_batch4_ep200_psnr": 22.8731
+  },
+  "ladder": [
+    {"stage": "raw", "label": "原始 B1–B3 直出", "psnr": 10.1584, "ssim": 0.3859, "lpips": 0.5308, "metric": "canonical"},
+    {"stage": "zero_shot", "label": "陈模型零样本迁移", "psnr": 16.5861, "ssim": 0.4937, "lpips": 0.3240, "metric": "canonical"},
+    {"stage": "native_ep200", "label": "原生 1:1 窗口，ep200", "psnr": 20.6783, "ssim": 0.5956, "lpips": 0.2832, "metric": "eval_tfd_8bit"},
+    {"stage": "random_ep100", "label": "4:1 窗口，ep100", "psnr": 25.2217, "ssim": 0.8150, "lpips": 0.0683, "metric": "canonical"},
+    {"stage": "random_ep200", "label": "4:1 窗口，ep200", "psnr": 28.7608, "ssim": 0.8652, "lpips": 0.0330, "metric": "eval_tfd_8bit"},
+    {"stage": "random_ep500", "label": "4:1 窗口，ep500", "psnr": 30.1839, "ssim": 0.9045, "lpips": 0.0250, "metric": "canonical"}
+  ],
+  "three_model_ep200": {
+    "note": "same 4:1 data, same split, same engine, 256 patches, 200 epochs, seed 11",
+    "rows": [
+      {"model": "pix2pix", "batch": 1, "psnr": 14.836, "ssim": 0.493, "lpips": 0.365},
+      {"model": "pix2pix", "batch": 4, "psnr": 25.106, "ssim": 0.769, "lpips": 0.120},
+      {"model": "TFD-GAN", "batch": 1, "psnr": 27.220, "ssim": 0.834, "lpips": 0.044},
+      {"model": "TFD-GAN", "batch": 4, "psnr": 29.054, "ssim": 0.875, "lpips": 0.033},
+      {"model": "DRUNet", "batch": 1, "psnr": 36.453, "ssim": 0.962, "lpips": 0.017},
+      {"model": "DRUNet", "batch": 4, "psnr": 36.438, "ssim": 0.961, "lpips": 0.018}
+    ]
+  }
+}

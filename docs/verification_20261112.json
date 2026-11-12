@@ -1,0 +1,20 @@
+{
+  "status": "passed",
+  "pages": 20,
+  "labels": 26,
+  "citations": 29,
+  "checked_text_boxes": 3803,
+  "undefined_references": 0,
+  "oversized_floats": 0,
+  "overfull_boxes": 0,
+  "completed_runs_verified": 270,
+  "scope": "Saved-record, source, table and PDF layout checks; no new inference.",
+  "date": "2026-11-12",
+  "pdf": "output/pdf/main_zh_latest.pdf",
+  "pdf_sha256": "c754c11ba4fc3e58bb03a8b7bb44a9201fe7744576b6cb3f0a625fc364384a56",
+  "pdf_bytes": 1161841,
+  "compiler": "XeLaTeX / TeX Live 2026 via latexmk",
+  "visual_review": "All 20 pages rendered and inspected; new table 10/11 and figure 5 checked; no cropping or collisions found.",
+  "base_commit": "6435bdf0f9ea4d45ec00600524026ce3ab56be9d",
+  "raw_data_weights_delivery_archives_included": false
+}
