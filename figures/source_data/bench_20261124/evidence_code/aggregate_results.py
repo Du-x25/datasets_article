@@ -144,6 +144,12 @@ def build(runs):
             d["%s_ep%d_runs" % (data, e)] = keys
             if e == 100:
                 d["scene_seeds"][data] = seed_scenes(runs, keys)
+    d["scene_rank_rho"] = {}  # lowest Spearman correlation of per-scene PSNR between any two runs
+    for data in ("mswir", "chen"):
+        keys = d["%s_ep100_runs" % data]
+        rho = [runs[a].scene_means["psnr"].corr(runs[b].scene_means["psnr"], method="spearman")
+               for a, b in itertools.combinations(keys, 2)]
+        d["scene_rank_rho"][data] = float(min(rho)) if rho else None
     refs = [runs[k] for k in d["mswir_ep100_runs"]]
     d["band_ref"] = d["mswir_ep100"]
     scenes = sorted(set().union(*[set(x.scene_mean.index) for x in refs])) if refs else []

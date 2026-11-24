@@ -225,6 +225,12 @@ def latex_macros(d):
         group(pre, g)
     for pre, g in (("MsEpHundred", d["mswir_ep100"]), ("ChEpHundred", d["chen_ep100"]), ("ChEpTwoHundred", d["chen_ep200"])):
         add(pre + "Seeds", "--" if g is None else str(g["k"]))
+    for pre, keys in (("MsEpHundred", d["mswir_ep100_runs"]), ("MsEpTwoHundred", d["mswir_ep200_runs"]),
+                      ("ChEpHundred", d["chen_ep100_runs"]), ("ChEpTwoHundred", d["chen_ep200_runs"])):
+        if len(keys) > 1:
+            ps = [d["runs"][k]["psnr"] for k in keys]
+            add(pre + "RunMin", "%.2f" % min(ps))
+            add(pre + "RunMax", "%.2f" % max(ps))
     for name, label in (("100", "Hundred"), ("200", "TwoHundred")):
         full, native = d["mswir_ep%s" % name], d["native"].get(name)
         if full and native:
@@ -234,6 +240,8 @@ def latex_macros(d):
     if d.get("gap"):
         add("GapEpHundred", signed(d["gap"]["100"]))
         add("GapEpTwoHundred", signed(d["gap"]["200"]))
+        add("GapEpHundredPlain", "%.2f" % abs(d["gap"]["100"]))
+        add("GapEpTwoHundredPlain", "%.2f" % abs(d["gap"]["200"]))
     full = d["mswir_ep100"]
     for name, key in (("TwentyFive", "e3_frac25_ep400"), ("Fifty", "e3_frac50_ep200"), ("SeventyFive", "e3_frac75_ep130")):
         part = d["budget"].get(key)
@@ -257,10 +265,14 @@ def latex_macros(d):
         if vals:
             ps = [v["mean"][0] for v in vals]
             add(label + "SceneMinPsnr", "%.2f" % min(ps)), add(label + "SceneMaxPsnr", "%.2f" % max(ps))
+            add(label + "SceneSpan", "%.2f" % (max(ps) - min(ps)))
             add(label + "SceneMinName", scenes[ps.index(min(ps))])
             sds = [v["sd"][0] for v in vals if v.get("sd")]
             if sds:
                 add(label + "SceneSdMax", "%.2f" % max(sds))
+            rho = d.get("scene_rank_rho", {}).get("mswir" if label == "Ms" else "chen")
+            if rho is not None:
+                add(label + "SceneRankRhoMin", "%.2f" % rho)
     q = d["quality"]
     for key, label in (("chen", "ScaleChen"), ("mswir_4to1", "ScaleMs"), ("mswir_native", "ScaleNative")):
         for suf, col in (("LagOne", "a_lag1_mean"), ("Psd", "a_psd_mean"), ("BLagOne", "b_lag1_mean"),
@@ -319,7 +331,6 @@ def latex_macros(d):
     add("SceneWeakSecond", "%.1f" % qs[weak[1]]["weak"])
     add("ScaleMsWeakStd", "%.1f" % q["mswir_4to1"]["all"]["weak_std_mean"])
     add("ScaleMsStrongStd", "%.1f" % q["mswir_4to1"]["all"]["strong_std_mean"])
-    add("SeedsDone", "1" if d["mswir_ep100"] and d["mswir_ep100"]["k"] >= 3 else "0")
     add("BandDone", "1" if band_complete(d) else "0")
     add("SceneDone", "1" if d["scene"].get("foldA") and d["scene"].get("foldB") else "0")
     add("BudgetDone", "1" if all(d["budget"].get("e3_%s_ep%d" % (n, MATCHED[n])) for n in MATCHED) else "0")

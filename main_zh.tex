@@ -248,7 +248,7 @@ RGB在重叠区域的中间调估计逐位置、逐通道参数$g$，由$\gamma=
 
 预测以$256\times256$八位PNG保存，指标对测试窗口逐一计算后取算术平均：PSNR、SSIM（skimage实现，按通道轴计算，数据范围为1）\cite{wang2004}和LPIPS-Alex v0.1\cite{zhang2018lpips}。两个结果的PSNR差值的95\%置信区间按场景整群bootstrap估计（20{,}000次重采样，固定种子）：每次有放回地抽取与场景数相同的场景，用被抽中场景的全部逐窗口差值合并计算均值，取2.5\%和97.5\%分位。本节各实验不设验证集，统一评价固定的epoch检查点；逐窗口指标随稿提供。
 \subsection{仅替换数据集的同配置对照}\label{sec:same-config}
-表~\ref{tab:bench-main-zh}给出代码与配置不变、只替换数据集时的结果。100个epoch时，本数据集的PSNR为\MsEpHundredPsnrPm\,dB，陈归档数据为\ChEpHundredPsnrPm\,dB，相差\GapEpHundred\,dB；200个epoch时为\MsEpTwoHundredPsnrPm{}和\ChEpTwoHundredPsnrPm\,dB，相差\GapEpTwoHundred\,dB。SSIM与LPIPS的方向相同，200个epoch时LPIPS为\MsEpTwoHundredLpips{}对\ChEpTwoHundredLpips。源论文在其数据上报告的PSNR为24.156\,dB，其发布权重复评为24.005\,dB；归档数据在本节配置下训练200个epoch的结果低于这两个数值，500个epoch的结果见第~\ref{sec:budget}~节。
+表~\ref{tab:bench-main-zh}给出代码与配置不变、只替换数据集时的结果。100个epoch时，本数据集的PSNR为\MsEpHundredPsnrPm\,dB，陈归档数据为\ChEpHundredPsnrPm\,dB，均值相差\GapEpHundredPlain\,dB；200个epoch时为\MsEpTwoHundredPsnrPm{}和\ChEpTwoHundredPsnrPm\,dB，相差\GapEpTwoHundredPlain\,dB。SSIM与LPIPS的方向相同，200个epoch时LPIPS为\MsEpTwoHundredLpips{}对\ChEpTwoHundredLpips。源论文在其数据上报告的PSNR为24.156\,dB，其发布权重复评为24.005\,dB；归档数据在本节配置下训练200个epoch的结果低于这两个数值，500个epoch的结果见第~\ref{sec:budget}~节。
 
 \begin{table}[htbp]\centering\small
 \caption{仅替换数据集的同配置对照。}\label{tab:bench-main-zh}
@@ -256,11 +256,7 @@ RGB在重叠区域的中间调估计逐位置、逐通道参数$g$，由$\gamma=
 \input{generated/bench_main_20261124_zh.tex}
 \end{table}
 
-逐场景结果见表~\ref{tab:bench-scene-seeds-zh}。100个epoch时十个场景的PSNR为\MsSceneMinPsnr--\MsSceneMaxPsnr\,dB，最低的\MsSceneMinName{}也高于归档数据七个场景中的最高值\ChSceneMaxPsnr\,dB（归档数据的范围为\ChSceneMinPsnr--\ChSceneMaxPsnr\,dB）。本数据集完成\MsEpHundredSeeds{}次、归档数据完成\ChEpHundredSeeds{}次独立训练。
-\ifnum\SeedsDone=1
-合并PSNR的样本标准差为\MsEpHundredPsnrSd\,dB（本数据集）和\ChEpHundredPsnrSd\,dB（归档数据），逐场景PSNR标准差的最大值为\MsSceneSdMax\,dB。
-% TODO(results): 训练间波动与场景间差别的对比
-\fi
+逐场景结果见表~\ref{tab:bench-scene-seeds-zh}。两套数据各完成\MsEpHundredSeeds{}次和\ChEpHundredSeeds{}次独立训练，100个epoch时本数据集的PSNR为\MsEpHundredRunMin--\MsEpHundredRunMax\,dB，归档数据为\ChEpHundredRunMin--\ChEpHundredRunMax\,dB，两组的取值范围不重叠；合并PSNR的样本标准差为\MsEpHundredPsnrSd\,dB（本数据集）和\ChEpHundredPsnrSd\,dB（归档数据）。本数据集十个场景的PSNR为\MsSceneMinPsnr--\MsSceneMaxPsnr\,dB，场景之间的跨度为\MsSceneSpan\,dB；逐场景的训练间标准差最大为\MsSceneSdMax\,dB，任意两次训练的场景排序秩相关不低于\MsSceneRankRhoMin。训练间波动小于场景之间的跨度，场景的相对难易在重复训练中基本保持。两套数据的场景内容不同，逐场景数值只在各自内部比较。
 
 \begin{table}[htbp]\centering\small
 \caption{本数据集逐场景的同配置结果（100 epoch）。}\label{tab:bench-scene-seeds-zh}
@@ -268,9 +264,9 @@ RGB在重叠区域的中间调估计逐位置、逐通道参数$g$，由$\gamma=
 \input{generated/bench_scene_seeds_20261124_zh.tex}
 \end{table}
 
-这一对照回答的是可用性，不是质量排序。两套数据的内容、地点和后期处理不同，PSNR差值不能换算为数据质量的差值。可以核对的差别有三项。纹理尺度相近：4:1窗口与归档图块的输入lag-1相差0.002，频谱重心相差0.002。目标图像的统计不同：本数据集RGB目标取255的平均比例更高（\ScaleMsRgbSat\%对\ScaleChenRgbSat\%），通道间相关也更高（\ScaleMsRgbChanCorr{}对\ScaleChenRgbChanCorr）；上限裁剪区域的目标值恒定，通道相关的目标自由度更少，二者都可能使PSNR偏高。更新次数：归档数据在100个epoch时多4.7\%，方向相反。\GapEpHundred\,dB的差值中有一部分来自目标图像的统计差别，其大小未被分离。
+这一对照回答的是可用性，不是质量排序。两套数据的内容、地点和后期处理不同，PSNR差值不能换算为数据质量的差值。可以核对的差别有三项。纹理尺度相近：4:1窗口与归档图块的输入lag-1相差0.002，频谱重心相差0.002。目标图像的统计不同：本数据集RGB目标取255的平均比例更高（\ScaleMsRgbSat\%对\ScaleChenRgbSat\%），通道间相关也更高（\ScaleMsRgbChanCorr{}对\ScaleChenRgbChanCorr）；上限裁剪区域的目标值恒定，通道相关的目标自由度更少，二者都可能使PSNR偏高。更新次数：归档数据在100个epoch时多4.7\%，方向相反。\GapEpHundredPlain\,dB的差值中有一部分来自目标图像的统计差别和训练间波动，其大小未被分离。
 
-在该前提下，对照支持的结论是：公开实现无需修改即可在本数据集上训练，并在相同预算下得到更高的分数；十个场景的结果方向一致，没有出现训练失败的场景。该结果属于随机窗口划分，训练与测试窗口来自相同的场景，不代表未见地点上的性能，后者见第~\ref{sec:scale-scene}~和\ref{sec:site-isolated}~节。
+在该前提下，对照支持的结论是：公开实现无需修改即可在本数据集上训练，并在相同预算下得到更高的分数；本数据集\MsEpHundredSeeds{}次训练的最低值高于归档数据\ChEpHundredSeeds{}次训练的最高值，十个场景上均未出现训练失败。该结果属于随机窗口划分，训练与测试窗口来自相同的场景，不代表未见地点上的性能，后者见第~\ref{sec:scale-scene}~和\ref{sec:site-isolated}~节。
 \subsection{输入波段消融}\label{sec:band-ablation}
 固定训练与评价配置，只改变输入的三个通道：五种单波段（同一波段复制到三个通道）和十种三波段（按编号升序堆叠），每种输入训练一次，共15次；窗口、目标、划分和更新次数与第~\ref{sec:same-config}~节相同。各输入相对B123（取\MsEpHundredSeeds{}次训练的逐窗口均值）的PSNR差值及其95\%置信区间见表~\ref{tab:bench-band-zh}\ifnum\BandDone=1{}和图~\ref{fig:band-ablation-zh}\fi。
 \ifnum\BandDone=1
@@ -287,7 +283,7 @@ RGB在重叠区域的中间调估计逐位置、逐通道参数$g$，由$\gamma=
 \ifnum\BandDone=1
 \begin{figure}[htbp]\centering
 \includegraphics[width=.8\textwidth]{figures/zh/results_20261124/band_ablation_zh.pdf}
-\caption{十五种输入的测试PSNR（100 epoch）。灰色为单波段，青色为三波段，深色为参照输入B123；点为各场景内的窗口均值。\label{fig:band-ablation-zh}}
+\caption{十五种输入的测试PSNR（100 epoch）。灰色为单波段，青色为三波段，深色为参照输入B123（\MsEpHundredSeeds{}次训练，误差线为标准差）；点为各场景内的窗口均值。\label{fig:band-ablation-zh}}
 \end{figure}
 \fi
 
@@ -311,18 +307,18 @@ RGB在重叠区域的中间调估计逐位置、逐通道参数$g$，由$\gamma=
 
 \begin{figure}[htbp]\centering
 \includegraphics[width=.62\textwidth]{figures/zh/results_20261124/budget_curve_zh.pdf}
-\caption{训练数据量与测试PSNR。横轴为参数更新次数，虚线为全量训练100个epoch的更新次数；各子集在同一测试集上评价。\label{fig:budget-curve-zh}}
+\caption{训练数据量与测试PSNR。横轴为参数更新次数，虚线为全量训练100个epoch的更新次数；各子集在同一测试集上评价，全量训练在71{,}000次更新处的误差线为\MsEpHundredSeeds{}次训练的标准差。\label{fig:budget-curve-zh}}
 \end{figure}
 
 \begin{table}[htbp]\centering\small
 \caption{匹配更新次数下的训练数据量对照（100 epoch 口径，随机窗口划分）。}\label{tab:bench-budget-zh}
-\vspace{1pt}{\footnotesize\noindent 各行更新次数在69{,}290--71{,}000之间；测试集为相同的710个窗口。\ifnum\BudgetDone=1\else{}“--”表示该训练尚未完成。\fi\par}
+\vspace{1pt}{\footnotesize\noindent 各行更新次数在69{,}290--71{,}000之间；测试集为相同的710个窗口；100\%一行为100个epoch的\MsEpHundredSeeds{}次训练均值$\pm$样本标准差。\ifnum\BudgetDone=1\else{}“--”表示该训练尚未完成。\fi\par}
 \input{generated/bench_budget_20261124_zh.tex}
 \end{table}
 
 训练预算的影响另以500个epoch的结果估计：从200个epoch按原作者的续训方式继续训练，本数据集的PSNR为\MsEpFiveHundredPsnr\,dB（SSIM \MsEpFiveHundredSsim，LPIPS \MsEpFiveHundredLpips），归档数据两次训练为\ChEpFiveHundredPsnrPm\,dB。本节不设验证集，500个epoch统一取末个epoch的检查点：归档数据的一次训练在第490与第500个epoch之间变化\ChLateSwing\,dB，末个epoch的取值带有波动。本文因此以100和200个epoch的匹配预算作为对照口径，500个epoch的数值只表示该配置下的预算敏感性。
 \subsection{窗口尺度与场景边界}\label{sec:scale-scene}
-\emph{窗口尺度。}把采样单元由4:1窗口换为1:1窗口，其余配置不变：100和200个epoch的PSNR为\NativeEpHundredPsnr{}和\NativeEpTwoHundredPsnr\,dB，比同预算下4:1窗口的多次训练均值低\NativeDropHundred{}和\NativeDropTwoHundred\,dB，SSIM为\NativeEpHundredSsim{}和\NativeEpTwoHundredSsim。第~\ref{sec:quality-scale}~节的统计给出了与这一差别并存的两个因素：1:1窗口的SWIR输入被放大约10倍、纹理更平滑，且其过采样倍数高于RGB目标（约10倍对3.2倍），目标中存在输入难以分辨的结构。窗口尺度因此是使用本数据集时需要明确的参数。
+\emph{窗口尺度。}把采样单元由4:1窗口换为1:1窗口，其余配置不变：100和200个epoch的PSNR为\NativeEpHundredPsnr{}和\NativeEpTwoHundredPsnr\,dB，比同预算下4:1窗口的结果低\NativeDropHundred{}和\NativeDropTwoHundred\,dB，SSIM为\NativeEpHundredSsim{}和\NativeEpTwoHundredSsim。第~\ref{sec:quality-scale}~节的统计给出了与这一差别并存的两个因素：1:1窗口的SWIR输入被放大约10倍、纹理更平滑，且其过采样倍数高于RGB目标（约10倍对3.2倍），目标中存在输入难以分辨的结构。窗口尺度因此是使用本数据集时需要明确的参数。
 
 \emph{场景边界。}为考察分数对场景组成的依赖，另做两折场景划分：划分A用随机划分训练集中属于C1--C5的1558个窗口训练，以C6--C10的全部1618个窗口为测试集；划分B用C6--C10的1284个窗口训练，以C1--C5的全部1934个窗口为测试集。两者的更新次数分别为70{,}020和70{,}620，与全量训练100个epoch相当，结果见表~\ref{tab:bench-scene-zh}。
 \ifnum\SceneDone=1
@@ -419,7 +415,7 @@ RGB在重叠区域的中间调估计逐位置、逐通道参数$g$，由$\gamma=
 \caption{目标地点监督及其空间边界。a，整地点保留区域中的三种映射；b，固定二次映射在同侧、全图和对侧采样条件下的半区评价。灰线为地点，蓝线为十地点均值；b中每个地点已平均两个方向。两面板的评价支持不同，分别解释其内部差异。\label{fig:calibration-zh}}
 \end{figure}
 \subsection{定性图}\label{sec:qualitative}
-图~\ref{fig:qualitative-zh}给出十个场景各一个测试窗口的SWIR输入、TFD-GAN输出和RGB真值，输出取自100个epoch的参照训练。窗口由作者只查看RGB真值选定，每场景取一个内容较丰富的候选，选定时不查看模型输出；这十个窗口在参照训练中的PSNR为\QualPsnrMin--\QualPsnrMax\,dB。
+图~\ref{fig:qualitative-zh}给出十个场景各一个测试窗口的SWIR输入、TFD-GAN输出和RGB真值，输出取自同配置对照中100个epoch的第1次训练。窗口由作者只查看RGB真值选定，每场景取一个内容较丰富的候选，选定时不查看模型输出；这十个窗口在该次训练中的PSNR为\QualPsnrMin--\QualPsnrMax\,dB。
 
 输出的整体色调和主要结构与真值接近：钢结构、停车架和路面标线的颜色与位置得到保留，天空、植被和车窗的色调与真值一致。细小纹理被平滑，高亮区域有偏色，例如C1的天空偏品红、远处的枝叶和窗格缺少细节。图像说明该协议下的输出可用于整体外观的查看，细小结构和局部颜色仍有偏差。
 
@@ -430,10 +426,10 @@ RGB在重叠区域的中间调估计逐位置、逐通道参数$g$，由$\gamma=
 \section{使用说明与局限}\label{sec:usage}
 使用本数据集时需要明确三个参数。\emph{采样单元：}4:1窗口是面向当前公开实现的默认单元，其纹理尺度与该实现的归档图块相近；1:1窗口对应约10倍上采样的SWIR输入，得分低得多（第~\ref{sec:scale-scene}~节）。\emph{输入波段：}五个波段分为两组，任一波段都与其余波段不完全冗余，固定配置下的十五种输入结果见表~\ref{tab:bench-band-zh}。\emph{划分方式：}随机窗口划分度量同一场景内的重建，地点隔离与留出场景划分度量对新地点的泛化，两类分数各自解释。
 
-局限有五项。(1) 保存值为未定标八位数字量，五个SWIR波段分时曝光，曝光与增益未随文件保存。(2) 存在上限裁剪：B1在\BandBOneSatTopName{}和\BandBOneSatSecondName{}分别有\BandBOneSatTop\%和\BandBOneSatSecond\%的像素取255，\RgbSatMaxName{}的RGB三通道各有约\RgbSatMax\%的像素取255。(3) \ScaleMsPeakWeakPct\%的4:1窗口的模态间对齐无法由图像内容自动判定，独立人工几何验收和全量质量巡检尚未完成。(4) 地点规模为十个，场景划分只有两折；波段消融、训练数据量和场景划分实验的每种配置只有一次训练。(5) 跨数据集的PSNR差值不构成数据质量排序。
+局限有五项。(1) 保存值为未定标八位数字量，五个SWIR波段分时曝光，曝光与增益未随文件保存。(2) 存在上限裁剪：B1在\BandBOneSatTopName{}和\BandBOneSatSecondName{}分别有\BandBOneSatTop\%和\BandBOneSatSecond\%的像素取255，\RgbSatMaxName{}的RGB三通道各有约\RgbSatMax\%的像素取255。(3) \ScaleMsPeakWeakPct\%的4:1窗口的模态间对齐无法由图像内容自动判定，独立人工几何验收和全量质量巡检尚未完成。(4) 地点规模为十个，场景划分只有两折；波段消融、训练数据量和场景划分实验的每种配置只有一次训练，窗口尺度和500个epoch的本数据集结果也只有一次训练。(5) 跨数据集的PSNR差值不构成数据质量排序。
 
 \section{结论}\label{sec:conclusion}
-本文构建了十地点RGB与五个名义SWIR子波段的配对数据集，以源帧身份、几何变换、裁切、强度处理和共同支持关联数据记录，并给出随机窗口与地点隔离两类评价协议。数据质量方面，在网络输入尺度上，本数据集4:1窗口的纹理尺度与按同一平台配置采集的归档图块相近，可判定窗口的模态间位移不超过1像素的比例为\ScaleMsPeakWithinOnePxStrong\%；五个波段在图像内容上分为两组且互不冗余，B1和部分RGB存在上限裁剪。在公开实现与相同训练预算下仅替换数据集，100个epoch的PSNR为\MsEpHundredPsnrPm\,dB，同配置下归档数据为\ChEpHundredPsnrPm\,dB，十个场景方向一致，说明该实现无需修改即可使用本数据集；该差值中混有目标图像统计的差别，不作为质量排序。地点隔离五折基准下，验证集选择的三波段输入的PSNR收益随模型与地点变化；目标地点的十个配对图块使仿射映射在保留区域提高\CalibrationAffineGain\,dB，并显示出空间适用边界。当前资源限于十个地点、分时曝光和未定标DN，独立人工几何验证与全量质量巡检尚未完成，部分基准配置只有一次训练。后续工作是完成这些验收、扩展独立地点，并以多次训练复验波段与场景划分的结论。
+本文构建了十地点RGB与五个名义SWIR子波段的配对数据集，以源帧身份、几何变换、裁切、强度处理和共同支持关联数据记录，并给出随机窗口与地点隔离两类评价协议。数据质量方面，在网络输入尺度上，本数据集4:1窗口的纹理尺度与按同一平台配置采集的归档图块相近，可判定窗口的模态间位移不超过1像素的比例为\ScaleMsPeakWithinOnePxStrong\%；五个波段在图像内容上分为两组且互不冗余，B1和部分RGB存在上限裁剪。在公开实现与相同训练预算下仅替换数据集，100个epoch的PSNR为\MsEpHundredPsnrPm\,dB，同配置下归档数据为\ChEpHundredPsnrPm\,dB（各\MsEpHundredSeeds{}次训练），说明该实现无需修改即可使用本数据集；该差值中混有目标图像统计的差别和训练间波动，不作为质量排序。地点隔离五折基准下，验证集选择的三波段输入的PSNR收益随模型与地点变化；目标地点的十个配对图块使仿射映射在保留区域提高\CalibrationAffineGain\,dB，并显示出空间适用边界。当前资源限于十个地点、分时曝光和未定标DN，独立人工几何验证与全量质量巡检尚未完成，部分基准配置只有一次训练。后续工作是完成这些验收、扩展独立地点，并以多次训练复验波段与场景划分的结论。
 
 \section*{代码可用性}
 读取、处理、评价及汇总代码将按投稿要求公开，正式代码地址和版本标识将在提交前补入。目前论文项目保存了最小结果表、协议、配置摘要、来源SHA-256以及重建图表和表格的脚本。地点隔离基准部分的既有核对覆盖270项训练的完成状态、验证选择规则及逐地点汇总，45种固定模型--输入条件的重算均值与导出主表最大绝对差为$7.2\times10^{-15}$以内；窗口级基准的表格、宏和图由同一脚本从随稿保存的汇总数据重建，并与稿内表格逐字核对。该核对基于保存记录，不包含重新训练、生成预测或从完整浮点预测重算全部指标，不替代外部独立复现。权重、原始数据和大型交付包不随论文源稿仓库分发。
@@ -455,7 +451,6 @@ RGB在重叠区域的中间调估计逐位置、逐通道参数$g$，由$\gamma=
 \setlength{\bibsep}{2pt}
 \bibliographystyle{unsrtnat}
 \bibliography{refs}
-\clearpage
 \appendix
 \section{完整输入配置与验证选择}\label{app:all-inputs-zh}
 表~\ref{tab:choices-zh}列出每模型每折由验证集选出的输入。S1--S5为相应单波段复制，T123--T345为十种不同三波段组合。候选检查点先依据固定验证窗口确定，再比较候选输入；测试地点的任何指标均未参与选择。

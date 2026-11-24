@@ -1,16 +1,20 @@
 {
   "status": "passed",
-  "pages": 26,
+  "pages": 27,
   "labels": 57,
   "citations": 29,
-  "checked_text_boxes": 5208,
+  "checked_text_boxes": 5255,
   "undefined_references": 0,
   "oversized_floats": 0,
   "overfull_boxes": 0,
   "completed_runs_verified": 270,
-  "window_level_runs_in_summary": 11,
+  "window_level_runs_in_summary": 15,
+  "seed_repeats": {
+    "100_epochs": {"mswir": 3, "chen": 3},
+    "200_epochs": {"mswir": 1, "chen": 1}
+  },
   "pending_training_groups": [
-    "multi-seed repeats (two datasets)",
+    "multi-seed repeats at 200 epochs (two datasets)",
     "input band ablation (14 variants)",
     "training-set size (25/50/75%)",
     "scene-held-out split (two folds)"
@@ -18,10 +22,10 @@
   "scope": "Saved-record, source, table and PDF layout checks; no new inference.",
   "date": "2026-11-24",
   "pdf": "output/pdf/main_zh_latest.pdf",
-  "pdf_sha256": "1c666b4d150c3a050d0a20e7a4f053b07f6f142bf195816a3deeca58d6677f3d",
-  "pdf_bytes": 4335935,
+  "pdf_sha256": "6274f0a4d34b633c3ea9a8a4378431a955515b2b0a551c3295adbcffa7d6649e",
+  "pdf_bytes": 4337571,
   "compiler": "XeLaTeX / TeX Live 2026 via latexmk",
-  "visual_review": "All 26 pages rendered and inspected; pages 10-16 additionally at higher resolution; no cropping or collisions found. Tables 14, 16, 17 and 18 carry '--' placeholders for trainings still running at the time of this check.",
-  "base_commit": "5a82d454be380db7132ce10ed87519872f42db34",
+  "visual_review": "All 27 pages rendered as contact sheets and inspected; pages 12, 13, 14, 21, 24 and 27, the pages changed by the three-seed update, additionally at page resolution; no blank pages, cropping or collisions found. Tables 14, 16, 17 and 18 carry '--' placeholders for trainings still running at the time of this check.",
+  "base_commit": "b38044551bd4563c0cbe1e2f816f869f299cdbae",
   "raw_data_weights_delivery_archives_included": false
 }
