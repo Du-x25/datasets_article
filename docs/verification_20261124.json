@@ -1,0 +1,27 @@
+{
+  "status": "passed",
+  "pages": 26,
+  "labels": 57,
+  "citations": 29,
+  "checked_text_boxes": 5208,
+  "undefined_references": 0,
+  "oversized_floats": 0,
+  "overfull_boxes": 0,
+  "completed_runs_verified": 270,
+  "window_level_runs_in_summary": 11,
+  "pending_training_groups": [
+    "multi-seed repeats (two datasets)",
+    "input band ablation (14 variants)",
+    "training-set size (25/50/75%)",
+    "scene-held-out split (two folds)"
+  ],
+  "scope": "Saved-record, source, table and PDF layout checks; no new inference.",
+  "date": "2026-11-24",
+  "pdf": "output/pdf/main_zh_latest.pdf",
+  "pdf_sha256": "1c666b4d150c3a050d0a20e7a4f053b07f6f142bf195816a3deeca58d6677f3d",
+  "pdf_bytes": 4335935,
+  "compiler": "XeLaTeX / TeX Live 2026 via latexmk",
+  "visual_review": "All 26 pages rendered and inspected; pages 10-16 additionally at higher resolution; no cropping or collisions found. Tables 14, 16, 17 and 18 carry '--' placeholders for trainings still running at the time of this check.",
+  "base_commit": "5a82d454be380db7132ce10ed87519872f42db34",
+  "raw_data_weights_delivery_archives_included": false
+}

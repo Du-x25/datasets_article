@@ -33,6 +33,10 @@ def validate():
     assert cited <= keys, cited-keys
     for old in ['results_macros_zh.tex','fig:local-modalities-zh','Restormer','GeneralizationGap','固定末步检查点','30次训练','仅扰动B1']:
         assert old not in source, old
+    # Window-level benchmark tables must be rebuilt from the bundled source data and all be in the manuscript.
+    import build_bench_20261124 as bench
+    for name in bench.check_tables():
+        assert name[:-4] in source, 'bench table not included: %s' % name
     macros=dict(re.findall(r'\\newcommand\{\\([^}]+)\}\{([^}]+)\}',tex))
     for m,prefix in [('drunet','Drunet'),('pix2pix','Pix'),('tfd','Tfd')]:
         for group in ['single','triple']:

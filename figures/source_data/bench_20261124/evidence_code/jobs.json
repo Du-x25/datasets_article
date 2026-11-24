@@ -1,0 +1,312 @@
+[
+  {
+    "id": "ev_mswir_ep100",
+    "group": "eval",
+    "eval_only": true,
+    "priority": 5,
+    "gpu": 0,
+    "epoch": 100,
+    "dataroot": "D:/dh/chen_repro/datasets/mswir_random_4to1_3552",
+    "ckpt": "D:/dh/chen_repro/train/tfd_mswir_random_4to1_b4/checkpoints/mswir_random_4to1/100_net_G.pth",
+    "note": "已有 ep100 结果的口径自检，应复现 25.2217/0.8150/0.0683"
+  },
+  {
+    "id": "ev_mswir_ep200",
+    "group": "eval",
+    "eval_only": true,
+    "priority": 5,
+    "gpu": 0,
+    "epoch": 200,
+    "dataroot": "D:/dh/chen_repro/datasets/mswir_random_4to1_3552",
+    "ckpt": "D:/dh/chen_repro/train/tfd_mswir_random_4to1_b4/checkpoints/mswir_random_4to1/200_net_G.pth",
+    "note": "已有 ep200 检查点的统一 PNG 口径重评（此前仅有 eval_tfd 张量口径 28.7608）"
+  },
+  {
+    "id": "e1_mswir_s2",
+    "group": "e1",
+    "priority": 10,
+    "gpu": 0,
+    "dataroot": "D:/dh/chen_repro/datasets/mswir_random_4to1_3552",
+    "niter": 100,
+    "niter_decay": 100,
+    "eval_epochs": [
+      100,
+      200
+    ]
+  },
+  {
+    "id": "e1_chen_s2",
+    "group": "e1",
+    "priority": 10,
+    "gpu": 0,
+    "dataroot": "D:/chen/pix2pixhd-p-noshuffle/datasets/new_seg/train124_rgb",
+    "niter": 100,
+    "niter_decay": 100,
+    "eval_epochs": [
+      100,
+      200
+    ]
+  },
+  {
+    "id": "e1_mswir_s3",
+    "group": "e1",
+    "priority": 10,
+    "gpu": 1,
+    "dataroot": "D:/dh/chen_repro/datasets/mswir_random_4to1_3552",
+    "niter": 100,
+    "niter_decay": 100,
+    "eval_epochs": [
+      100,
+      200
+    ]
+  },
+  {
+    "id": "e1_chen_s3",
+    "group": "e1",
+    "priority": 10,
+    "gpu": 1,
+    "dataroot": "D:/chen/pix2pixhd-p-noshuffle/datasets/new_seg/train124_rgb",
+    "niter": 100,
+    "niter_decay": 100,
+    "eval_epochs": [
+      100,
+      200
+    ]
+  },
+  {
+    "id": "e3_frac25",
+    "group": "e3",
+    "priority": 20,
+    "dataroot": "D:/dh/MSWIR_RGB/bench_20261124/datasets/frac25",
+    "niter": 400,
+    "niter_decay": 400,
+    "stop_after": 400,
+    "eval_epochs": [
+      100,
+      200,
+      300,
+      400
+    ]
+  },
+  {
+    "id": "e3_frac50",
+    "group": "e3",
+    "priority": 20,
+    "dataroot": "D:/dh/MSWIR_RGB/bench_20261124/datasets/frac50",
+    "niter": 200,
+    "niter_decay": 200,
+    "stop_after": 200,
+    "eval_epochs": [
+      50,
+      100,
+      150,
+      200
+    ]
+  },
+  {
+    "id": "e3_frac75",
+    "group": "e3",
+    "priority": 20,
+    "dataroot": "D:/dh/MSWIR_RGB/bench_20261124/datasets/frac75",
+    "niter": 130,
+    "niter_decay": 130,
+    "stop_after": 130,
+    "eval_epochs": [
+      50,
+      100,
+      130
+    ]
+  },
+  {
+    "id": "e4_sceneA",
+    "group": "e4",
+    "priority": 30,
+    "dataroot": "D:/dh/MSWIR_RGB/bench_20261124/datasets/scene_foldA",
+    "niter": 180,
+    "niter_decay": 180,
+    "stop_after": 180,
+    "eval_epochs": [
+      180
+    ]
+  },
+  {
+    "id": "e4_sceneB",
+    "group": "e4",
+    "priority": 30,
+    "dataroot": "D:/dh/MSWIR_RGB/bench_20261124/datasets/scene_foldB",
+    "niter": 220,
+    "niter_decay": 220,
+    "stop_after": 220,
+    "eval_epochs": [
+      220
+    ]
+  },
+  {
+    "id": "e2_B1",
+    "group": "e2",
+    "priority": 40,
+    "dataroot": "D:/dh/MSWIR_RGB/bench_20261124/datasets/B1",
+    "niter": 100,
+    "niter_decay": 100,
+    "stop_after": 100,
+    "eval_epochs": [
+      100
+    ]
+  },
+  {
+    "id": "e2_B2",
+    "group": "e2",
+    "priority": 40,
+    "dataroot": "D:/dh/MSWIR_RGB/bench_20261124/datasets/B2",
+    "niter": 100,
+    "niter_decay": 100,
+    "stop_after": 100,
+    "eval_epochs": [
+      100
+    ]
+  },
+  {
+    "id": "e2_B3",
+    "group": "e2",
+    "priority": 40,
+    "dataroot": "D:/dh/MSWIR_RGB/bench_20261124/datasets/B3",
+    "niter": 100,
+    "niter_decay": 100,
+    "stop_after": 100,
+    "eval_epochs": [
+      100
+    ]
+  },
+  {
+    "id": "e2_B4",
+    "group": "e2",
+    "priority": 40,
+    "dataroot": "D:/dh/MSWIR_RGB/bench_20261124/datasets/B4",
+    "niter": 100,
+    "niter_decay": 100,
+    "stop_after": 100,
+    "eval_epochs": [
+      100
+    ]
+  },
+  {
+    "id": "e2_B5",
+    "group": "e2",
+    "priority": 40,
+    "dataroot": "D:/dh/MSWIR_RGB/bench_20261124/datasets/B5",
+    "niter": 100,
+    "niter_decay": 100,
+    "stop_after": 100,
+    "eval_epochs": [
+      100
+    ]
+  },
+  {
+    "id": "e2_B124",
+    "group": "e2",
+    "priority": 40,
+    "dataroot": "D:/dh/MSWIR_RGB/bench_20261124/datasets/B124",
+    "niter": 100,
+    "niter_decay": 100,
+    "stop_after": 100,
+    "eval_epochs": [
+      100
+    ]
+  },
+  {
+    "id": "e2_B125",
+    "group": "e2",
+    "priority": 40,
+    "dataroot": "D:/dh/MSWIR_RGB/bench_20261124/datasets/B125",
+    "niter": 100,
+    "niter_decay": 100,
+    "stop_after": 100,
+    "eval_epochs": [
+      100
+    ]
+  },
+  {
+    "id": "e2_B134",
+    "group": "e2",
+    "priority": 40,
+    "dataroot": "D:/dh/MSWIR_RGB/bench_20261124/datasets/B134",
+    "niter": 100,
+    "niter_decay": 100,
+    "stop_after": 100,
+    "eval_epochs": [
+      100
+    ]
+  },
+  {
+    "id": "e2_B135",
+    "group": "e2",
+    "priority": 40,
+    "dataroot": "D:/dh/MSWIR_RGB/bench_20261124/datasets/B135",
+    "niter": 100,
+    "niter_decay": 100,
+    "stop_after": 100,
+    "eval_epochs": [
+      100
+    ]
+  },
+  {
+    "id": "e2_B145",
+    "group": "e2",
+    "priority": 40,
+    "dataroot": "D:/dh/MSWIR_RGB/bench_20261124/datasets/B145",
+    "niter": 100,
+    "niter_decay": 100,
+    "stop_after": 100,
+    "eval_epochs": [
+      100
+    ]
+  },
+  {
+    "id": "e2_B234",
+    "group": "e2",
+    "priority": 40,
+    "dataroot": "D:/dh/MSWIR_RGB/bench_20261124/datasets/B234",
+    "niter": 100,
+    "niter_decay": 100,
+    "stop_after": 100,
+    "eval_epochs": [
+      100
+    ]
+  },
+  {
+    "id": "e2_B235",
+    "group": "e2",
+    "priority": 40,
+    "dataroot": "D:/dh/MSWIR_RGB/bench_20261124/datasets/B235",
+    "niter": 100,
+    "niter_decay": 100,
+    "stop_after": 100,
+    "eval_epochs": [
+      100
+    ]
+  },
+  {
+    "id": "e2_B245",
+    "group": "e2",
+    "priority": 40,
+    "dataroot": "D:/dh/MSWIR_RGB/bench_20261124/datasets/B245",
+    "niter": 100,
+    "niter_decay": 100,
+    "stop_after": 100,
+    "eval_epochs": [
+      100
+    ]
+  },
+  {
+    "id": "e2_B345",
+    "group": "e2",
+    "priority": 40,
+    "dataroot": "D:/dh/MSWIR_RGB/bench_20261124/datasets/B345",
+    "niter": 100,
+    "niter_decay": 100,
+    "stop_after": 100,
+    "eval_epochs": [
+      100
+    ]
+  }
+]

@@ -133,7 +133,7 @@ python scripts/qa_manuscripts.py --language zh
 Copy-Item -LiteralPath "build/zh/main_zh.pdf" -Destination "output/pdf/main_zh_latest.pdf"
 ```
 
-将 `output/pdf/main_zh_latest.pdf` 与本次源稿修改一起提交。已归档的 `20261109` PDF 和验证记录继续保留为历史版本；需要额外里程碑归档时再创建日期命名副本。不同系统字体可能改变分页，19 页是当前 Windows/TeX Live 2026 归档版本的页数。
+将 `output/pdf/main_zh_latest.pdf` 与本次源稿修改一起提交。已归档的 `20261109` PDF 和验证记录继续保留为历史版本；需要额外里程碑归档时再创建日期命名副本。不同系统字体可能改变分页，26 页是当前 Windows/TeX Live 2026 归档版本的页数。
 
 ## 5. 可选：复算结果与重新出图
 
@@ -153,6 +153,16 @@ python scripts/qa_manuscripts.py --language zh
 ```
 
 绘图会重建 `figures/zh/results_20261109/` 中的 PDF/SVG/PNG、`generated/` 中对应的表格和宏，以及数值汇总。生成的表格与宏应从脚本更新，避免手工改数后与证据不一致。普通文字修改无需重新出图。
+
+窗口级基准与数据质量统计（第 4 节、第 5.2–5.6 节）的表格、数值宏和图由另一个脚本从随稿保存的汇总数据重建：
+
+```powershell
+python scripts/build_bench_20261124.py
+latexmk -norc -xelatex -bibtex -interaction=nonstopmode -halt-on-error -outdir=build/zh main_zh.tex
+python scripts/qa_manuscripts.py --language zh
+```
+
+脚本读取 `figures/source_data/bench_20261124/results.json`，写入 `generated/bench_*_20261124_zh.tex` 和 `figures/zh/results_20261124/` 中的图；`qa_manuscripts.py` 用同一脚本逐字核对稿内表格。图 7（定性图）由工作区的预测结果生成，仓库内不重建，其窗口清单在 `qualitative_windows.csv`。
 
 脚本自动查找微软雅黑、Noto Sans SC/CJK SC、思源黑体等已安装字体，找不到时明确报错。也可在当前终端指定字体族或字体文件：
 
