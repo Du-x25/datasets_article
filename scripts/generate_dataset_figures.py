@@ -484,20 +484,7 @@ def write_acquisition_tables(acquisition: pd.DataFrame) -> None:
         r"& Canvas (px) & Coverage \\",
         r"\midrule",
     ]
-    header_zh = [
-        r"\begin{table}[htbp]",
-        r"\centering",
-        r"\caption{由 \texttt{metadata/acquisition\_provenance.csv} 自动生成的逐场景采集与"
-        r"拼接构建记录。日期由只读原始文件的修改时间恢复，每个场景对应唯一日历日期。"
-        r"位姿边为进入位姿图的已接受位置间特征匹配数；覆盖率为未裁剪画布上六模态均有效的比例。}",
-        r"\label{tab:acquisition-zh}",
-        r"\small",
-        r"\begin{tabular}{@{}llrrrrlrr@{}}",
-        r"\toprule",
-        r"场景 & 日期 & 位置数 & RGB帧 & SWIR帧 & 位姿边 & 位姿模型 & 画布（像素） & 覆盖率 \\",
-        r"\midrule",
-    ]
-    rows_en, rows_zh = [], []
+    rows_en = []
     for _, row in acquisition.iterrows():
         bundle = "+BA" if bool(row["bundle_adjustment_enabled"]) else ""
         pose = f"{row['pose_model']}{bundle}"
@@ -518,13 +505,9 @@ def write_acquisition_tables(acquisition: pd.DataFrame) -> None:
         )
         line = " & ".join(str(value) for value in values) + r" \\"
         rows_en.append(line)
-        rows_zh.append(line)
     tail = [r"\bottomrule", r"\end{tabular}", r"\end{table}"]
     (GENERATED / "scene_acquisition_en.tex").write_text(
         "\n".join(header_en + rows_en + tail) + "\n", encoding="utf-8"
-    )
-    (GENERATED / "scene_acquisition_zh.tex").write_text(
-        "\n".join(header_zh + rows_zh + tail) + "\n", encoding="utf-8"
     )
     acquisition.to_csv(
         SOURCE_DATA / "acquisition_provenance.csv", index=False, encoding="utf-8-sig"

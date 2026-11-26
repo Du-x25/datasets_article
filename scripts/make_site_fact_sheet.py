@@ -111,21 +111,21 @@ def main():
     lines = []
     lines.append("% 自动生成，勿手工编辑；由 scripts/make_site_fact_sheet.py 生成")
     lines.append("% 数据源：datasets_article_auto_v3/metadata + crop_comparison_20261011")
-    lines.append("\\begin{tabularx}{\\textwidth}{@{}llrrlr>{\\raggedright\\arraybackslash}X@{}}")
+    lines.append("\\begin{tabularx}{\\textwidth}{@{}llrrrlr>{\\raggedright\\arraybackslash}X@{}}")
     lines.append("\\toprule")
-    lines.append("地点 & 采集日期 & 视野数 & RGB源帧 & 画幅（宽$\\times$高） & 合格窗口 & 画面构成 \\\\")
+    lines.append("地点 & 采集日期 & 视野数 & RGB源帧 & SWIR源帧 & 画幅（宽$\\times$高） & 合格窗口 & 画面构成 \\\\")
     lines.append("\\midrule")
     for r in rows:
         note = f"（每视野{r['rgb_per_pos']}帧）" if r["rgb_per_pos"] != "1" else ""
         lines.append(
-            f"{r['scene']} & {r['date']} & {r['positions']} & {r['rgb_frames']} & "
+            f"{r['scene']} & {r['date']} & {r['positions']} & {r['rgb_frames']} & {5 * r['positions']} & "
             f"{r['width']}$\\times${r['height']} & {r['windows']} & {r['content']}{note} \\\\"
         )
     lines.append("\\midrule")
     tot_pos = sum(r["positions"] for r in rows)
     tot_rgb = sum(r["rgb_frames"] for r in rows)
     tot_win = sum(r["windows"] for r in rows)
-    lines.append(f"合计 & --- & {tot_pos} & {tot_rgb} & 十个不同尺寸 & {tot_win} & --- \\\\")
+    lines.append(f"合计 & --- & {tot_pos} & {tot_rgb} & {5 * tot_pos} & 十个不同尺寸 & {tot_win} & --- \\\\")
     lines.append("\\bottomrule")
     lines.append("\\end{tabularx}")
     io.open(zh, "w", encoding="utf-8").write("\n".join(lines) + "\n")

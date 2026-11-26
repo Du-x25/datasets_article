@@ -1,9 +1,9 @@
 {
   "status": "passed",
   "pages": 27,
-  "labels": 58,
+  "labels": 57,
   "citations": 29,
-  "checked_text_boxes": 5580,
+  "checked_text_boxes": 5539,
   "undefined_references": 0,
   "oversized_floats": 0,
   "overfull_boxes": 0,
@@ -23,10 +23,10 @@
   "scope": "Saved-record, source, table and PDF layout checks; no new inference.",
   "date": "2026-11-26",
   "pdf": "output/pdf/main_zh_latest.pdf",
-  "pdf_sha256": "ecb3c447154333d32953127e1e2fbc43a8706b597a7eb87baf762aa6d3608002",
-  "pdf_bytes": 5710963,
+  "pdf_sha256": "f55e4b25b57e5a03a93564ad09b35733da43c6c1d6663cd119cbf36fb47806f9",
+  "pdf_bytes": 5710417,
   "compiler": "XeLaTeX / TeX Live 2026 via latexmk",
-  "visual_review": "All 27 pages rendered as contact sheets and inspected; no blank pages, cropping or collisions found. The blank tail of page 9 comes from a table held before the next section, and page 21 is the full-page qualitative plate; both match the previous version. No table carries '--' placeholders. Wording pass of 2026-11-26 changed prose only; numbers, tables and figures are unchanged.",
+  "visual_review": "All 27 pages rendered as contact sheets and inspected; no blank pages, cropping or collisions found. The blank tail of page 9 comes from a table held before the next section, and page 21 is the full-page qualitative plate; both match the previous version. No table carries '--' placeholders. Table merge of 2026-11-26 joined the acquisition list and the per-site fact sheet into one table (24 tables, figures unchanged).",
   "base_commit": "574176c3b359b653d322227610c179bd90128c49",
   "raw_data_weights_delivery_archives_included": false
 }
