@@ -133,7 +133,7 @@ python scripts/qa_manuscripts.py --language zh
 Copy-Item -LiteralPath "build/zh/main_zh.pdf" -Destination "output/pdf/main_zh_latest.pdf"
 ```
 
-将 `output/pdf/main_zh_latest.pdf` 与本次源稿修改一起提交。已归档的 `20261109` PDF 和验证记录继续保留为历史版本；需要额外里程碑归档时再创建日期命名副本。不同系统字体可能改变分页，27 页是当前 Windows 归档版本的页数。
+将 `output/pdf/main_zh_latest.pdf` 与本次源稿修改一起提交。已归档的 `20261109` PDF 和验证记录继续保留为历史版本；需要额外里程碑归档时再创建日期命名副本。不同系统字体可能改变分页，本地阅读版的页数见[校验记录](verification_20261124.json)。
 
 ## 5. 可选：复算结果与重新出图
 

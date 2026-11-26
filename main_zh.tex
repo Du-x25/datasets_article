@@ -36,7 +36,9 @@
 \date{}
 
 \begin{document}\maketitle
-\begin{abstract}多波段短波红外（short-wave infrared，SWIR）与RGB的配对数据是跨光谱生成与输入波段研究的基础，但现有资源的SWIR侧多为单个宽带通道，难以在场景与采集几何不变的条件下比较子波段配置。本文构建场景级配对数据集M-SWIR-RGB：以共孔径分光平台在十个物理地点采集140个重叠视野，从1281幅源图像中选取840幅，形成RGB与五个SWIR子波段的60幅八位成图，并关联源帧身份、几何变换、裁切与评价支持。本文从图像统计和生成实验两方面表征该资源。在全部3552个4:1窗口中，对齐可判定的窗口有\ScaleMsPeakWithinOnePxStrong\%的模态间位移不超过1像素，与已有同平台数据集\cite{chen2026thesis}（\ScaleChenPeakWithinOnePxStrong\%）相当，两者的纹理尺度相近；五个波段在图像内容上分为两组且互不冗余。在TFD-GAN的公开实现与原训练配置下仅替换数据集，100 epoch的测试PSNR为\MsEpHundredPsnrPm\,dB（\MsEpHundredSeeds{}次独立训练），该对照数据集为\ChEpHundredPsnrPm\,dB；200 epoch时为\MsEpTwoHundredPsnrPm{}和\ChEpTwoHundredPsnrPm\,dB，本数据集的分数更高且训练间波动更小。十五种输入波段中有\BandRestCount{}种与默认输入的PSNR相差不超过\BandRestDiffMax\,dB，四分之一的训练窗口在匹配的更新次数下与全量数据相当。训练与测试场景不同时，同一管线的PSNR为\SceneFoldAPsnr{}和\SceneFoldBPsnr\,dB，表明SWIR到RGB的映射具有场景特异性；由训练地点拟合的像素级仿射映射在保留区域的PSNR为\CalibrationCross\,dB，改用目标地点的十个配对图块拟合后升至\CalibrationTarget\,dB。地点隔离五折基准下，验证集选择的三波段输入相对单波段的PSNR变化为DRUNet的+\DrunetGain、pix2pix的\PixGain{}及TFD-GAN的+\TfdGain\,dB。该资源适用于波段配置、跨场景颜色映射与评价协议研究。\end{abstract}
+\begin{abstract}
+评价短波红外（short-wave infrared，SWIR）到RGB的图像生成方法，需要分别衡量模型在已见地点重建颜色和在新地点预测颜色的能力。本文构建场景级配对数据集M-SWIR-RGB，通过共孔径分光平台在十个地点采集140个重叠视野，每个地点提供一幅RGB拼接图和五幅SWIR子波段拼接图，并记录对应的源帧、几何变换和有效评价区域。随机划分得到的710个测试窗口中，有701个在拼接图上的范围完全落入训练窗口的并集。为检验这种划分下的分数在新地点能否保持，本文将十个地点分为两组，轮流留出一组，并在与随机划分相同的测试窗口上评价TFD-GAN。训练时排除相应地点后，两组窗口的峰值信噪比（PSNR）分别由\SceneSameRandomAPsnr{}降至\SceneSameHeldAPsnr\,dB、由\SceneSameRandomBPsnr{}降至\SceneSameHeldBPsnr\,dB。另以固定的三个SWIR波段拟合像素级仿射映射。将拟合样本从训练地点换成每个目标地点的十个配对图块后，保留区域的十地点等权平均PSNR由\CalibrationCross{}升至\CalibrationTarget\,dB。该数据集可用于比较SWIR输入波段组合，并在明确的空间划分和目标地点监督条件下评价颜色预测性能。
+\end{abstract}
 \section{背景与概要}
 \subsection{跨光谱生成的数据条件与资源缺口}
 多波段SWIR与RGB描述了同一场景在不同光谱响应下的观测。已有研究表明，SWIR观测可揭示可见光难以区分的材料响应\cite{song2024,sivaprakasam2023}，但从这种光谱差异建立RGB外观预测依赖配对数据中的统计关系，属于外观映射而非反射率或材料属性的恢复；配对数据只有同时明确光谱定义、图像处理与评价单位，才能支持可重复的方法比较\cite{gebru2021,wilkinson2016}。
@@ -44,9 +46,9 @@
 \begin{figure}[htbp]\centering\includegraphics[width=\textwidth]{figures/zh/fig1_scene_modality_overview_zh.pdf}\caption{六模态成图总览。}\label{fig:overview-zh}
 \vspace{1pt}{\footnotesize\noindent 各幅图独立按1\%--99\%分位拉伸（RGB三通道联合取分位），仅用于显示，不参与评价；十个场景的窗口级输入、输出与RGB真值见图~\ref{fig:qualitative-zh}。\par}\end{figure}
 
-现有配对资源在光谱覆盖、采集几何和组织单位上各有设计（表~\ref{tab:related-zh}）。RASMD提供RGB与1000--1700\,nm宽带SWIR配对图像\cite{jin2026}，三波段检测资源同样使用单个宽带SWIR通道\cite{liu2025triband}；DeepSWIR利用卫星多传感器波段进行SWIR合成\cite{rout2019}，EPFL资源则面向RGB与近红外\cite{brown2011}。这些资源的SWIR侧多为单个宽带通道或跨传感器合成波段，无法在场景与采集几何固定的条件下改变SWIR子波段配置；采用事后配准的资源仍保留局部失配\cite{jin2026,aviid2023,tang2022superfusion}，来自同一地点的相关视图或图块也不能视为独立测试样本\cite{roberts2017}。由此形成三方面缺口：在波段组织上，通道定义与采集几何未同时固定，波段配置实验难以在场景不变的条件下重复；在配对质量上，光谱差异与空间对应误差在数据中相互叠加，生成模型的误差来源无法分离；在评价口径上，划分单位、有效支持与聚合方式缺乏一致记录，跨研究结果难以复算。
+现有配对资源在光谱覆盖、采集几何和划分单位上各有侧重（表~\ref{tab:related-zh}）。RASMD和三波段检测资源各提供一个宽带SWIR通道\cite{jin2026,liu2025triband}；DeepSWIR利用卫星多传感器波段合成SWIR图像\cite{rout2019}，EPFL资源面向RGB与近红外\cite{brown2011}。与本文最接近的同平台工作已采集RGB和五个SWIR子波段，并以B1/B2/B4作为生成模型的一种输入\cite{chen2026thesis,chen2026threeband}。从七场景对照归档每个场景抽取10幅RGB测试图块，共70幅；其中67幅通过特征匹配，七个场景均有图块能定位到对应的C1--C7成图。该结果给出RGB画面的空间对应，归档图块的原始曝光帧身份仍未核实。随稿清单列出各图块的匹配结果与对应变换。本文按十个物理地点整理六模态成图，保留从源帧到窗口的几何与处理记录，并给出地点隔离划分。这样可以在同一地点上改变输入波段，也可以在完整留出的地点上评价生成结果。
 
-针对上述缺口，本文构建M-SWIR-RGB数据集（图~\ref{fig:overview-zh}），并围绕三个问题展开：多子波段配对数据在共孔径采集下具有怎样的配对质量与波段结构；现有生成方法能否在不修改实现与配置的前提下直接使用该数据，结果是否稳定；输入波段、数据规模、采样尺度与场景组成如何影响生成结果，少量目标场景的配对样本又能起多大作用。
+本文考察三个问题：多子波段图像在网络输入尺度上有怎样的空间对应和相关结构；对同一个测试窗口，训练集是否含有该地点的图像会怎样影响生成结果；在新地点取得少量配对图块后，颜色映射能改善多少（图~\ref{fig:overview-zh}）。
 \begin{table}[htbp]
 \centering
 \caption{与已有配对数据资源的比较。}
@@ -60,16 +62,17 @@
 RASMD \cite{jin2026} & 驾驶，城市/郊区，晴、阴、雨、雪 & RGB加一个宽带SWIR通道（1000--1700\,nm） & 两台独立相机，事后SIFT单应与RANSAC & $10^5$对RGB/SWIR图像；按任务组织子集\\
 AVIID \cite{aviid2023} & 航拍，车辆目标 & 可见光与红外图块对 & 分开航拍获取 & 993、1090与1280对，$434\times434$或$512\times512$；图块级\\
 DeepSWIR \cite{rout2019} & 卫星多传感器 & 由绿、红、近红外与粗分辨率SWIR合成的SWIR波段 & 跨传感器配准，5与24\,m GSD & n.r.\\
+同平台工作\cite{chen2026thesis,chen2026threeband} & 地面，七个场景 & RGB与五个SWIR子波段 & 共孔径采集、拼接后裁块 & 学位论文报告4000对图块，随机划分为3200/800对\\
 M-SWIR-RGB（本文） & 地面场景，十个不同物理地点 & RGB加五个SWIR子波段（1000--1700\,nm内的名义通带） & 共孔径二向色平台；逐场景特征位姿图 & \DatasetSceneCount{}个场景；\QualifiedWindowCount{}个候选窗口；地点隔离的训练/验证/测试\\
 \bottomrule
 \end{tabularx}
 \end{table}
 \subsection{数据集概览与主要结果}
-M-SWIR-RGB由十个物理地点的140个重叠采集视野构成，每个地点提供RGB与B1--B5六幅同尺寸拼接图。三项设计分别对应上述缺口。\emph{多波段配对观测：}全部通道在同一共孔径采集平台上以固定滤光片配置获得，RGB与SWIR共用入射光瞳，波段组合成为可在场景内单独改变的变量。\emph{地点隔离评价：}十个地点按五折划分，每个地点恰好进入一次测试集，并同时给出像素、SSIM邻域和LPIPS矩形的支持范围及逐地点覆盖。\emph{处理链可追溯：}以SHA-256绑定文件身份，逐项保存几何变换、裁切偏移、强度查找表与掩膜版本，任一评价结果都能回指到生成它的处理配置。
+M-SWIR-RGB由十个物理地点的140个重叠采集视野构成，每个地点提供RGB与B1--B5六幅同尺寸拼接图。RGB与SWIR共用入射光瞳，五个SWIR波段分时曝光。文件清单以SHA-256标记源帧和成图，几何变换、裁切偏移、强度查找表和掩膜版本将输出窗口关联到相应的处理配置。地点隔离五折划分中，每个地点恰好进入一次测试集，随稿给出各地点用于像素误差、SSIM和LPIPS的评价范围。
 
-评价协议分为两类。随机窗口划分下，训练与测试窗口来自相同的场景，分数度量场景内的重建；地点隔离与留出场景划分下，测试场景不出现在训练集中，分数度量对未见过场景的泛化。两类协议回答不同的问题，使用时的选择见第~\ref{sec:usage}~节。
+随机窗口划分将同一地点的空间重叠窗口分给训练集和测试集，衡量模型在已见场景内的重建表现。按地点划分时，测试地点整体留出，用于评价模型在新地点的表现。为比较两种条件，本文还将两种划分下的预测放到完全相同的测试窗口上评分。
 
-实验部分以文献\cite{chen2026thesis}在同一采集平台上构建的七场景SWIR--RGB数据集为对照数据集，并采用该文提出的TFD-GAN的公开实现与原训练配置。本文的主要结果如下。在配对质量上，本数据集4:1窗口的纹理尺度与对照数据集的图块相近，模态间对齐程度相当；五个波段在图像内容上分为两组且互不冗余。在直接可用性上，TFD-GAN的公开实现与原配置无需修改即可在本数据集上训练，相同预算下的PSNR更高、训练间波动更小，结果对输入波段和训练数据量不敏感，三类生成架构均可训练。在跨场景使用上，训练与测试场景不同时同一管线的PSNR明显下降，而目标场景的少量配对样本能显著改善像素级颜色映射，这给出了本数据集的两种使用方式：场景内的重建与学习，以及结合目标场景配对样本的校准。
+在两组相同测试窗口上，TFD-GAN在训练集中包含目标地点图像时的PSNR分别为\SceneSameRandomAPsnr{}和\SceneSameRandomBPsnr\,dB，留出目标地点后分别为\SceneSameHeldAPsnr{}和\SceneSameHeldBPsnr\,dB。另一组实验固定输入波段和像素级仿射映射，将拟合数据由训练地点换成目标地点的十个配对图块，在同一组保留像素上，十地点等权PSNR由\CalibrationCross{}升至\CalibrationTarget\,dB。
 \section{方法}
 \subsection{采集平台}
 跨光谱配对数据的可用范围首先受采集几何限制：若RGB与SWIR由两台各自独立瞄准的相机获取，两个光轴之间的基线会在不同物距下产生视差，同一物理点在两幅图像中的位置偏移随景深变化，事后配准只能针对单一深度平面校正，近景与远景的残余失配直接压缩可用的有效评价区域。为了从光路源头减小这种视差，本文的配对采集采用共孔径二向色分光平台，景物辐射经前置物镜到达以45$^{\circ}$放置的分光镜后按波长分路：小于900\,nm的部分被反射进入垂直方向的可见光支路，大于900\,nm的部分透射进入水平方向的SWIR支路。两个传感器通过同一入射光瞳观测同一场景，双相机方案中的视差在光路层面被消除；残余失配主要来自两支路像元间距、靶面尺寸与后光路镜头畸变的差异，由几何配准校正\cite{zitova2003}。
@@ -182,13 +185,13 @@ RGB在重叠区域逐位置、逐通道估计中间调参数$g$，由$\gamma=1-\
 \input{generated/bench_quality_corr_20261124_zh.tex}
 \end{table}
 
-各波段与RGB亮度的相关在B1、B2和B4上随地点变号，范围分别为$\BandBOneLumaMin$--$\BandBOneLumaMax$、$\BandBTwoLumaMin$--$\BandBTwoLumaMax{}$和$\BandBFourLumaMin$--$\BandBFourLumaMax$；B3和B5在所有地点为正（$\BandBThreeLumaMin$--$\BandBThreeLumaMax{}$和$\BandBFiveLumaMin$--$\BandBFiveLumaMax$）。任一波段与其余波段的相关最低为\BandBTwoCorrMin，五个波段并不彼此冗余，波段组合会改变网络可用的信息；第~\ref{sec:band-ablation}~节在固定配置下比较全部单波段与三波段输入。
+各波段与RGB亮度的相关在B1、B2和B4上随地点变号，范围分别为$\BandBOneLumaMin$--$\BandBOneLumaMax$、$\BandBTwoLumaMin$--$\BandBTwoLumaMax{}$和$\BandBFourLumaMin$--$\BandBFourLumaMax$；B3和B5在所有地点为正（$\BandBThreeLumaMin$--$\BandBThreeLumaMax{}$和$\BandBFiveLumaMin$--$\BandBFiveLumaMax$）。波段间两两相关系数的最低值为\BandBTwoCorrMin。这些系数描述同一地点内各通道明暗变化的一致程度。第~\ref{sec:band-ablation}~节进一步在相同训练配置下比较五种单波段和十种三波段输入对RGB预测的影响。
 \subsection{网络输入尺度上的纹理统计}\label{sec:quality-scale}
 生成模型使用的是窗口而非整幅成图，窗口的采样尺度决定网络看到的纹理。本文比较三组输入单元：对照数据集\cite{chen2026thesis}的$256\times256$图块，共3715个；本数据集的4:1窗口，即成画布上$1024\times1024$的区域经双三次插值缩至256，每个窗口像素对应1.25个原生RGB像元和约0.39个原生SWIR像元，共3552个；以及1:1窗口，即成画布上$256\times256$的区域，不缩放，共3886个。对每个窗口统计SWIR输入与RGB目标的灰度lag-1自相关（水平与垂直相邻像素相关的平均）、频谱重心（功率加权的平均径向频率，单位为周/像素）和通道间相关（三对通道相关的平均），再对全部窗口取平均（表~\ref{tab:quality-scale-zh}）。
 
 \begin{table}[htbp]\centering\footnotesize\setlength{\tabcolsep}{4pt}
 \caption{三组输入单元的纹理与模态间灰度相关统计。}\label{tab:quality-scale-zh}
-\vspace{1pt}{\footnotesize\noindent 各列为全部图像集内窗口（图块）的算术平均。lag-1为灰度（三通道均值）相邻像素相关的平均，频谱重心单位为周/像素。$^{*}$仅统计模态间对齐可判定（$\pm$16像素内峰值相关不低于0.2）的图像；$^{\dagger}$该行的容差为4像素，与4:1窗口的1像素对应相同的物理位移。\par}
+\vspace{1pt}{\footnotesize\noindent 灰度取三通道均值。lag-1为水平与垂直相邻像素相关的平均，频谱重心单位为周/像素。各统计量按窗口取均值。$^{*}$末列为峰值相关不低于0.2的窗口中，相关峰落入指定邻域的百分比。对照图块与4:1窗口取零位移处的$3\times3$邻域；$^{\dagger}$1:1窗口取峰值偏移欧氏距离四舍五入后不超过4像素的邻域。\par}
 \input{generated/bench_quality_scale_20261124_zh.tex}
 \end{table}
 
@@ -196,33 +199,35 @@ RGB在重叠区域逐位置、逐通道估计中间调参数$g$，由$\gamma=1-\
 
 两组输入单元在目标图像上另有可测的差别：4:1窗口的RGB三通道取255的平均比例为\ScaleMsRgbSat\%，对照图块为\ScaleChenRgbSat\%；RGB通道间相关为\ScaleMsRgbChanCorr{}对\ScaleChenRgbChanCorr。
 \subsection{模态间对齐的自动检查}\label{sec:quality-align}
-对每个窗口，把SWIR输入与RGB目标的灰度图去均值并加Hann窗，用FFT计算循环互相关，在$\pm16$像素内搜索峰值，记录零位移处的相关$r_0$、峰值相关$r_{\mathrm{p}}$及其位移（水平与垂直分量的欧氏长度取整）。峰值相关不足0.2的窗口记为不可判定，此时两模态的灰度相关太弱，峰值位置不可靠；对可判定的窗口统计位移不超过1像素的比例。该检查只依赖图像内容。
+对每个窗口，将SWIR输入的三个通道逐像素取均值，RGB目标同样取三通道均值，先计算两幅灰度图在零位移处的相关系数$r_0$。再将两图分别去均值并加Hann窗，用FFT计算循环互相关，在水平、垂直各$\pm16$像素内搜索峰值，记录归一化峰值$r_{\mathrm{p}}$及其整数坐标$(\Delta x,\Delta y)$。以$r_{\mathrm{p}}\geq 0.2$的窗口为可判定窗口，统计峰值落在零位移处$3\times3$邻域内的比例，即$|\Delta x|\leq1$且$|\Delta y|\leq1$。该比例衡量输入与目标灰度结构在网络输入尺度上的对齐情况。逐波段的绝对几何误差需用独立对应点测量。
 
-4:1窗口的零位移相关与峰值相关平均为\ScaleMsAbCorr{}和\ScaleMsAbPeak，对照图块为\ScaleChenAbCorr{}和\ScaleChenAbPeak；零位移相关的均值与峰值相关的均值之比为\ScaleMsAbRatio\%，对照图块为\ScaleChenAbRatio\%。不可判定窗口占\ScaleMsPeakWeakPct\%（对照图块\ScaleChenPeakWeakPct\%），可判定窗口中位移不超过1像素的占\ScaleMsPeakWithinOnePxStrong\%（对照图块\ScaleChenPeakWithinOnePxStrong\%）；4:1窗口的1像素约合0.39个原生SWIR像元。共孔径采集的配对精度与对照数据集相当。
+4:1窗口的零位移相关与峰值相关平均为\ScaleMsAbCorr{}和\ScaleMsAbPeak，对照图块为\ScaleChenAbCorr{}和\ScaleChenAbPeak。零位移相关均值与峰值相关均值之比分别为\ScaleMsAbRatio\%和\ScaleChenAbRatio\%。4:1窗口中有\ScaleMsPeakWeakPct\%因峰值相关过低而不可判定，对照图块中为\ScaleChenPeakWeakPct\%。在各自可判定的窗口中，相关峰落入中心$3\times3$邻域的比例分别为\ScaleMsPeakWithinOnePxStrong\%和\ScaleChenPeakWithinOnePxStrong\%。4:1窗口沿水平或垂直方向的一个像素间隔约合0.39个原生SWIR像元。
 
-逐地点的差别较大（表~\ref{tab:quality-scene-zh}）：零位移相关中位数在\SceneCorrMin--\SceneCorrMax{}之间；不可判定比例最高的是\SceneWeakMaxName（\SceneWeakMax\%）和\SceneWeakSecondName（\SceneWeakSecond\%）；可判定窗口中位移不超过1像素的比例以\SceneAlignMinName{}最低（\SceneAlignMin\%）、\SceneAlignMaxName{}最高（\SceneAlignMax\%）。不可判定窗口的SWIR输入平均标准差为\ScaleMsWeakStd，其余窗口为\ScaleMsStrongStd，二者差距不大，不可判定更多出现在SWIR与可见光灰度相关性弱的景物，而非平坦窗口；\SceneWeakMaxName{}和\SceneWeakSecondName{}的零位移相关中位数也是十个地点中最低的两个。
+逐地点的零位移相关中位数在\SceneCorrMin--\SceneCorrMax{}之间（表~\ref{tab:quality-scene-zh}）。不可判定比例最高的是\SceneWeakMaxName（\SceneWeakMax\%）和\SceneWeakSecondName（\SceneWeakSecond\%）。在各地点可判定的窗口中，相关峰落入中心$3\times3$邻域的比例以\SceneAlignMinName{}最低（\SceneAlignMin\%）、\SceneAlignMaxName{}最高（\SceneAlignMax\%）。不可判定窗口的SWIR输入平均标准差为\ScaleMsWeakStd，可判定窗口为\ScaleMsStrongStd。\SceneWeakMaxName{}和\SceneWeakSecondName{}的零位移相关中位数也是十个地点中最低的两个。
 
 \begin{table}[htbp]\centering\footnotesize\setlength{\tabcolsep}{3pt}
 \caption{逐地点的裁剪比例与模态间对齐统计（4:1窗口）。}\label{tab:quality-scene-zh}
-\vspace{1pt}{\footnotesize\noindent B1取255的比例按成图几何有效区域内的抽样像素计；其余各列按该地点的4:1窗口计，RGB取255与取0两列依次为红、绿、蓝通道，零位移相关一列为窗口的中位数。$^{*}$仅统计对齐可判定的窗口。\par}
+\vspace{1pt}{\footnotesize\noindent B1取255的比例按成图几何有效区域内的抽样像素计。其余各列按该地点的4:1窗口计，RGB取255与取0两列依次为红、绿、蓝通道，零位移相关一列为窗口的中位数。$^{*}$末列以各地点峰值相关不低于0.2的窗口为分母，统计相关峰落入中心$3\times3$邻域的比例。\par}
 \input{generated/bench_quality_scene_20261124_zh.tex}
 \end{table}
 
-1:1窗口上，与上述容差相同的物理位移对应4像素：可判定窗口中位移不超过4像素的占\ScaleNativePeakWithinFourPx\%，不超过1像素的仅\ScaleNativePeakWithinOnePxStrong\%，与该尺度下SWIR输入被放大约10倍相符。
+在1:1窗口上，一个4:1窗口的像素间隔对应四个像素间隔。按1:1窗口的像素计，将峰值偏移的欧氏距离$\sqrt{\Delta x^2+\Delta y^2}$四舍五入后，可判定窗口中距离不超过4像素的占\ScaleNativePeakWithinFourPx\%；相关峰落入中心$3\times3$邻域的占\ScaleNativePeakWithinOnePxStrong\%。
 
 \section{基准实验}\label{sec:bench}
 \subsection{协议与评价口径}\label{sec:bench-protocol}
-第~\ref{sec:same-config}、\ref{sec:band-ablation}、\ref{sec:budget}~和\ref{sec:scale-scene}~节采用TFD-GAN\cite{chen2026thesis}的公开实现（pix2pixhd-p-noshuffle），其29个源文件与公开版本的SHA-256一致。除特别说明外，训练选项为\texttt{label\_nc}=0、\texttt{no\_instance}、\texttt{loadSize}=256（训练时随机裁至128）、批大小4，Adam学习率$2\times10^{-4}$、$\beta=(0.5,0.999)$；前100个epoch学习率不变，之后线性衰减，200个epoch时降为零。该实现不设置随机种子，每次训练的初始权重与数据顺序不同，因此以多次独立训练的均值和样本标准差报告结果。三类架构实验（第~\ref{sec:three-model}~节）与地点隔离基准（第~\ref{sec:site-isolated}~节）的设置另述。
+第~\ref{sec:same-config}、\ref{sec:band-ablation}、\ref{sec:budget}~和\ref{sec:scale-scene}~节采用TFD-GAN\cite{chen2026thesis}的归档实现（pix2pixhd-p-noshuffle）。训练使用的29个文件与归档副本的SHA-256逐一一致。除特别说明外，训练选项为\texttt{label\_nc}=0、\texttt{no\_instance}、\texttt{loadSize}=256（训练时随机裁至128）、批大小4，Adam学习率$2\times10^{-4}$、$\beta=(0.5,0.999)$；前100个epoch学习率不变，之后线性衰减，200个epoch时降为零。该实现不固定随机种子，有重复训练的配置报告均值与样本标准差。三类架构实验（第~\ref{sec:three-model}~节）与地点隔离基准（第~\ref{sec:site-isolated}~节）的设置另述。
 
-各实验的数据与预算见表~\ref{tab:bench-protocol-zh}。输入为B1、B2、B3堆叠的三通道图像（与文献\cite{chen2026thesis}的输入一致），目标为RGB。4:1窗口在成画布上以步长128枚举$1024\times1024$且整窗位于几何有效区域内的位置，缩放至256后剔除输入三通道合并标准差小于3的平坦窗口，共3552个，按固定种子打乱后以4:1划分为训练集2842个和测试集710个，十个地点的窗口同时出现在两个集合中。1:1窗口为每地点在成画布上随机选取的400个$256\times256$区域，共3886个，划分3109/777。对照数据集为7个场景的3715个图块，划分2972/743。该实现把每轮参与训练的窗口数取为批大小的整数倍，文件列表末尾不足一个批的窗口不参与训练：全量数据为2842个中的2840个，25\%、50\%子集和场景划分A各少2个，1:1窗口少1个，其余各行的窗口数可被4整除。每个epoch的更新次数等于这一窗口数除以批大小。
+各实验的数据与预算见表~\ref{tab:bench-protocol-zh}。学位论文的TFD-GAN实验将B1、B2、B4堆叠为输入，以RGB为目标；4000对图块中，3200对用于训练、800对用于测试\cite{chen2026thesis}。本文使用的七场景对照归档按原有划分提供3715对图块（训练2972对、测试743对），输入为归档中标记为B1/B2/B4的三通道图像。M-SWIR-RGB默认输入为B1/B2/B3，B1/B2/B4的结果见第~\ref{sec:band-ablation}~节。
+
+M-SWIR-RGB的4:1窗口在成图上以步长128枚举$1024\times1024$且整窗位于几何有效区域内的位置，缩放至256后剔除输入三通道合并标准差小于3的平坦窗口，共3552个。按固定种子打乱后，2842个用于训练、710个用于测试，十个地点均同时出现在两个集合中。1:1窗口为每地点在成图上随机选取的至多400个$256\times256$区域，共3886个，划分3109/777。该实现把每轮训练窗口数取为批大小的整数倍：全量数据每轮使用2840个窗口，25\%、50\%子集和场景划分A各少2个，1:1窗口少1个，其余各行的窗口数均可被4整除。每个epoch的更新次数等于实际窗口数除以批大小。
 
 \begin{table}[htbp]\centering\small
 \caption{窗口级基准实验的数据与训练预算。}\label{tab:bench-protocol-zh}
-\vspace{1pt}{\footnotesize\noindent 除窗口尺度一行使用1:1窗口外，各行均使用4:1窗口；更新次数为批大小4下每个epoch的更新次数与epoch数之积。训练数据量一行的三个数值依次对应25\%、50\%和75\%子集，场景划分一行的两个数值依次对应划分A和划分B。\par}
+\vspace{1pt}{\footnotesize\noindent M-SWIR-RGB除窗口尺度一行使用1:1窗口外，其余各行均使用4:1窗口；对照归档使用现成图块。更新次数为每轮批次数与epoch数之积。训练数据量一行依次为25\%、50\%和75\%子集。\par}
 \begin{tabular}{@{}llrrl@{}}\toprule
 实验 & 训练集 & 训练窗口 & 测试窗口 & 更新次数\\\midrule
 同配置对照 & 本数据集 & 2842 & 710 & 71{,}000 / 142{,}000\\
-同配置对照 & 对照数据集\cite{chen2026thesis} & 2972 & 743 & 74{,}300 / 148{,}600\\
+同配置对照 & 七场景对照归档 & 2972 & 743 & 74{,}300 / 148{,}600\\
 输入波段消融 & 本数据集，15种输入 & 2842 & 710 & 71{,}000\\
 训练数据量 & 本数据集的25\%/50\%/75\% & 710/1422/2132 & 710 & 70{,}800/71{,}000/69{,}290\\
 窗口尺度 & 本数据集1:1窗口 & 3109 & 777 & 77{,}700 / 155{,}400\\
@@ -231,11 +236,11 @@ RGB在重叠区域逐位置、逐通道估计中间调参数$g$，由$\gamma=1-\
 
 预测以$256\times256$八位PNG保存，指标对测试窗口逐一计算后取算术平均：PSNR、SSIM（skimage实现，按通道轴计算，数据范围为1）\cite{wang2004}和LPIPS-Alex v0.1\cite{zhang2018lpips}。两个结果的PSNR差值的95\%置信区间按场景整群bootstrap估计（20{,}000次重采样，固定种子）：每次有放回地抽取与场景数相同的场景，用被抽中场景的全部逐窗口差值合并计算均值，取2.5\%和97.5\%分位。各实验不设验证集，统一在固定的epoch检查点评价。
 \subsection{同配置对照}\label{sec:same-config}
-表~\ref{tab:bench-main-zh}给出实现与配置不变、只替换数据集时的结果。100个epoch时，本数据集的PSNR为\MsEpHundredPsnrPm\,dB，对照数据集为\ChEpHundredPsnrPm\,dB，均值相差\GapEpHundredPlain\,dB；200个epoch时为\MsEpTwoHundredPsnrPm{}和\ChEpTwoHundredPsnrPm\,dB（各\MsEpTwoHundredSeeds{}次训练），相差\GapEpTwoHundredPlain\,dB。SSIM与LPIPS的方向相同，200个epoch时LPIPS为\MsEpTwoHundredLpips{}对\ChEpTwoHundredLpips。文献\cite{chen2026thesis}在其数据上报告的PSNR为24.156\,dB，训练500个epoch的结果见第~\ref{sec:budget}~节。
+两套数据使用同一TFD-GAN实现、优化器设置和测试指标（表~\ref{tab:bench-main-zh}）。100个epoch时，本数据集的PSNR为\MsEpHundredPsnrPm\,dB，对照归档为\ChEpHundredPsnrPm\,dB，均值相差\GapEpHundredPlain\,dB；200个epoch时为\MsEpTwoHundredPsnrPm{}和\ChEpTwoHundredPsnrPm\,dB（各\MsEpTwoHundredSeeds{}次训练），相差\GapEpTwoHundredPlain\,dB。SSIM与LPIPS的方向相同，200个epoch时LPIPS为\MsEpTwoHundredLpips{}对\ChEpTwoHundredLpips。学位论文在其4000对图块的划分上报告了24.156\,dB\cite{chen2026thesis}。本文两套数据的500个epoch结果见第~\ref{sec:budget}~节。
 
 \begin{table}[htbp]\centering\small
-\caption{TFD-GAN的公开实现与原训练配置下仅替换数据集的对照。}\label{tab:bench-main-zh}
-\vspace{1pt}{\footnotesize\noindent TFD-GAN的公开实现与原训练配置\cite{chen2026thesis}，代码与选项不变；PSNR单位为dB。结果为测试窗口的算术平均，多次训练时给出均值与样本标准差。\par}
+\caption{同一TFD-GAN实现与训练设置下两套数据的窗口级结果。}\label{tab:bench-main-zh}
+\vspace{1pt}{\footnotesize\noindent M-SWIR-RGB使用B1/B2/B3，对照归档使用其标记为B1/B2/B4的图块。PSNR单位为dB。结果为测试窗口的算术平均，多次训练时给出均值与样本标准差。\par}
 \input{generated/bench_main_20261124_zh.tex}
 \end{table}
 
@@ -247,22 +252,22 @@ RGB在重叠区域逐位置、逐通道估计中间调参数$g$，由$\gamma=1-\
 \input{generated/bench_scene_seeds_20261124_zh.tex}
 \end{table}
 
-两套数据的纹理尺度相近（第~\ref{sec:quality-scale}~节），差别主要在目标图像的统计和更新次数：本数据集RGB目标取255的平均比例更高（\ScaleMsRgbSat\%对\ScaleChenRgbSat\%），通道间相关也更高（\ScaleMsRgbChanCorr{}对\ScaleChenRgbChanCorr）；对照数据集在100个epoch时多4.7\%的更新次数。\GapEpHundredPlain\,dB的差值同时包含两套数据在场景内容与目标图像统计上的差别。
+两套数据的纹理尺度相近（第~\ref{sec:quality-scale}~节），RGB目标取255的平均比例在本数据集上更高（\ScaleMsRgbSat\%对\ScaleChenRgbSat\%），通道间相关也更高（\ScaleMsRgbChanCorr{}对\ScaleChenRgbChanCorr）。对照归档在100个epoch时多4.7\%的更新次数。解释两套数据的分数差异时，还需考虑输入波段、成图和裁块方式，以及场景组成。
 
-上述结果表明，TFD-GAN的公开实现无需修改即可在本数据集上训练：相同预算下的PSNR、SSIM和LPIPS均更优，本数据集\MsEpHundredSeeds{}次训练的最低值高于对照数据集\ChEpHundredSeeds{}次训练的最高值，十个场景均正常收敛，训练间标准差也更小。该实验采用随机窗口划分，即训练与测试窗口来自相同的场景；跨场景与跨地点的结果见第~\ref{sec:scale-scene}~和\ref{sec:site-isolated}~节。
+在本文的随机窗口划分下，同一TFD-GAN实现能在两套数据上训练。与对照归档相比，M-SWIR-RGB在两个检查点的平均PSNR和SSIM均较高，平均LPIPS较低，三次训练的PSNR样本标准差较小。第~\ref{sec:scale-scene}~和\ref{sec:site-isolated}~节进一步考察训练和测试来自不同地点时的表现。
 \subsection{输入波段消融}\label{sec:band-ablation}
-固定训练与评价配置，只改变输入的三个通道：五种单波段（同一波段复制到三个通道）和十种三波段（按编号升序堆叠），每种输入训练一次，共15次；窗口、目标、划分和更新次数与第~\ref{sec:same-config}~节相同。各输入相对B123（取\MsEpHundredSeeds{}次训练的逐窗口均值）的PSNR差值及其95\%置信区间见表~\ref{tab:bench-band-zh}\ifnum\BandDone=1{}和图~\ref{fig:band-ablation-zh}\fi。
+在相同窗口、目标、划分和更新次数下，比较五种单波段输入（同一波段复制到三个通道）和十种三波段输入（按编号升序堆叠）。B123参照取第~\ref{sec:same-config}~节\MsEpHundredSeeds{}次独立训练的逐窗口均值，其余十四种输入各训练一次。表~\ref{tab:bench-band-zh}\ifnum\BandDone=1{}和图~\ref{fig:band-ablation-zh}\fi{}给出各组合的结果。在本文数据上，文献\cite{chen2026thesis}所用的B124组合得到24.44\,dB，本文默认组合B123为\MsEpHundredPsnrPm\,dB。
 \ifnum\BandDone=1
 单波段中PSNR最高的是\BandBestSingle（\BandBestSinglePsnr\,dB），最低的是\BandWorstSingle（\BandWorstSinglePsnr\,dB）；三波段中最高的是\BandBestTriple（\BandBestTriplePsnr\,dB），最低的是\BandWorstTriple（\BandWorstTriplePsnr\,dB）。
 
-与参照相比，PSNR低于参照三次训练最低值（\MsEpHundredRunMin\,dB）的输入有三种：\BandLowNames，比参照均值低\BandLowDropMin--\BandLowDropMax\,dB，在十个场景上均低于参照。其余\BandRestCount{}种输入与参照均值的差值不超过\BandRestDiffMax\,dB，PSNR落在参照三次训练的取值范围内，或高出其上界不超过\BandRestRangeExcess\,dB。置信区间不含零的输入有\BandCiExcludingZero{}种，其中\BandCiExcludingRest{}种属于上述\BandRestCount{}种输入，其差值与参照三次训练之间的跨度（\MsEpHundredRunSpan\,dB）同量级；三种偏低输入的降幅超出这一跨度，且在十个场景上一致。默认输入B123的结果因而对波段选择不敏感，只有三种输入例外。
+与参照相比，PSNR低于参照三次训练最低值（\MsEpHundredRunMin\,dB）的输入有三种：\BandLowNames，比参照均值低\BandLowDropMin--\BandLowDropMax\,dB，在十个场景上均低于参照。其余\BandRestCount{}种输入与参照均值的差值不超过\BandRestDiffMax\,dB，PSNR落在参照三次训练的取值范围内，或高出其上界不超过\BandRestRangeExcess\,dB。置信区间不含零的输入有\BandCiExcludingZero{}种，其中\BandCiExcludingRest{}种属于上述\BandRestCount{}种输入。三种偏低输入的降幅均超过参照三次训练的极差（\MsEpHundredRunSpan\,dB）。
 
 三个偏低的输入都含B3而不含B1，但同样含B3而不含B1的B235与参照相当，差别不能归于某一波段的有无。第~\ref{sec:quality-corr}~节的分组也不能直接预测这些结果：B3与B5的相关在所有地点不低于0.967，二者单独作为输入时的PSNR却相差\BandBThreeFiveSingleDiff\,dB；同组的B1、B2和B4单独输入与参照相当。波段间相关高说明图像内容相近，单个波段并不因此可以互换。
 \fi
 
 \begin{table}[htbp]\centering\small
 \caption{输入波段消融（100 epoch，随机窗口划分）。}\label{tab:bench-band-zh}
-\vspace{1pt}{\footnotesize\noindent 单波段复制为三个通道，三波段按编号升序堆叠；每种输入一次训练，结果为测试窗口的算术平均。$\Delta$PSNR为相对B123的逐窗口差值均值，方括号为按场景整群bootstrap的95\%置信区间。\par}
+\vspace{1pt}{\footnotesize\noindent 单波段复制为三个通道，三波段按编号升序堆叠。各行先对测试窗口取算术平均，B123另报告三次训练的均值和样本标准差，其余各行均为单次训练。$\Delta$PSNR为相对B123的逐窗口差值均值，方括号为按场景整群bootstrap的95\%置信区间。\par}
 \input{generated/bench_band_20261124_zh.tex}
 \end{table}
 
@@ -273,7 +278,7 @@ RGB在重叠区域逐位置、逐通道估计中间调参数$g$，由$\gamma=1-\
 \end{figure}
 \fi
 
-每种输入训练一次，置信区间反映场景间的波动。该实验采用随机窗口划分；地点隔离条件下的波段收益见第~\ref{sec:site-isolated}~节。
+这里的置信区间描述给定训练结果下重采样测试场景的波动。地点隔离条件下的波段收益见第~\ref{sec:site-isolated}~节。
 \subsection{三类生成架构}\label{sec:three-model}
 在相同的4:1窗口、划分与评价口径上，固定256整块输入、200个epoch与训练种子11，只改变批大小，对pix2pix、TFD-GAN与DRUNet重训（表~\ref{tab:three-model-zh}）。批大小为4时，三者的测试PSNR依次为DRUNet 36.438\,dB、TFD-GAN 29.054\,dB和pix2pix 25.106\,dB；批大小为1时依次为36.453、27.220和14.836\,dB。pix2pix在批大小1下的L1损失在第25个epoch之后停留在0.078--0.082，对抗损失持续上升，推测与小批量下的批归一化统计有关；TFD-GAN在批大小1下的测试PSNR从第150个epoch的24.19\,dB升至第200个epoch的27.22\,dB，在该预算内仍在上升。
 
@@ -289,7 +294,9 @@ RGB在重叠区域逐位置、逐通道估计中间调参数$g$，由$\gamma=1-\
 \ifnum\BudgetDone=1
 匹配预算下，25\%、50\%和75\%训练集的PSNR为\FracTwentyFivePsnrPm、\FracFiftyPsnrPm{}和\FracSeventyFivePsnrPm\,dB，全量训练相对三者的差值为\BudgetGainTwentyFive、\BudgetGainFifty{}和\BudgetGainSeventyFive\,dB。
 
-三个差值的绝对值都小于全量训练三次训练的标准差\MsEpHundredPsnrSd\,dB：在约71{,}000次更新的预算内，训练窗口从710增至2842，测试PSNR基本不变。相同epoch数下，三个子集的分数随窗口数上升（100个epoch时为\FracTwentyFiveEpHundredPsnr、\FracFiftyEpHundredPsnr{}和\FracSeventyFiveEpHundredPsnr\,dB），测试分数主要随更新次数增长。一个可能的解释是窗口之间的冗余：相邻窗口在行或列方向有一半的面积重叠，同一场景的窗口内容相近，而按场景分层抽取的四分之一子集已覆盖全部十个场景。
+三个子集各训练一次，与全量训练均值的差值都小于全量训练三次结果的样本标准差（\MsEpHundredPsnrSd\,dB）。若固定为100个epoch，三个子集随窗口数增加分别达到\FracTwentyFiveEpHundredPsnr、\FracFiftyEpHundredPsnr{}和\FracSeventyFiveEpHundredPsnr\,dB，此时更新次数也随之增加。
+
+这些子集均包含十个地点的窗口。主实验在成图上裁取$1024\times1024$窗口，步长为128像素，故水平或垂直相邻一步的两个窗口有87.5\%的面积重叠。按窗口清单逐地点计算2842个训练窗口的矩形并集，710个测试窗口中有701个完全落在各自地点的训练窗口并集内。该统计按训练时随机裁切之前的窗口坐标计算。四分之一训练窗口取得相近分数的结果，适用于这种高度重叠的场景内采样和约71{,}000次更新的预算。
 \fi
 
 \begin{figure}[htbp]\centering
@@ -309,15 +316,16 @@ RGB在重叠区域逐位置、逐通道估计中间调参数$g$，由$\gamma=1-\
 
 \emph{场景边界。}为考察分数对场景组成的依赖，另做两折场景划分：划分A用随机划分训练集中属于C1--C5的1558个窗口训练，以C6--C10的全部1618个窗口为测试集；划分B用C6--C10的1284个窗口训练，以C1--C5的全部1934个窗口为测试集。两者的更新次数分别为70{,}020和70{,}620，与全量训练100个epoch相当，结果见表~\ref{tab:bench-scene-zh}。
 \ifnum\SceneDone=1
-两折的PSNR为\SceneFoldAPsnrPm{}和\SceneFoldBPsnrPm\,dB，十个留出场景为\SceneHeldMinPsnr\,dB（\SceneHeldMinName）到\SceneHeldMaxPsnr\,dB（\SceneHeldMaxName），等权均值为\SceneHeldEqualPsnr\,dB；这些场景在随机窗口划分下为\SceneRandomEqualPsnr\,dB，留出分数低\SceneDropEqualAbs\,dB，\SceneHeldLowerCount{}个场景都较低（表~\ref{tab:bench-per-scene-zh}、图~\ref{fig:scene-boundary-zh}）。表~\ref{tab:bench-scene-zh}另给出相同窗口上的对照：在留出场景落入随机划分测试集的\SceneSameWindowCountA{}和\SceneSameWindowCountB{}个窗口上，随机窗口划分的三次训练均值为\SceneSameRandomAPsnr{}和\SceneSameRandomBPsnr\,dB，两折为\SceneSameHeldAPsnr{}和\SceneSameHeldBPsnr\,dB。
+先比较两种划分下完全相同的测试窗口。划分A的留出地点有\SceneSameWindowCountA{}个窗口也属于随机划分测试集，随机划分模型在这些窗口上的PSNR为\SceneSameRandomAPsnr\,dB（三次训练均值），训练时留出这些地点后降至\SceneSameHeldAPsnr\,dB。划分B的\SceneSameWindowCountB{}个共同测试窗口上，相应分数由\SceneSameRandomBPsnr{}降至\SceneSameHeldBPsnr\,dB。
+
+在各折留出地点的全部窗口上，划分A和B的PSNR分别为\SceneFoldAPsnrPm{}和\SceneFoldBPsnrPm\,dB（表~\ref{tab:bench-scene-zh}）。十个留出地点的PSNR从\SceneHeldMinPsnr\,dB（\SceneHeldMinName）到\SceneHeldMaxPsnr\,dB（\SceneHeldMaxName），等权均值为\SceneHeldEqualPsnr\,dB。按各自测试集评分，十地点等权均值比随机划分（\SceneRandomEqualPsnr\,dB）低\SceneDropEqualAbs\,dB，\SceneHeldLowerCount{}个地点的分数均下降（表~\ref{tab:bench-per-scene-zh}、图~\ref{fig:scene-boundary-zh}）。
 
 两折各训练一次。两个模型在各自的训练窗口上为\SceneSelfTrainAPsnrPm{}和\SceneSelfTrainBPsnrPm\,dB，能拟合训练场景的输入与目标。在留出窗口上，两个不经训练的基线——把输入的三通道均值作为灰度输出、恒定输出训练目标的通道均值——为\SceneGrayBaseAPsnr{}和\SceneConstBaseAPsnr\,dB（划分A的测试场景）、\SceneGrayBaseBPsnr{}和\SceneConstBaseBPsnr\,dB（划分B），都高于两折的留出分数。图~\ref{fig:heldout-examples-zh}中，随机窗口划分的输出与真值接近，场景划分模型的输出呈彩色噪点，只保留输入的大致明暗结构。
 
-这一差别不来自输入的整体强度：把留出输入各通道的均值和标准差整体替换为该折训练场景的取值后，两折为\SceneShiftGlobalAPsnr{}和\SceneShiftGlobalBPsnr\,dB，逐窗口替换后为\SceneShiftPerimgAPsnr{}和\SceneShiftPerimgBPsnr\,dB，与未对齐的\SceneFoldAPsnr{}和\SceneFoldBPsnr\,dB相差不超过\SceneShiftMaxChange\,dB。各场景RGB目标的均值相差较大（表~\ref{tab:quality-scene-zh}），模型学到的是训练场景特有的输入--颜色对应关系。
+把留出输入各通道的均值和标准差整体替换为该折训练场景的取值后，两折分别为\SceneShiftGlobalAPsnr{}和\SceneShiftGlobalBPsnr\,dB，逐窗口替换后为\SceneShiftPerimgAPsnr{}和\SceneShiftPerimgBPsnr\,dB。两种处理与未对齐的\SceneFoldAPsnr{}和\SceneFoldBPsnr\,dB相差均不超过\SceneShiftMaxChange\,dB，单靠这种强度调整难以弥补留出地点上的分数下降。
 
-因此，随机窗口划分的分数度量场景内的重建；对新场景使用时，需要该场景的配对样本，其作用见第~\ref{sec:calibration}~节。两折的训练集也不均衡，划分A的训练窗口中\SceneTrainMainNameA{}和\SceneTrainSecondNameA{}占\SceneTrainMainShareA\%和\SceneTrainSecondShareA\%，划分B中\SceneTrainMainNameB{}和\SceneTrainSecondNameB{}占\SceneTrainMainShareB\%和\SceneTrainSecondShareB\%。
+在这两折上，TFD-GAN在训练地点内拟合的颜色映射对留出地点的预测较差。两折的训练集也不均衡，划分A的训练窗口中\SceneTrainMainNameA{}和\SceneTrainSecondNameA{}占\SceneTrainMainShareA\%和\SceneTrainSecondShareA\%，划分B中\SceneTrainMainNameB{}和\SceneTrainSecondNameB{}占\SceneTrainMainShareB\%和\SceneTrainSecondShareB\%。第~\ref{sec:calibration}~节另用仿射映射检验少量目标地点配对样本能带来多大改善。
 \fi
-留出场景的测试集包含该场景的全部窗口，随机划分的测试集只含其中约20\%，两者的比较以表中的相同窗口对照为准。
 
 \begin{table}[htbp]\centering\small
 \caption{随机窗口划分、两折场景划分及其参照点的测试结果。}\label{tab:bench-scene-zh}
@@ -382,15 +390,15 @@ RGB在重叠区域逐位置、逐通道估计中间调参数$g$，由$\gamma=1-\
 \caption{验证集选择下的波段收益。a，三类模型的十地点等权均值；b，各地点三波段减单波段的PSNR差。检查点与输入均由验证集选择。\label{fig:band-selection-zh}}
 \end{figure}
 
-作为输入与映射复杂度的参照，在每折六个训练地点的有效像素上以16像素网格抽样、通过最小二乘拟合含截距的RGB仿射映射。固定B1/B3/B4与全部五波段的地点等权PSNR分别为14.136与14.108\,dB，不低于表~\ref{tab:baseline-zh}中的网络模型；而第~\ref{sec:calibration}~节中由目标地点样本拟合的同一类映射更高。这说明地点隔离条件下的误差主要来自跨地点的颜色对应关系，而非网络容量。
+作为输入与映射复杂度的参照，在每折六个训练地点的有效像素上以16像素网格抽样，通过最小二乘拟合含截距的RGB仿射映射。固定B1/B3/B4与全部五波段的地点等权PSNR分别为14.136与14.108\,dB，均高于表~\ref{tab:baseline-zh}中所测网络的分数。第~\ref{sec:calibration}~节固定输入和仿射函数形式，在相同的保留像素上比较训练地点与目标地点样本拟合的结果。
 \subsection{随机窗口划分对报告分数的影响}\label{sec:protocol-sensitivity}
-对pix2pix的十五种输入另外使用101、202、303三个划分种子，共45次训练，训练随机种子仍为11。5893个窗口按4243/471/1179分配到训练、验证和测试集，窗口标识互不重复，但来自相同地点且空间上重叠。为使评价区域一致，对两种划分得到的预测在每个随机测试区域上重新评分，得到十五种输入、三个划分和十地点的450对结果。
+本节使用地点隔离五折基准的5893个$256\times256$窗口，步长为128像素，水平或垂直相邻一步重叠50\%。对pix2pix的十五种输入另外使用101、202、303三个划分种子，共45次训练，训练随机种子仍为11。随机划分将窗口按4243/471/1179分配到训练、验证和测试集，窗口标识互不重复，但来自相同地点且空间上重叠。为使评价区域一致，对两种划分得到的预测在每个随机测试区域上重新评分，得到十五种输入、三个划分和十地点的450对结果。
 
 先在每地点平均45个配对差，再对十地点等权，随机窗口PSNR比地点隔离高\ProtocolGain\,dB；十地点的平均差均为正，范围为2.632--8.113\,dB。与此同时，三个划分中测试有效像素被训练窗口覆盖的比例按像素汇总分别为96.290\%、96.231\%和96.261\%。窗口编号分离并未带来空间独立性\cite{roberts2017,kapoor2023}。
 
 划分条件因此对报告分数有很大影响：随机窗口划分的高分来自场景内重建，度量跨场景泛化时应采用地点隔离或留出场景划分。两协议同时改变了训练地点的覆盖，\ProtocolGain\,dB是两种协议的总体差异。
 \subsection{少量目标地点配对样本与颜色校准}\label{sec:calibration}
-实际复用中，目标地点往往可以获得少量配对RGB。本节在固定输入B1/B3/B4上拟合像素级颜色映射。每地点从步长256的网格中选十个$256\times256$图块，候选块的有效比例至少30\%，按栅格顺序等间隔取索引。拟合仅使用块内有效像素，占该地点有效像素的4.02\%--11.27\%。评价排除校准块及其16像素邻域，再以固定随机种子从剩余支持中抽取最多50万个像素；同一地点三种方法使用完全相同的评价像素。
+如果能在目标地点获得少量配对RGB，颜色映射在该地点其余区域能改善多少？本节固定B1/B3/B4输入，在每个地点从步长256的网格中选十个$256\times256$配对图块，候选块的有效比例至少30\%，按栅格顺序等间隔取索引。拟合使用块内有效像素，占该地点有效像素的4.02\%--11.27\%。评价排除校准块及其16像素邻域，再以固定随机种子从剩余区域抽取最多50万个像素。同一地点的三种方法使用相同的评价像素。
 
 \begin{table}[htbp]\centering\small
 \caption{固定评价像素上的目标地点配对颜色校准。}\label{tab:calibration-zh}
@@ -400,7 +408,7 @@ RGB在重叠区域逐位置、逐通道估计中间调参数$g$，由$\gamma=1-\
 
 保持仿射函数形式不变，拟合样本由训练地点改为目标地点后，PSNR由\CalibrationCross{}升至\CalibrationTarget\,dB，增加\CalibrationAffineGain\,dB，\dE{}由19.719降至12.864（表~\ref{tab:calibration-zh}）。进一步加入平方项和两两交叉项，得到含常数项的十项二次映射，PSNR升至\CalibrationQuad\,dB，额外增加\CalibrationQuadIncrement\,dB。前一比较来自目标地点的配对样本，后一比较同时提高了映射容量。
 
-为考察空间适用范围，将每幅成图沿最长边分成两半，并交换拟合和评价方向。三种条件均用相同B1/B3/B4二次映射，分别从评价同侧半区、全图分散位置或对侧半区选十个块。对于每个评价半区，统一排除同侧及全图校准块的并集与16像素邻域，然后对三种方法使用相同的最多50万评价像素；先平均每地点的两个方向，再对十地点等权。结果为同侧\HalfWithin\,dB、全图16.914\,dB、对侧\HalfCross\,dB，同侧到对侧下降\HalfDrop\,dB（图~\ref{fig:calibration-zh}b）。颜色关系的适用范围随空间距离衰减，校准图块宜在目标地点内分散选取。
+为考察校准位置的影响，将每幅成图沿最长边分成两半，并交换拟合和评价方向。三种条件均用相同B1/B3/B4二次映射，分别从评价同侧半区、全图分散位置或对侧半区选十个块。对于每个评价半区，统一排除同侧及全图校准块的并集与16像素邻域，然后对三种方法使用相同的最多50万评价像素。先平均每地点的两个方向，再对十地点等权，同侧为\HalfWithin\,dB，全图为16.914\,dB，对侧为\HalfCross\,dB（图~\ref{fig:calibration-zh}b）。校准块全部取自对侧半区时，PSNR比取自评价同侧低\HalfDrop\,dB。
 
 \begin{figure}[htbp]\centering
 \includegraphics[width=\textwidth,height=.47\textheight,keepaspectratio]{figures/zh/results_20261109/paired_calibration.pdf}
@@ -413,13 +421,17 @@ RGB在重叠区域逐位置、逐通道估计中间调参数$g$，由$\gamma=1-\
 
 \begin{figure}[tbp]\centering
 \includegraphics[width=.98\textwidth,height=.78\textheight,keepaspectratio]{figures/zh/results_20261124/qualitative_zh.pdf}
-\caption{十个场景的SWIR输入、TFD-GAN输出与RGB真值。每行左起为场景编号和窗口在成画布上的左上角坐标；输入为B1--B3堆叠，按固定范围显示。\label{fig:qualitative-zh}}
+\caption{同地点随机窗口划分下十个场景的SWIR输入、TFD-GAN输出与RGB真值。各行标出场景编号和测试窗口在成图上的左上角坐标。输入为B1--B3堆叠，按固定范围显示。\label{fig:qualitative-zh}}
 \end{figure}
 \section{使用说明}\label{sec:usage}
-使用本数据集时需要明确三个参数。\emph{采样单元：}4:1窗口是面向现有256图块输入实现的默认单元，其纹理尺度与对照数据集的图块相近；1:1窗口对应约10倍上采样的SWIR输入，PSNR低得多（第~\ref{sec:scale-scene}~节）。\emph{输入波段：}五个波段分为两组且互不冗余，默认的B123输入对波段选择不敏感，B3、B234和B345三种输入偏低，十五种输入的结果见表~\ref{tab:bench-band-zh}。\emph{划分方式：}随机窗口划分度量场景内的重建，地点隔离与留出场景划分度量对新场景的泛化。跨场景使用时，应结合目标场景的少量配对样本进行颜色校准（第~\ref{sec:scale-scene}、\ref{sec:calibration}~节）。
+评价同一地点内的重建时，可在拼接图上截取$1024\times1024$窗口并缩放至$256\times256$作为网络输入，报告训练与测试窗口的空间重叠。评价未见地点上的预测时，应按物理地点划分训练、验证和测试集，并逐地点报告结果。目标地点可提供配对RGB时，可用分散选取的图块拟合颜色映射，在排除校准块及其邻域的区域内单独评分（第~\ref{sec:calibration}~节）。
+
+选择SWIR输入时，可查阅各波段的数字量分布和相关性（第~\ref{sec:quality-bands}、\ref{sec:quality-corr}~节），并按目标任务比较具体组合。表~\ref{tab:bench-band-zh}给出随机窗口划分下十五种输入的结果，表~\ref{tab:baseline-zh}给出各模型在验证地点选择输入后、在留出地点取得的结果。
 
 \section{结论}\label{sec:conclusion}
-本文构建了场景级配对数据集M-SWIR-RGB：以共孔径分光平台在十个物理地点采集RGB与五个SWIR子波段，形成60幅六模态成图，并以源帧身份、几何变换、裁切、强度处理和共同评价支持关联全部数据记录。数据表征表明，在网络输入尺度上，4:1窗口的纹理尺度与对照数据集\cite{chen2026thesis}的图块相近，可判定窗口的模态间位移不超过1像素的比例为\ScaleMsPeakWithinOnePxStrong\%；五个波段在图像内容上分为两组且互不冗余。生成实验表明，TFD-GAN的公开实现与原训练配置无需修改即可在本数据集上训练，100和200个epoch的PSNR为\MsEpHundredPsnrPm{}和\MsEpTwoHundredPsnrPm\,dB，对照数据集为\ChEpHundredPsnrPm{}和\ChEpTwoHundredPsnrPm\,dB，训练间波动更小；结果对输入波段和训练数据量不敏感，三类生成架构均可训练。训练与测试场景不同时，同一管线的PSNR为\SceneFoldAPsnr{}和\SceneFoldBPsnr\,dB，而目标地点的十个配对图块使仿射映射在保留区域的PSNR由\CalibrationCross{}升至\CalibrationTarget\,dB，说明SWIR到RGB的映射具有场景特异性，跨场景使用时应结合目标场景的配对样本。地点隔离五折基准下，验证集选择的三波段输入的PSNR收益随模型与地点变化。后续工作将扩展地点规模与场景类型，并在更多场景上检验波段选择与目标场景校准的作用。
+M-SWIR-RGB将十个地点的RGB和五波段SWIR拼接图与源帧、几何变换、质量掩膜和地点划分关联起来，使不同输入组合和生成方法可以在相同区域上评价。对于4:1窗口，\ScaleMsPeakWeakPct\%的窗口因灰度互相关峰较弱而无法判定。在可判定的窗口中，\ScaleMsPeakWithinOnePxStrong\%的相关峰落在零位移周围的$3\times3$像素邻域。五个波段的数字量呈现组内高相关的结构。地点隔离五折实验中，三波段相对单波段的生成收益随模型、地点和评价指标变化。
+
+同一批测试窗口在两种划分下呈现出不同的预测结果。训练窗口覆盖相同地点时，TFD-GAN能较好地重建这些窗口的RGB外观。按地点分组留出后，两个方向的测试分数均下降，输出出现明显的颜色失真。当目标地点可以提供配对RGB时，用每地点十个配对图块拟合仿射颜色映射，保留区域的PSNR比使用训练地点拟合的同类映射高\CalibrationAffineGain\,dB。后续将扩展地点和场景类型，检验这些波段配置和校准结果在更广泛采集条件下的适用性。
 
 \section*{代码可用性}
 读取、处理、评价及汇总代码将随数据集在同一记录中公开。随稿提供的材料包括结果表、协议、配置摘要、来源文件的SHA-256以及重建图表和表格的脚本；窗口级基准的表格与图由同一脚本从随稿保存的逐窗口指标重建。

@@ -181,7 +181,7 @@ def latex_quality_scale(q):
             c["ab_r0_mean"], c["ab_peak_mean"], fmt(near, 1) + ("" if key != "mswir_native" else "$^{\\dagger}$")))
     head = ["图像集 & 数量 & \\multicolumn{2}{c}{SWIR 输入} & \\multicolumn{2}{c}{RGB 目标} & \\multicolumn{3}{c}{模态间灰度相关}\\\\",
             "\\cmidrule(lr){3-4}\\cmidrule(lr){5-6}\\cmidrule(lr){7-9}",
-            " & & lag-1 & 频谱重心 & lag-1 & 频谱重心 & 零位移 & $\\pm$16 像素内峰值 & 峰值位移$\\le$1像素$^{*}$/\\%\\\\"]
+            " & & lag-1 & 频谱重心 & lag-1 & 频谱重心 & 零位移 & $\\pm$16 像素内峰值 & 峰在指定邻域$^{*}$/\\%\\\\"]
     return "\n".join(["\\begin{tabular}{@{}lrrrrrrrr@{}}", "\\toprule", *head, "\\midrule", *rows, "\\bottomrule",
                       "\\end{tabular}"]) + "\n"
 
@@ -195,7 +195,7 @@ def latex_quality_scene(q):
     rows = ["%s & %d & %.1f & %.0f & %s & %s & %.2f & %.1f & %.1f \\\\" % (
         sc, v["windows"], v["b1_sat"], v["rgb_luma"], triple(v["rgb_sat"]), triple(v["rgb0"]),
         v["ab_r0_med"], v["weak"], v["within1"]) for sc, v in q.items()]
-    head = ["场景 & 窗口 & B1取255/\\% & RGB均值 & RGB取255/\\% & RGB取0/\\% & 零位移相关 & 不可判定/\\% & 位移$\\le$1像素$^{*}$/\\%\\\\"]
+    head = ["场景 & 窗口 & B1取255/\\% & RGB均值 & RGB取255/\\% & RGB取0/\\% & 零位移相关 & 不可判定/\\% & 峰在中心邻域$^{*}$/\\%\\\\"]
     return "\n".join(["\\begin{tabular}{@{}lrrrrrrrr@{}}", "\\toprule", *head, "\\midrule", *rows, "\\bottomrule",
                       "\\end{tabular}"]) + "\n"
 

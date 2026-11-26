@@ -1,5 +1,6 @@
 """Portable evidence and compiled-PDF checks for the revised Chinese paper."""
 from pathlib import Path
+import csv
 import json
 import re
 import shutil
@@ -8,6 +9,45 @@ import xml.etree.ElementTree as ET
 from pypdf import PdfReader
 from build_results_20261109 import analyze, ROOT, SRC, MODELS, METRICS, NAMES
 from check_latex_log import find_issues
+
+
+def check_4to1_overlap(source):
+    """Measure window coverage on the mosaic before random training crops."""
+    width, stride = 1024, 128
+    train_cells = set()
+    test_windows = []
+    train_count = 0
+    path = ROOT / 'figures/source_data/bench_20261124/data_quality_windows.csv'
+    with path.open(encoding='utf-8-sig', newline='') as stream:
+        for row in csv.DictReader(stream):
+            if row['set'] != 'mswir_4to1':
+                continue
+            match = re.fullmatch(r'(C\d+)_\d+_y(\d+)_x(\d+)\.png', row['image'])
+            assert match and match[1] == row['scene'], row['image']
+            scene, y, x = match[1], int(match[2]), int(match[3])
+            assert x % stride == y % stride == 0, row['image']
+            # Each grid cell is a 128 x 128 square, identified within one scene.
+            cells = {(scene, cy, cx) for cy in range(y, y + width, stride)
+                     for cx in range(x, x + width, stride)}
+            if row['split'] == 'train':
+                train_cells.update(cells)
+                train_count += 1
+            else:
+                assert row['split'] == 'test', row['split']
+                test_windows.append(cells)
+    test_count = len(test_windows)
+    fully_covered = sum(cells <= train_cells for cells in test_windows)
+    counts = (train_count, test_count, fully_covered)
+    assert counts == (2842, 710, 701), f'4:1 window overlap changed: {counts}'
+
+    abstract = source.split(r'\begin{abstract}', 1)[1].split(r'\end{abstract}', 1)[0]
+    budget = source.split(r'\label{sec:budget}', 1)[1].split(r'\subsection', 1)[0]
+    coverage_claim = rf'(?<!\d){test_count}(?!\d)[^。]*?(?<!\d){fully_covered}(?!\d)'
+    for passage in (abstract, budget):
+        assert re.search(coverage_claim, passage), '4:1 test-window coverage differs from manuscript'
+    adjacent_pct = 100 * (width - stride) / width
+    assert str(train_count) in budget and f'{adjacent_pct:g}\\%' in budget, '4:1 sampling figures differ'
+    return {'train': train_count, 'test': test_count, 'fully_covered': fully_covered}
 
 
 def validate():
@@ -23,6 +63,7 @@ def validate():
             dependencies.add(image)
         return re.sub(r'\\input\{([^}]+)\}', lambda m: read_tex(ROOT/(m[1] if Path(m[1]).suffix else m[1]+'.tex')), s)
     source = (ROOT/'main_zh.tex').read_text(encoding='utf-8')
+    overlap = check_4to1_overlap(source)
     tex = read_tex(ROOT/'main_zh.tex')
     labels = re.findall(r'\\label\{([^}]+)\}',tex)
     refs = re.findall(r'\\(?:ref|eqref|autoref)\{([^}]+)\}',tex)
@@ -91,7 +132,8 @@ def validate():
             words+=1
     result={'status':'passed','pages':len(reader.pages),'labels':len(labels),'citations':len(cited),
             'checked_text_boxes':words,'undefined_references':0,'oversized_floats':0,'overfull_boxes':0,
-            'completed_runs_verified':270,'scope':'Saved-record, source, table and PDF layout checks; no new inference.'}
+            'completed_runs_verified':270,'window_overlap_4to1':overlap,
+            'scope':'Saved-record, source, table and PDF layout checks; no new inference.'}
     print(json.dumps(result,ensure_ascii=False,indent=2))
     return result
 
