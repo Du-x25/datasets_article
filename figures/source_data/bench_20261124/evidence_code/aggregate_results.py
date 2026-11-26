@@ -176,6 +176,7 @@ def build(runs):
     if all(d["%s_ep%d" % (x, e)] for x in ("mswir", "chen") for e in (100, 200)):
         d["gap"] = {"%d" % e: d["mswir_ep%d" % e]["mean"][0] - d["chen_ep%d" % e]["mean"][0] for e in (100, 200)}
     d["scene"] = scene_block(runs, d)
+    d["scene"]["diag"] = scene_diag()
     d["protocol"] = {
         "code": "TFD-GAN, pix2pixhd-p-noshuffle; 29 source files sha256-identical to the reference copy",
         "train_args": "--label_nc 0 --no_instance --loadSize 256 --batchSize 4; Adam lr 2e-4, betas (0.5, 0.999); "
@@ -216,6 +217,51 @@ def scene_block(runs, d):
         out["scenes_lower"] = int(sum(out["per_scene"][sc]["held"] < out["per_scene"][sc]["random"] for sc in both))
     if d["mswir_ep100"] and out["foldA"] and out["foldB"]:
         out["drop_fold_mean"] = d["mswir_ep100"]["mean"][0] - (out["foldA"]["mean"][0] + out["foldB"]["mean"][0]) / 2
+    out["same_windows"] = {}
+    if d["mswir_ep100_runs"]:
+        ref = pd.concat([runs[k].per.set_index("image")["psnr"] for k in d["mswir_ep100_runs"]], axis=1).mean(1)
+        for key, fold in (("e4_sceneA_ep180", "A"), ("e4_sceneB_ep220", "B")):
+            if key in runs:  # the held-out scenes' windows that are also in the random test split
+                both = pd.concat([ref, runs[key].per.set_index("image")["psnr"]], axis=1, keys=["random", "held"])
+                both = both.dropna()
+                out["same_windows"][fold] = {"n": int(len(both)), "random": float(both["random"].mean()),
+                                             "held": float(both["held"].mean())}
+    return out
+
+
+def scene_diag():
+    """场景划分的参照点: 各折训练窗口的地点构成、留出窗口上两个不训练的基线（输入取三通道均值、恒定为训练目标的
+    通道均值）、折模型在自身训练窗口上的指标，以及留出输入强度对齐后的指标（outputs/diag/，diag_e4_eval.py）。"""
+    from PIL import Image
+    out = {}
+    for fold in ("A", "B"):
+        data = ROOT / "datasets" / ("scene_fold%s" % fold)
+        if not (data / "test_A").is_dir():
+            continue
+        row = {"train_scene_n": {}}
+        for p in (data / "train_A").glob("*.png"):
+            sc = p.name.split("_")[0]
+            row["train_scene_n"][sc] = row["train_scene_n"].get(sc, 0) + 1
+        s, n = np.zeros(3), 0
+        for p in (data / "train_B").glob("*.png"):
+            f = np.asarray(Image.open(p).convert("RGB"), dtype=np.float64).reshape(-1, 3)
+            s += f.sum(0)
+            n += f.shape[0]
+        colour = np.rint(s / n)
+        gray, const = [], []
+        for p in sorted((data / "test_A").glob("*.png")):
+            a = np.asarray(Image.open(p).convert("RGB"), dtype=np.float64)
+            b = np.asarray(Image.open(data / "test_B" / p.name).convert("RGB"), dtype=np.float64)
+            gray.append(10 * np.log10(255.0 ** 2 / ((a.mean(2, keepdims=True) - b) ** 2).mean()))
+            const.append(10 * np.log10(255.0 ** 2 / ((colour - b) ** 2).mean()))
+        row["baseline"] = {"gray": float(np.mean(gray)), "const": float(np.mean(const)), "colour": colour.tolist()}
+        for key in ("train", "shift_global", "shift_perimg"):
+            p = ROOT / "outputs" / "diag" / ("e4_scene%s_%s" % (fold, key)) / "summary.json"
+            if p.is_file():
+                x = json.loads(p.read_text(encoding="utf-8"))
+                row[key] = {"n": x["n"], "k": 1, "sd": None, "mean": [x[m]["mean"] for m in METRICS],
+                            **{m: x[m]["mean"] for m in METRICS}}
+        out[fold] = row
     return out
 
 
@@ -354,6 +400,8 @@ def source_data(d, runs):
     import qualitative_sheet as Q
     rows = d["qualitative"]["windows"] if d.get("qualitative") else []
     pd.DataFrame(rows).to_csv(SRC / "qualitative_windows.csv", index=False, encoding="utf-8-sig")
+    import heldout_sheet as H
+    pd.DataFrame(H.select()).to_csv(SRC / "heldout_examples_windows.csv", index=False, encoding="utf-8-sig")
 
 
 def main():

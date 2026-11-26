@@ -132,6 +132,8 @@ def latex_budget(d):
 
 def latex_scene(d):
     s = d["scene"]
+    diag = s.get("diag", {})
+    held = {f: "留出的 %s 共 %d 个窗口" % (FOLDS[f][1], HELD[f]) for f in "AB"}
 
     def row(name, test, g):
         return "%s & %s & %s & %s & %s \\\\" % (name, test, *cells(g))
@@ -140,8 +142,19 @@ def latex_scene(d):
     for fold in ("A", "B"):
         train, test, key = FOLDS[fold]
         g = s["fold" + fold]
-        rows.append(row("场景划分 %s（训练 %s）" % (fold, train), "留出的 %s 共 %d 个窗口" % (test, HELD[fold]), g))
-    return tabular("llrrr", "划分 & 测试内容 & " + HEAD + "\\\\", rows)
+        rows.append(row("场景划分 %s（训练 %s）" % (fold, train), held[fold], g))
+    if all(all(k in diag.get(f, {}) for k in ("train", "shift_global", "baseline")) for f in "AB"):
+        n = {f: sum(diag[f]["train_scene_n"].values()) for f in "AB"}
+        rows.append("\\midrule")
+        for fold in "AB":
+            rows.append(row("划分 %s 的模型，自身训练窗口" % fold, "%s 的 %d 个窗口" % (FOLDS[fold][0], n[fold]), diag[fold]["train"]))
+        for fold in "AB":
+            rows.append(row("划分 %s 的模型，留出输入强度对齐" % fold, held[fold], diag[fold]["shift_global"]))
+        rows.append("\\midrule")
+        for name, key in (("输入的三通道均值（不训练）", "gray"), ("训练目标的通道均值（不训练）", "const")):
+            for fold in "AB":
+                rows.append("%s & %s & %s & -- & -- \\\\" % (name, held[fold], fmt(diag[fold]["baseline"][key], 2)))
+    return tabular("llrrr", "模型 & 测试窗口 & " + HEAD + "\\\\", rows)
 
 
 def latex_per_scene(d):
@@ -221,9 +234,13 @@ def latex_macros(d):
                    ("MsEpFiveHundred", d.get("mswir_ep500")), ("ChEpFiveHundred", d.get("chen_ep500")),
                    ("FracTwentyFive", d["budget"].get("e3_frac25_ep400")), ("FracFifty", d["budget"].get("e3_frac50_ep200")),
                    ("FracSeventyFive", d["budget"].get("e3_frac75_ep130")),
+                   ("FracTwentyFiveEpHundred", d["budget"].get("e3_frac25_ep100")),
+                   ("FracFiftyEpHundred", d["budget"].get("e3_frac50_ep100")),
+                   ("FracSeventyFiveEpHundred", d["budget"].get("e3_frac75_ep100")),
                    ("SceneFoldA", d["scene"].get("foldA")), ("SceneFoldB", d["scene"].get("foldB"))):
         group(pre, g)
-    for pre, g in (("MsEpHundred", d["mswir_ep100"]), ("ChEpHundred", d["chen_ep100"]), ("ChEpTwoHundred", d["chen_ep200"])):
+    for pre, g in (("MsEpHundred", d["mswir_ep100"]), ("MsEpTwoHundred", d["mswir_ep200"]),
+                   ("ChEpHundred", d["chen_ep100"]), ("ChEpTwoHundred", d["chen_ep200"])):
         add(pre + "Seeds", "--" if g is None else str(g["k"]))
     for pre, keys in (("MsEpHundred", d["mswir_ep100_runs"]), ("MsEpTwoHundred", d["mswir_ep200_runs"]),
                       ("ChEpHundred", d["chen_ep100_runs"]), ("ChEpTwoHundred", d["chen_ep200_runs"])):
@@ -231,6 +248,14 @@ def latex_macros(d):
             ps = [d["runs"][k]["psnr"] for k in keys]
             add(pre + "RunMin", "%.2f" % min(ps))
             add(pre + "RunMax", "%.2f" % max(ps))
+            add(pre + "RunSpan", "%.2f" % (max(ps) - min(ps)))
+    for pre, data in (("Ms", "mswir"), ("Ch", "chen")):
+        keys100, keys200 = d["%s_ep100_runs" % data], d["%s_ep200_runs" % data]
+        low = min(keys100, key=lambda k: d["runs"][k]["psnr"]) if len(keys100) > 1 else None
+        later = [k for k in keys200 if low and k.rsplit("_ep", 1)[0] == low.rsplit("_ep", 1)[0]]
+        if later:
+            add(pre + "EpHundredLowRunGap", "%.2f" % (max(d["runs"][k]["psnr"] for k in keys100) - d["runs"][low]["psnr"]))
+            add(pre + "EpTwoHundredLowRunGap", "%.2f" % (max(d["runs"][k]["psnr"] for k in keys200) - d["runs"][later[0]]["psnr"]))
     for name, label in (("100", "Hundred"), ("200", "TwoHundred")):
         full, native = d["mswir_ep%s" % name], d["native"].get(name)
         if full and native:
@@ -249,17 +274,76 @@ def latex_macros(d):
             add("BudgetGain" + name, signed(full["mean"][0] - part["mean"][0]))
     s = d["scene"]
     for key, name, sg in (("held_scene_equal", "SceneHeldEqualPsnr", False), ("random_scene_equal", "SceneRandomEqualPsnr", False),
+                          ("drop_scene_equal", "SceneDropEqualAbs", False),
                           ("drop_scene_equal", "SceneDropEqualPsnr", True), ("drop_fold_mean", "SceneDropFoldPsnr", True)):
         if s.get(key) is not None:
             add(name, signed(s[key]) if sg else "%.2f" % s[key])
     if s.get("scenes") is not None:
         add("SceneHeldLowerCount", str(s["scenes_lower"]))
         add("SceneHeldSceneCount", str(s["scenes"]))
+    held = {sc: v["held"] for sc, v in s["per_scene"].items() if v["held"] is not None}
+    for tag, pick in (("Min", min), ("Max", max)):
+        if held:
+            name = pick(held, key=held.get)
+            add("SceneHeld" + tag + "Name", name)
+            add("SceneHeld" + tag + "Psnr", "%.2f" % held[name])
+    for fold in ("A", "B"):
+        w = (s.get("same_windows") or {}).get(fold)
+        if w:
+            add("SceneSameWindowCount" + fold, str(w["n"]))
+            add("SceneSameRandom" + fold + "Psnr", "%.2f" % w["random"])
+            add("SceneSameHeld" + fold + "Psnr", "%.2f" % w["held"])
+        v = (s.get("diag") or {}).get(fold)
+        if not v:
+            continue
+        counts = sorted(v["train_scene_n"].items(), key=lambda kv: (-kv[1], kv[0]))
+        if len(counts) > 1:
+            total = sum(c for _, c in counts)
+            add("SceneTrainMainName" + fold, counts[0][0])
+            add("SceneTrainMainShare" + fold, "%.0f" % (100.0 * counts[0][1] / total))
+            add("SceneTrainSecondName" + fold, counts[1][0])
+            add("SceneTrainSecondShare" + fold, "%.0f" % (100.0 * counts[1][1] / total))
+        for key, label in (("train", "SelfTrain"), ("shift_global", "ShiftGlobal"), ("shift_perimg", "ShiftPerimg")):
+            if key in v:
+                group("Scene" + label + fold, v[key])
+        if "baseline" in v:
+            add("SceneGrayBase" + fold + "Psnr", "%.2f" % v["baseline"]["gray"])
+            add("SceneConstBase" + fold + "Psnr", "%.2f" % v["baseline"]["const"])
+    changes = [abs(s["diag"][f][k]["mean"][0] - s["fold" + f]["mean"][0])
+               for f in ("A", "B") if f in (s.get("diag") or {}) for k in ("shift_global", "shift_perimg") if k in s["diag"][f]]
+    if changes:
+        add("SceneShiftMaxChange", "%.2f" % max(changes))
     for key, label in (("best_single", "BandBestSingle"), ("worst_single", "BandWorstSingle"),
                        ("best_triple", "BandBestTriple"), ("worst_triple", "BandWorstTriple")):
         if d.get(key):
             add(label, d[key][0])
             add(label + "Psnr", "%.2f" % d[key][1])
+    ref = d["mswir_ep100"]
+    variants = [v for v in SINGLES + TRIPLES if v != "B123" and d["band"].get(v, {}).get("paired")]
+    if band_complete(d) and ref is not None and ref.get("sd") is not None and variants:
+        ps = {v: d["band"][v]["run"]["mean"][0] for v in variants}
+        runs = [d["runs"][k]["psnr"] for k in d["mswir_ep100_runs"]]
+        low = [v for v in variants if ps[v] < min(runs)]  # below every reference run
+        rest = [v for v in variants if v not in low]
+        p = d["band"]
+        add("BandLowNames", "、".join(sorted(low, key=variants.index)))
+        add("BandLowDropMin", "%.2f" % (ref["mean"][0] - max(ps[v] for v in low)))
+        add("BandLowDropMax", "%.2f" % (ref["mean"][0] - min(ps[v] for v in low)))
+        add("BandLowScenePosMax", str(max(p[v]["paired"]["scenes_pos"] for v in low)))
+        add("BandRestCount", str(len(rest)))
+        add("BandRestDiffMax", "%.2f" % max(abs(ps[v] - ref["mean"][0]) for v in rest))
+        add("BandRestRangeExcess", "%.2f" % max(max(ps[v] - max(runs), min(runs) - ps[v], 0.0) for v in rest))
+        excl = [v for v in variants if p[v]["paired"]["lo"] > 0 or p[v]["paired"]["hi"] < 0]
+        add("BandCiExcludingZero", str(len(excl)))
+        add("BandCiExcludingRest", str(len([v for v in excl if v not in low])))
+        b3 = [v for v in rest if "3" in v]
+        add("BandBThreeRestNames", "、".join(sorted(b3, key=ps.get)))
+        add("BandBThreeRestDiffMax", "%.2f" % max(abs(ps[v] - ref["mean"][0]) for v in b3))
+    for v in SINGLES:
+        if v in d["band"]:
+            add("Band" + WORDS[int(v[1])] + "SinglePsnr", "%.2f" % d["band"][v]["run"]["mean"][0])
+    if all(v in d["band"] for v in ("B3", "B5")):
+        add("BandBThreeFiveSingleDiff", "%.2f" % abs(d["band"]["B5"]["run"]["mean"][0] - d["band"]["B3"]["run"]["mean"][0]))
     for data, label, scenes in (("mswir", "Ms", SCENES), ("chen", "Ch", CHEN_SCENES)):
         vals = [d["scene_seeds"][data][sc] for sc in scenes if sc in d["scene_seeds"][data]]
         if vals:

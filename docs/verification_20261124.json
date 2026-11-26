@@ -1,31 +1,32 @@
 {
   "status": "passed",
-  "pages": 27,
-  "labels": 57,
+  "pages": 29,
+  "labels": 58,
   "citations": 29,
-  "checked_text_boxes": 5255,
+  "checked_text_boxes": 5813,
   "undefined_references": 0,
   "oversized_floats": 0,
   "overfull_boxes": 0,
   "completed_runs_verified": 270,
-  "window_level_runs_in_summary": 15,
+  "window_level_runs_in_summary": 46,
   "seed_repeats": {
     "100_epochs": {"mswir": 3, "chen": 3},
-    "200_epochs": {"mswir": 1, "chen": 1}
+    "200_epochs": {"mswir": 3, "chen": 3}
   },
-  "pending_training_groups": [
-    "multi-seed repeats at 200 epochs (two datasets)",
+  "single_training_groups": [
     "input band ablation (14 variants)",
     "training-set size (25/50/75%)",
-    "scene-held-out split (two folds)"
+    "scene-held-out split (two folds)",
+    "1:1 windows and 500 epochs (this dataset)"
   ],
+  "pending_training_groups": [],
   "scope": "Saved-record, source, table and PDF layout checks; no new inference.",
-  "date": "2026-11-24",
+  "date": "2026-11-26",
   "pdf": "output/pdf/main_zh_latest.pdf",
-  "pdf_sha256": "6274f0a4d34b633c3ea9a8a4378431a955515b2b0a551c3295adbcffa7d6649e",
-  "pdf_bytes": 4337571,
+  "pdf_sha256": "cea05bc887b753fbfb2d3fc7ae6ed95a06131955f144508a068d942fd4353b13",
+  "pdf_bytes": 5739587,
   "compiler": "XeLaTeX / TeX Live 2026 via latexmk",
-  "visual_review": "All 27 pages rendered as contact sheets and inspected; pages 12, 13, 14, 21, 24 and 27, the pages changed by the three-seed update, additionally at page resolution; no blank pages, cropping or collisions found. Tables 14, 16, 17 and 18 carry '--' placeholders for trainings still running at the time of this check.",
-  "base_commit": "b38044551bd4563c0cbe1e2f816f869f299cdbae",
+  "visual_review": "All 29 pages rendered as contact sheets and inspected; pages 1, 10, 11, 16 and 17 additionally at page resolution; no blank pages, cropping or collisions found. The blank tails of pages 10 and 21 come from floats held before the next section and match the previous version. No table carries '--' placeholders.",
+  "base_commit": "908f856514bf42d75ef71a7c30df6a4cc42c9a63",
   "raw_data_weights_delivery_archives_included": false
 }
