@@ -34,7 +34,7 @@ WORDS = ["", "One", "Two", "Three", "Four", "Five"]
 DEC = ((0, 2), (1, 3), (2, 3))
 FOLDS = {"A": ("C1--C5", "C6--C10", "e4_sceneA_ep180"), "B": ("C6--C10", "C1--C5", "e4_sceneB_ep220")}
 HELD = {"A": 1618, "B": 1934}  # test windows of the held-out scenes, fixed by the fold manifests
-QUALITY_SETS = (("chen", "陈归档数据图块"), ("mswir_4to1", "本数据集 4:1 窗口"), ("mswir_native", "本数据集 1:1 窗口"))
+QUALITY_SETS = (("chen", "对照数据集图块"), ("mswir_4to1", "本数据集 4:1 窗口"), ("mswir_native", "本数据集 1:1 窗口"))
 
 
 def fmt(x, dec):
@@ -80,7 +80,7 @@ HEAD = "PSNR/dB$\\uparrow$ & SSIM$\\uparrow$ & LPIPS$\\downarrow$"
 
 
 def latex_main(d):
-    rows = ["%s & 100 epoch & %s & %s & %s \\\\" % ("陈归档数据\\cite{chen2026thesis}", *cells(d["chen_ep100"])),
+    rows = ["%s & 100 epoch & %s & %s & %s \\\\" % ("对照数据集\\cite{chen2026thesis}", *cells(d["chen_ep100"])),
             " & 200 epoch & %s & %s & %s \\\\" % tuple(cells(d["chen_ep200"])), "\\midrule",
             "M-SWIR-RGB（4:1 窗口） & 100 epoch & %s & %s & %s \\\\" % tuple(cells(d["mswir_ep100"])),
             " & 200 epoch & %s & %s & %s \\\\" % tuple(cells(d["mswir_ep200"]))]

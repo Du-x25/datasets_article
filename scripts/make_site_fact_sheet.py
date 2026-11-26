@@ -113,7 +113,7 @@ def main():
     lines.append("% 数据源：datasets_article_auto_v3/metadata + crop_comparison_20261011")
     lines.append("\\begin{tabularx}{\\textwidth}{@{}llrrlr>{\\raggedright\\arraybackslash}X@{}}")
     lines.append("\\toprule")
-    lines.append("地点 & 采集日期 & 视野数 & 档案RGB & 画幅（宽$\\times$高） & 合格窗口 & 画面构成 \\\\")
+    lines.append("地点 & 采集日期 & 视野数 & RGB源帧 & 画幅（宽$\\times$高） & 合格窗口 & 画面构成 \\\\")
     lines.append("\\midrule")
     for r in rows:
         note = f"（每视野{r['rgb_per_pos']}帧）" if r["rgb_per_pos"] != "1" else ""

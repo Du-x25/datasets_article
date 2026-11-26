@@ -1,9 +1,9 @@
 {
   "status": "passed",
-  "pages": 29,
+  "pages": 27,
   "labels": 58,
   "citations": 29,
-  "checked_text_boxes": 5813,
+  "checked_text_boxes": 5580,
   "undefined_references": 0,
   "oversized_floats": 0,
   "overfull_boxes": 0,
@@ -23,10 +23,10 @@
   "scope": "Saved-record, source, table and PDF layout checks; no new inference.",
   "date": "2026-11-26",
   "pdf": "output/pdf/main_zh_latest.pdf",
-  "pdf_sha256": "cea05bc887b753fbfb2d3fc7ae6ed95a06131955f144508a068d942fd4353b13",
-  "pdf_bytes": 5739587,
+  "pdf_sha256": "ecb3c447154333d32953127e1e2fbc43a8706b597a7eb87baf762aa6d3608002",
+  "pdf_bytes": 5710963,
   "compiler": "XeLaTeX / TeX Live 2026 via latexmk",
-  "visual_review": "All 29 pages rendered as contact sheets and inspected; pages 1, 10, 11, 16 and 17 additionally at page resolution; no blank pages, cropping or collisions found. The blank tails of pages 10 and 21 come from floats held before the next section and match the previous version. No table carries '--' placeholders.",
-  "base_commit": "908f856514bf42d75ef71a7c30df6a4cc42c9a63",
+  "visual_review": "All 27 pages rendered as contact sheets and inspected; no blank pages, cropping or collisions found. The blank tail of page 9 comes from a table held before the next section, and page 21 is the full-page qualitative plate; both match the previous version. No table carries '--' placeholders. Wording pass of 2026-11-26 changed prose only; numbers, tables and figures are unchanged.",
+  "base_commit": "574176c3b359b653d322227610c179bd90128c49",
   "raw_data_weights_delivery_archives_included": false
 }
