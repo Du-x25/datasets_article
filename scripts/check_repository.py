@@ -42,8 +42,7 @@ def main():
         if size > 20 * 1024 * 1024:
             errors.append(f"file exceeds manuscript limit of 20 MiB: {relative}")
 
-    for language in ("zh", "en"):
-        source_name = f"main_{language}.tex"
+    for source_name in ("main_zh.tex", "supplementary_zh.tex", "main_en.tex", "supplementary_en.tex"):
         if source_name not in files:
             errors.append(f"untracked manuscript: {source_name}")
             continue
@@ -55,7 +54,7 @@ def main():
             dependencies.append(name if name in files else "figures/" + name)
         for name in dependencies:
             if name not in files:
-                errors.append(f"untracked compile dependency for {language}: {name}")
+                errors.append(f"untracked compile dependency for {source_name}: {name}")
     for error in errors:
         print("FAIL:", error)
     print(f"Checked {len(files)} tracked/staged files, {total / 1024**2:.2f} MiB.")

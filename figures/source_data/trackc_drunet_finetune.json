@@ -1,0 +1,308 @@
+{
+  "protocol": {
+    "bands": "B1/B3/B4 (T134)",
+    "architecture": "DRUNet (UNetRes [64,128,256,512], nb=4, masked L1, D4 aug, bf16)",
+    "seed": 11,
+    "pretrain_steps": 400,
+    "ft_steps": 150,
+    "scratch_steps": 250,
+    "eval_pixels_per_site": 500000,
+    "halo_px": 16,
+    "verified_trackc_cross_affine_psnr": 14.113,
+    "verified_trackc_target_affine_psnr": 16.502,
+    "wall_time_sec": 909.0,
+    "gpu": "NVIDIA GeForce RTX 4090 Laptop GPU"
+  },
+  "summary": {
+    "drunet_zeroshot": {
+      "sites": 10,
+      "psnr": 13.378,
+      "deltaE00": 23.505,
+      "mae": 0.1699
+    },
+    "drunet_scratch10": {
+      "sites": 10,
+      "psnr": 14.458,
+      "deltaE00": 17.728,
+      "mae": 0.1366
+    },
+    "drunet_ft10": {
+      "sites": 10,
+      "psnr": 14.448,
+      "deltaE00": 17.808,
+      "mae": 0.1366
+    }
+  },
+  "per_site": [
+    {
+      "site": "C1",
+      "fold": 1,
+      "method": "drunet_zeroshot",
+      "cal_frac": 0.0402,
+      "psnr": 11.641,
+      "deltaE00": 24.502,
+      "mae": 0.201
+    },
+    {
+      "site": "C1",
+      "fold": 1,
+      "method": "drunet_ft10",
+      "cal_frac": 0.0402,
+      "psnr": 12.598,
+      "deltaE00": 23.086,
+      "mae": 0.1897
+    },
+    {
+      "site": "C1",
+      "fold": 1,
+      "method": "drunet_scratch10",
+      "cal_frac": 0.0402,
+      "psnr": 12.673,
+      "deltaE00": 23.113,
+      "mae": 0.1906
+    },
+    {
+      "site": "C8",
+      "fold": 1,
+      "method": "drunet_zeroshot",
+      "cal_frac": 0.0498,
+      "psnr": 13.741,
+      "deltaE00": 29.005,
+      "mae": 0.1433
+    },
+    {
+      "site": "C8",
+      "fold": 1,
+      "method": "drunet_ft10",
+      "cal_frac": 0.0498,
+      "psnr": 15.232,
+      "deltaE00": 14.83,
+      "mae": 0.1166
+    },
+    {
+      "site": "C8",
+      "fold": 1,
+      "method": "drunet_scratch10",
+      "cal_frac": 0.0498,
+      "psnr": 15.075,
+      "deltaE00": 14.809,
+      "mae": 0.117
+    },
+    {
+      "site": "C2",
+      "fold": 2,
+      "method": "drunet_zeroshot",
+      "cal_frac": 0.0405,
+      "psnr": 13.494,
+      "deltaE00": 19.844,
+      "mae": 0.1758
+    },
+    {
+      "site": "C2",
+      "fold": 2,
+      "method": "drunet_ft10",
+      "cal_frac": 0.0405,
+      "psnr": 13.521,
+      "deltaE00": 22.365,
+      "mae": 0.1408
+    },
+    {
+      "site": "C2",
+      "fold": 2,
+      "method": "drunet_scratch10",
+      "cal_frac": 0.0405,
+      "psnr": 13.558,
+      "deltaE00": 22.837,
+      "mae": 0.1424
+    },
+    {
+      "site": "C9",
+      "fold": 2,
+      "method": "drunet_zeroshot",
+      "cal_frac": 0.0528,
+      "psnr": 14.062,
+      "deltaE00": 20.181,
+      "mae": 0.1714
+    },
+    {
+      "site": "C9",
+      "fold": 2,
+      "method": "drunet_ft10",
+      "cal_frac": 0.0528,
+      "psnr": 16.504,
+      "deltaE00": 14.421,
+      "mae": 0.0828
+    },
+    {
+      "site": "C9",
+      "fold": 2,
+      "method": "drunet_scratch10",
+      "cal_frac": 0.0528,
+      "psnr": 16.473,
+      "deltaE00": 14.484,
+      "mae": 0.0824
+    },
+    {
+      "site": "C5",
+      "fold": 3,
+      "method": "drunet_zeroshot",
+      "cal_frac": 0.0506,
+      "psnr": 13.324,
+      "deltaE00": 23.157,
+      "mae": 0.1744
+    },
+    {
+      "site": "C5",
+      "fold": 3,
+      "method": "drunet_ft10",
+      "cal_frac": 0.0506,
+      "psnr": 13.802,
+      "deltaE00": 20.041,
+      "mae": 0.145
+    },
+    {
+      "site": "C5",
+      "fold": 3,
+      "method": "drunet_scratch10",
+      "cal_frac": 0.0506,
+      "psnr": 13.801,
+      "deltaE00": 20.152,
+      "mae": 0.1452
+    },
+    {
+      "site": "C10",
+      "fold": 3,
+      "method": "drunet_zeroshot",
+      "cal_frac": 0.062,
+      "psnr": 12.706,
+      "deltaE00": 25.637,
+      "mae": 0.1737
+    },
+    {
+      "site": "C10",
+      "fold": 3,
+      "method": "drunet_ft10",
+      "cal_frac": 0.062,
+      "psnr": 12.711,
+      "deltaE00": 20.264,
+      "mae": 0.1594
+    },
+    {
+      "site": "C10",
+      "fold": 3,
+      "method": "drunet_scratch10",
+      "cal_frac": 0.062,
+      "psnr": 12.715,
+      "deltaE00": 19.808,
+      "mae": 0.16
+    },
+    {
+      "site": "C3",
+      "fold": 4,
+      "method": "drunet_zeroshot",
+      "cal_frac": 0.0957,
+      "psnr": 15.705,
+      "deltaE00": 21.451,
+      "mae": 0.1266
+    },
+    {
+      "site": "C3",
+      "fold": 4,
+      "method": "drunet_ft10",
+      "cal_frac": 0.0957,
+      "psnr": 15.366,
+      "deltaE00": 17.697,
+      "mae": 0.1262
+    },
+    {
+      "site": "C3",
+      "fold": 4,
+      "method": "drunet_scratch10",
+      "cal_frac": 0.0957,
+      "psnr": 15.393,
+      "deltaE00": 16.434,
+      "mae": 0.1246
+    },
+    {
+      "site": "C6",
+      "fold": 4,
+      "method": "drunet_zeroshot",
+      "cal_frac": 0.1127,
+      "psnr": 12.572,
+      "deltaE00": 29.283,
+      "mae": 0.1789
+    },
+    {
+      "site": "C6",
+      "fold": 4,
+      "method": "drunet_ft10",
+      "cal_frac": 0.1127,
+      "psnr": 14.112,
+      "deltaE00": 14.142,
+      "mae": 0.1363
+    },
+    {
+      "site": "C6",
+      "fold": 4,
+      "method": "drunet_scratch10",
+      "cal_frac": 0.1127,
+      "psnr": 14.452,
+      "deltaE00": 13.968,
+      "mae": 0.1335
+    },
+    {
+      "site": "C4",
+      "fold": 5,
+      "method": "drunet_zeroshot",
+      "cal_frac": 0.1074,
+      "psnr": 14.788,
+      "deltaE00": 16.682,
+      "mae": 0.1532
+    },
+    {
+      "site": "C4",
+      "fold": 5,
+      "method": "drunet_ft10",
+      "cal_frac": 0.1074,
+      "psnr": 17.272,
+      "deltaE00": 11.106,
+      "mae": 0.1045
+    },
+    {
+      "site": "C4",
+      "fold": 5,
+      "method": "drunet_scratch10",
+      "cal_frac": 0.1074,
+      "psnr": 17.182,
+      "deltaE00": 11.232,
+      "mae": 0.1054
+    },
+    {
+      "site": "C7",
+      "fold": 5,
+      "method": "drunet_zeroshot",
+      "cal_frac": 0.0444,
+      "psnr": 11.75,
+      "deltaE00": 25.312,
+      "mae": 0.201
+    },
+    {
+      "site": "C7",
+      "fold": 5,
+      "method": "drunet_ft10",
+      "cal_frac": 0.0444,
+      "psnr": 13.364,
+      "deltaE00": 20.13,
+      "mae": 0.1645
+    },
+    {
+      "site": "C7",
+      "fold": 5,
+      "method": "drunet_scratch10",
+      "cal_frac": 0.0444,
+      "psnr": 13.258,
+      "deltaE00": 20.44,
+      "mae": 0.1654
+    }
+  ]
+}

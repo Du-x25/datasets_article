@@ -1,0 +1,13 @@
+\begin{tabular}{@{}lrr@{}}
+\toprule
+Calibration / adaptation regime (fixed B1/B3/B4) & PSNR/dB$\uparrow$ & \dE{}$\downarrow$\\
+\midrule
+Training-site affine (zero-shot) & 14.113 & 19.719\\
+DRUNet zero-shot (6-site pre-trained) & 13.378 & 23.505\\
+\midrule
+Target-site affine (10 patches) & 16.502 & 12.864\\
+Target-site quadratic (10 patches) & 16.715 & 12.089\\
+DRUNet from scratch (10 target patches) & 14.458 & 17.728\\
+DRUNet few-shot fine-tuned (pre-trained + 10 patches) & 14.448 & 17.808\\
+\bottomrule
+\end{tabular}

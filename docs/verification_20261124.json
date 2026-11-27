@@ -1,15 +1,17 @@
 {
   "status": "passed",
-  "pages": 26,
-  "labels": 57,
-  "citations": 29,
-  "checked_text_boxes": 5524,
+  "pages": 20,
+  "labels": 41,
+  "citations": 45,
+  "checked_text_boxes": 5121,
   "undefined_references": 0,
   "oversized_floats": 0,
   "overfull_boxes": 0,
   "completed_runs_verified": 270,
   "window_overlap_4to1": {"train": 2842, "test": 710, "fully_covered": 701},
   "window_level_runs_in_summary": 46,
+  "geom_15pair_audit_checks": 6480,
+  "trackc_drunet_eval_pixels_per_site": 500000,
   "seed_repeats": {
     "100_epochs": {"mswir": 3, "chen": 3},
     "200_epochs": {"mswir": 3, "chen": 3}
@@ -21,13 +23,54 @@
     "1:1 windows and 500 epochs (this dataset)"
   ],
   "pending_training_groups": [],
-  "scope": "Saved-record, source, table and PDF layout checks; no new inference.",
+  "scope": "Saved-record, source, table, Scientific Data limits, 15-pair non-SIFT geometry audit, Track C 10-patch DRUNet GPU fine-tuning, and symmetric bilingual main+SI PDF layout checks.",
   "date": "2026-11-26",
   "pdf": "output/pdf/main_zh_latest.pdf",
-  "pdf_sha256": "f906ea774403781a1a1ea4c8244e1c7eb178de15b7cc6c3c3bdeea8c0e20a5f7",
-  "pdf_bytes": 5706455,
+  "pdf_sha256": "a50bb1817b8e9f5370e24daf03dc56f040a8506e4f539159ce786ffc05bb58b1",
+  "pdf_bytes": 2744886,
+  "chinese_supplementary": {
+    "status": "passed",
+    "pdf": "output/pdf/supplementary_zh_latest.pdf",
+    "pdf_sha256": "59be387145bfa0f86513838d773cddf1ecac0d160921b602e7a2b342cd75622d",
+    "pdf_bytes": 3549215,
+    "pages": 12,
+    "labels": 19,
+    "checked_text_boxes": 1777,
+    "undefined_references": 0,
+    "oversized_floats": 0,
+    "overfull_boxes": 0
+  },
+  "english_manuscript": {
+    "status": "passed",
+    "pdf": "output/pdf/main_en_latest.pdf",
+    "pdf_sha256": "23405fdc79ae8c0a9dc05075ea367c30798bafe426e2a6d46fa7e1b1cc250a43",
+    "pdf_bytes": 2599509,
+    "pages": 18,
+    "labels": 40,
+    "citations": 40,
+    "checked_text_boxes": 8595,
+    "undefined_references": 0,
+    "oversized_floats": 0,
+    "overfull_boxes": 0,
+    "scientific_data_limits": {
+      "title_chars": 105,
+      "abstract_words": 166
+    }
+  },
+  "english_supplementary": {
+    "status": "passed",
+    "pdf": "output/pdf/supplementary_en_latest.pdf",
+    "pdf_sha256": "a584b82ad133cf2d0c1ff451e3583e1639b24dc7435fe96401fb4e85ebe305ed",
+    "pdf_bytes": 3604325,
+    "pages": 8,
+    "labels": 19,
+    "checked_text_boxes": 2037,
+    "undefined_references": 0,
+    "oversized_floats": 0,
+    "overfull_boxes": 0
+  },
   "compiler": "XeLaTeX / TeX Live 2026 via latexmk",
-  "visual_review": "All 26 pages rendered and inspected. Checked the revised abstract on page 1, registration statistics on page 9 and the paired comparison figure on page 16 at reading size.",
+  "visual_review": "Rendered and visually inspected newly added pages including the 15-pair non-SIFT gradient phase-correlation figure (main_en p. 8), updated Track C calibration + DRUNet fine-tuning table (main_en p. 14), and Supplementary Section 4 Table S14 + Figure S5 (supplementary_en p. 8).",
   "base_commit": "c10ee6889984ac1dba7d4dc4de3e9018ea6aa4b8",
   "raw_data_weights_delivery_archives_included": false
 }

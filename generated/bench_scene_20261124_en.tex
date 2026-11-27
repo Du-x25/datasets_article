@@ -1,0 +1,20 @@
+\begin{tabular}{@{}llrrr@{}}
+\toprule
+Model & Test windows & PSNR/dB$\uparrow$ & SSIM$\uparrow$ & LPIPS$\downarrow$\\
+\midrule
+Random window split (3 runs) & All 10 sites (710 windows) & 24.46$\pm$1.12 & 0.807$\pm$0.011 & 0.089$\pm$0.029 \\
+\midrule
+Scene split A (train C1--C5) & Held-out C6--C10 (1618 windows) & 7.64 & 0.186 & 0.764 \\
+Scene split B (train C6--C10) & Held-out C1--C5 (1934 windows) & 7.84 & 0.164 & 0.696 \\
+\midrule
+Split A model, own train windows & C1--C5 (1558 windows) & 24.66 & 0.847 & 0.069 \\
+Split B model, own train windows & C6--C10 (1284 windows) & 25.98 & 0.819 & 0.071 \\
+Split A model, intensity-aligned input & Held-out C6--C10 (1618 windows) & 7.32 & 0.178 & 0.774 \\
+Split B model, intensity-aligned input & Held-out C1--C5 (1934 windows) & 7.89 & 0.165 & 0.692 \\
+\midrule
+Three-channel input mean (untrained) & Held-out C6--C10 (1618 windows) & 9.79 & -- & -- \\
+Three-channel input mean (untrained) & Held-out C1--C5 (1934 windows) & 10.69 & -- & -- \\
+Train target channel mean (untrained) & Held-out C6--C10 (1618 windows) & 9.56 & -- & -- \\
+Train target channel mean (untrained) & Held-out C1--C5 (1934 windows) & 9.79 & -- & -- \\
+\bottomrule
+\end{tabular}

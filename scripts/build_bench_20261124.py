@@ -509,7 +509,7 @@ def figures(d, out):
             ax.grid(color="#eeeeee", linewidth=0.5)
             ax.set_axisbelow(True)
         for ax in axes[:, 0]:
-            ax.set_ylabel("像素比例 / \\%", fontsize=6.5)
+            ax.set_ylabel("像素比例 / %", fontsize=6.5)
         for ax in axes[1]:
             ax.set_xlabel("数字量")
         fig.legend(*axes[0, 0].get_legend_handles_labels(), ncol=10, frameon=False, fontsize=7, loc="outside lower center")
@@ -528,10 +528,10 @@ def figures(d, out):
                 errs.append(0.0 if g["sd"] is None else float(g["sd"][0]))
                 colors.append(color)
         ax.bar(range(len(names)), vals, color=colors, width=0.6, yerr=errs, error_kw={"elinewidth": 0.8, "capsize": 2})
-        for i, v in enumerate(vals):
-            ax.text(i, v + 0.6, "%.2f" % v, ha="center", fontsize=7)
+        for i, (v, e) in enumerate(zip(vals, errs)):
+            ax.text(i, v + e + 0.6, "%.2f" % v, ha="center", fontsize=7)
         ax.set_xticks(range(len(names)), names)
-        ax.set_ylim(0, max(vals) * 1.18)
+        ax.set_ylim(0, max(v + e for v, e in zip(vals, errs)) * 1.18)
         ax.set_ylabel("测试 PSNR / dB")
         ax.grid(axis="y", color="#dddddd", linewidth=0.6)
         ax.set_axisbelow(True)
@@ -539,17 +539,339 @@ def figures(d, out):
         both = [sc for sc in SCENES if s["per_scene"].get(sc) and s["per_scene"][sc]["held"] is not None]
         if both:
             xs = np.arange(len(both))
+            r_vals = [s["per_scene"][sc]["random"] for sc in both]
+            h_vals = [s["per_scene"][sc]["held"] for sc in both]
             for x, sc in zip(xs, both):
                 ax.plot([x, x], [s["per_scene"][sc]["held"], s["per_scene"][sc]["random"]], color="#999999", lw=0.8)
-            ax.scatter(xs, [s["per_scene"][sc]["random"] for sc in both], s=18, color=grey, zorder=3, label="随机窗口划分（%d 次训练均值）" % ref["k"])
-            ax.scatter(xs, [s["per_scene"][sc]["held"] for sc in both], s=20, color=teal, marker="^", zorder=3, label="留出场景")
+            ax.scatter(xs, r_vals, s=18, color=grey, zorder=3, label="随机窗口划分（%d 次训练均值）" % ref["k"])
+            ax.scatter(xs, h_vals, s=20, color=teal, marker="^", zorder=3, label="留出场景")
             ax.set_xticks(xs, both)
+            ax.set_ylim(min(h_vals) - 1.5, max(r_vals) + 4.8)
             ax.set_ylabel("场景内 PSNR / dB")
             ax.grid(axis="y", color="#dddddd", linewidth=0.6)
             ax.set_axisbelow(True)
-            ax.legend(frameon=False, fontsize=7, loc="upper right")
+            ax.legend(frameon=False, fontsize=7, loc="upper right", ncol=2)
         fig.savefig(out / "scene_boundary_zh.pdf")
         plt.close(fig)
+
+
+def figures_en(d, out):
+    import csv as _csv
+    import io as _io
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from PIL import Image
+    from pypdf import PdfReader
+
+    plt.rcParams.update({"font.family": ["Arial", "DejaVu Sans"], "axes.unicode_minus": False,
+                         "pdf.fonttype": 42, "font.size": 8})
+    out = Path(out)
+    out.mkdir(parents=True, exist_ok=True)
+    grey, teal, dark = "#9fb3c8", "#4f9f9a", "#1f5553"
+
+    ref = d["mswir_ep100"]
+    order = [v for v in SINGLES + TRIPLES if v == "B123" or v in d["band"]]
+    if ref is not None:
+        fig, ax = plt.subplots(figsize=(6.4, 3.6), layout="constrained")
+        for y, v in enumerate(order):
+            if v == "B123":
+                per = np.array(list(d["band_ref_scene_mean"].values()) or [np.nan])
+                ax.barh(y, ref["mean"][0], color=dark, height=0.62, xerr=0.0 if ref["sd"] is None else ref["sd"][0],
+                        error_kw={"elinewidth": 0.8, "capsize": 2})
+            else:
+                per = np.array([d["band"][v]["scene_mean"][sc] for sc in d["band_ref_scene_mean"]])
+                ax.barh(y, d["band"][v]["run"]["mean"][0], color=grey if v in SINGLES else teal, height=0.62)
+            ax.scatter(per, np.full(len(per), y), s=7, color="black", alpha=0.5, linewidths=0, zorder=3)
+        ax.set_yticks(range(len(order)), order)
+        ax.invert_yaxis()
+        ax.set_xlabel("Test PSNR / dB (dots show per-scene window means)")
+        ax.grid(axis="x", color="#dddddd", linewidth=0.6)
+        ax.set_axisbelow(True)
+        fig.savefig(out / "band_ablation_en.pdf")
+        plt.close(fig)
+
+    fig, ax = plt.subplots(figsize=(4.9, 3.0), layout="constrained")
+    style = {"frac25": ("25%", grey, "o"), "frac50": ("50%", "#5f8fb0", "s"), "frac75": ("75%", "#3f8f8a", "^"),
+             "full": ("100%", dark, "D")}
+    for name, (label, color, marker) in style.items():
+        if name == "full":
+            pts = [(ITERS["full"] * e, g["mean"][0]) for e, g in ((100, d["mswir_ep100"]), (200, d["mswir_ep200"]))
+                   if g is not None]
+        else:
+            pts = [(ITERS[name] * int(k.rsplit("_ep", 1)[1]), g["mean"][0])
+                   for k, g in d["budget"].items() if k.startswith("e3_%s_" % name)]
+        if pts:
+            ax.plot([p[0] / 1000.0 for p in pts], [p[1] for p in pts], marker=marker, ms=4, lw=1.1, color=color,
+                    label="%s (%d train windows)" % (label, TRAIN[name]))
+    if ref is not None and ref["sd"] is not None:
+        ax.errorbar([71.0], [ref["mean"][0]], yerr=ref["sd"][0], color=dark, fmt="none", capsize=2, lw=0.9)
+    ax.axvline(71.0, color="#a05a1e", lw=0.9, ls="--")
+    ax.set_xlabel("Parameter updates / thousands")
+    ax.set_ylabel("Test PSNR / dB")
+    ax.grid(color="#dddddd", linewidth=0.6)
+    ax.set_axisbelow(True)
+    ax.legend(frameon=False, fontsize=7, loc="lower right")
+    fig.savefig(out / "budget_curve_en.pdf")
+    plt.close(fig)
+
+    hist = d.get("quality_hist")
+    if hist:
+        fig, axes = plt.subplots(2, 3, figsize=(6.6, 4.3), layout="constrained", sharex=True, sharey=True)
+        cmap = plt.get_cmap("turbo")
+        x = np.arange(257)
+        for ax, b in zip(axes.flat, ["B1", "B2", "B3", "B4", "B5", "LUMA"]):
+            for i, sc in enumerate(SCENES):
+                v = np.array(hist[sc][b] + [hist[sc][b][-1]], dtype=float)
+                ax.step(x, np.where(v > 1e-4, v, np.nan), where="post", lw=0.8, color=cmap(i / 9.0), label=sc)
+            ax.set_yscale("log")
+            ax.set_ylim(1e-3, 30)
+            ax.set_xlim(0, 256)
+            ax.set_title("RGB mean (ref.)" if b == "LUMA" else b, fontsize=8)
+            ax.grid(color="#eeeeee", linewidth=0.5)
+            ax.set_axisbelow(True)
+        for ax in axes[:, 0]:
+            ax.set_ylabel("Pixel share / %", fontsize=6.5)
+        for ax in axes[1]:
+            ax.set_xlabel("Digital number (DN)")
+        fig.legend(*axes[0, 0].get_legend_handles_labels(), ncol=10, frameon=False, fontsize=7, loc="outside lower center")
+        fig.savefig(out / "band_histograms_en.pdf")
+        plt.close(fig)
+
+    s = d["scene"]
+    if ref is not None:
+        fig, axes = plt.subplots(1, 2, figsize=(6.6, 2.9), layout="constrained", gridspec_kw={"width_ratios": [1, 1.5]})
+        ax = axes[0]
+        names, vals, errs, colors = [], [], [], []
+        for label, g, color in (("Random\nwindow", ref, grey), ("Scene\nsplit A", s.get("foldA"), teal), ("Scene\nsplit B", s.get("foldB"), teal)):
+            if g is not None:
+                names.append(label)
+                vals.append(float(g["mean"][0]))
+                errs.append(0.0 if g["sd"] is None else float(g["sd"][0]))
+                colors.append(color)
+        ax.bar(range(len(names)), vals, color=colors, width=0.6, yerr=errs, error_kw={"elinewidth": 0.8, "capsize": 2})
+        for i, (v, e) in enumerate(zip(vals, errs)):
+            ax.text(i, v + e + 0.6, "%.2f" % v, ha="center", fontsize=7)
+        ax.set_xticks(range(len(names)), names)
+        ax.set_ylim(0, max(v + e for v, e in zip(vals, errs)) * 1.18)
+        ax.set_ylabel("Test PSNR / dB")
+        ax.grid(axis="y", color="#dddddd", linewidth=0.6)
+        ax.set_axisbelow(True)
+        ax = axes[1]
+        both = [sc for sc in SCENES if s["per_scene"].get(sc) and s["per_scene"][sc]["held"] is not None]
+        if both:
+            xs = np.arange(len(both))
+            r_vals = [s["per_scene"][sc]["random"] for sc in both]
+            h_vals = [s["per_scene"][sc]["held"] for sc in both]
+            for x_pos, sc in zip(xs, both):
+                ax.plot([x_pos, x_pos], [s["per_scene"][sc]["held"], s["per_scene"][sc]["random"]], color="#999999", lw=0.8)
+            ax.scatter(xs, r_vals, s=18, color=grey, zorder=3, label="Random window split (%d-run mean)" % ref["k"])
+            ax.scatter(xs, h_vals, s=20, color=teal, marker="^", zorder=3, label="Held-out scene")
+            ax.set_xticks(xs, both)
+            ax.set_ylim(min(h_vals) - 1.5, max(r_vals) + 4.8)
+            ax.set_ylabel("Within-site PSNR / dB")
+            ax.grid(axis="y", color="#dddddd", linewidth=0.6)
+            ax.set_axisbelow(True)
+            ax.legend(frameon=False, fontsize=7, loc="upper right", ncol=2)
+        fig.savefig(out / "scene_boundary_en.pdf")
+        plt.close(fig)
+
+    # Re-label embedded lossless panels from heldout_examples_zh.pdf and qualitative_zh.pdf into English.
+    held_src = FIG / "heldout_examples_zh.pdf"
+    held_csv = SRC.parent / "heldout_examples_windows.csv"
+    if held_src.is_file() and held_csv.is_file():
+        imgs = [Image.open(_io.BytesIO(im.data)).convert("RGB") for im in PdfReader(held_src).pages[0].images]
+        with held_csv.open(encoding="utf-8-sig") as f:
+            hrows = list(_csv.DictReader(f))
+        if len(imgs) == 16 and len(hrows) == 4:
+            fig, axes = plt.subplots(2, 10, figsize=(6.75, 2.0), dpi=300,
+                                     gridspec_kw=dict(width_ratios=[0.62, 1, 1, 1, 1] * 2, wspace=0.04, hspace=0.06))
+            for r in range(2):
+                for c in (0, 5):
+                    axes[r, c].axis("off")
+            cols = ["SWIR input", "Random\nsplit output", "Scene-split\noutput", "RGB target"]
+            for idx, row in enumerate(hrows):
+                r, b = divmod(idx, 2)
+                axes[r, 5 * b].text(1.0, 0.5, "Split %s\n%s" % (row["fold"], row["scene"]),
+                                    transform=axes[r, 5 * b].transAxes, ha="right", va="center", fontsize=6.5, linespacing=1.2)
+                for c in range(4):
+                    ax = axes[r, c + 1 + 5 * b]
+                    ax.imshow(imgs[idx * 4 + c], interpolation="nearest")
+                    ax.set_xticks([]); ax.set_yticks([])
+                    for sp in ax.spines.values():
+                        sp.set_visible(False)
+                    if r == 0:
+                        ax.set_title(cols[c], fontsize=6.5, pad=2, linespacing=1.0)
+                    if c in (1, 2):
+                        ax.text(0.03, 0.03, "%.2f dB" % float(row["psnr_random" if c == 1 else "psnr_held"]),
+                                transform=ax.transAxes, fontsize=6, va="bottom",
+                                bbox=dict(boxstyle="square,pad=0.12", fc="white", ec="none", alpha=0.85))
+            fig.subplots_adjust(left=0.005, right=0.995, top=0.88, bottom=0.005)
+            fig.savefig(out / "heldout_examples_en.pdf")
+            plt.close(fig)
+
+    qual_src = FIG / "qualitative_zh.pdf"
+    qual_csv = SRC.parent / "qualitative_windows.csv"
+    if qual_src.is_file() and qual_csv.is_file():
+        imgs = [Image.open(_io.BytesIO(im.data)).convert("RGB") for im in PdfReader(qual_src).pages[0].images]
+        with qual_csv.open(encoding="utf-8-sig") as f:
+            qrows = list(_csv.DictReader(f))
+        if len(imgs) == 30 and len(qrows) == 10:
+            half = 5
+            fig, axes = plt.subplots(half, 7, figsize=(6.75, 1.12 * half + 0.3), dpi=260,
+                                     gridspec_kw=dict(width_ratios=[1, 1, 1, 0.14, 1, 1, 1], wspace=0.04, hspace=0.04))
+            for ax in axes[:, 3]:
+                ax.axis("off")
+            cols = ["SWIR (B1--B3)", "TFD-GAN output", "RGB target"]
+            for i, row in enumerate(qrows):
+                block, r = divmod(i, half)
+                row_major_idx = r * 2 + block
+                for c in range(3):
+                    ax = axes[r, 3 * block + c + block]
+                    ax.imshow(imgs[row_major_idx * 3 + c], interpolation="nearest")
+                    ax.set_xticks([]); ax.set_yticks([])
+                    for sp in ax.spines.values():
+                        sp.set_visible(False)
+                    if r == 0:
+                        ax.set_title(cols[c], fontsize=7.5, pad=2)
+                    if c == 0:
+                        ax.set_ylabel("%s\n%04d, %04d" % (row["scene"], int(row["top"]), int(row["left"])),
+                                      fontsize=7, linespacing=1.1, labelpad=2)
+            fig.subplots_adjust(left=0.075, right=0.995, top=0.955, bottom=0.005)
+            fig.savefig(out / "qualitative_en.pdf")
+            plt.close(fig)
+
+
+def tables_en(d):
+    def latex_main_en(d):
+        rows = ["%s & 100 epochs & %s & %s & %s \\\\" % ("Reference archive~\\cite{chen2026thesis}", *cells(d["chen_ep100"])),
+                " & 200 epochs & %s & %s & %s \\\\" % tuple(cells(d["chen_ep200"])), "\\midrule",
+                "M-SWIR-RGB (4:1 windows) & 100 epochs & %s & %s & %s \\\\" % tuple(cells(d["mswir_ep100"])),
+                " & 200 epochs & %s & %s & %s \\\\" % tuple(cells(d["mswir_ep200"]))]
+        return tabular("llrrr", "Dataset & Training budget & " + HEAD + "\\\\", rows)
+
+    def latex_scene_seeds_en(d):
+        rows = []
+        for sc in SCENES:
+            v = d["scene_seeds"]["mswir"].get(sc)
+            if v is not None:
+                rows.append("%s & %d & %s & %s & %s \\\\" % (sc, v["n"], pm(v, 0, 2), fmt(v["mean"][1], 3), fmt(v["mean"][2], 3)))
+        rows.append("\\midrule")
+        allr = d["mswir_ep100"]
+        rows.append("All ten sites pooled & %d & %s & %s & %s \\\\" % (d["runs"][d["mswir_ep100_runs"][0]]["n"], pm(allr, 0, 2),
+                                                                      fmt(allr["mean"][1], 3), fmt(allr["mean"][2], 3)))
+        return tabular("lrrrr", "Site & Test windows & " + HEAD + "\\\\", rows)
+
+    def latex_band_en(d):
+        ref = d["mswir_ep100"]
+        rows = []
+        for v in SINGLES + TRIPLES:
+            if v == "B123":
+                rows.append("B123 (ref., %d runs) & %s & %s & %s & Reference \\\\" % (ref["k"], *cells(ref)))
+            elif v in d["band"]:
+                b = d["band"][v]
+                rows.append("%s & %s & %s & %s & %s \\\\" % (v, fmt(b["run"]["mean"][0], 2), fmt(b["run"]["mean"][1], 3),
+                                                             fmt(b["run"]["mean"][2], 3), ci(b["paired"])))
+            else:
+                rows.append("%s & -- & -- & -- & -- \\\\" % v)
+        return tabular("lrrrr", "Input & " + HEAD + " & $\\Delta$PSNR and 95\\% CI\\\\", rows)
+
+    def latex_budget_en(d):
+        rows = []
+        for name in ("frac25", "frac50", "frac75"):
+            g = d["budget"].get("e3_%s_ep%d" % (name, MATCHED[name]))
+            rows.append("%d\\%% & %d & %s & %s & %s & %s \\\\" % (
+                int(name[4:]), TRAIN[name], thousands(ITERS[name] * MATCHED[name]), *cells(g)))
+        g = d["mswir_ep100"]
+        rows.append("100\\%% & %d & %s & %s & %s & %s \\\\" % (TRAIN["full"], thousands(ITERS["full"] * 100), *cells(g)))
+        return tabular("rrlrrr", "Train fraction & Train windows & Updates & " + HEAD + "\\\\", rows)
+
+    def latex_scene_en(d):
+        s = d["scene"]
+        diag = s.get("diag", {})
+        held = {f: "Held-out %s (%d windows)" % (FOLDS[f][1], HELD[f]) for f in "AB"}
+        def row(name, test, g):
+            return "%s & %s & %s & %s & %s \\\\" % (name, test, *cells(g))
+        rows = [row("Random window split (%d runs)" % d["mswir_ep100"]["k"],
+                    "All 10 sites (%d windows)" % d["runs"][d["mswir_ep100_runs"][0]]["n"], d["mswir_ep100"]), "\\midrule"]
+        for fold in ("A", "B"):
+            train, _, _ = FOLDS[fold]
+            rows.append(row("Scene split %s (train %s)" % (fold, train), held[fold], s["fold" + fold]))
+        if all(all(k in diag.get(f, {}) for k in ("train", "shift_global", "baseline")) for f in "AB"):
+            n = {f: sum(diag[f]["train_scene_n"].values()) for f in "AB"}
+            rows.append("\\midrule")
+            for fold in "AB":
+                rows.append(row("Split %s model, own train windows" % fold, "%s (%d windows)" % (FOLDS[fold][0], n[fold]), diag[fold]["train"]))
+            for fold in "AB":
+                rows.append(row("Split %s model, intensity-aligned input" % fold, held[fold], diag[fold]["shift_global"]))
+            rows.append("\\midrule")
+            for name, key in (("Three-channel input mean (untrained)", "gray"), ("Train target channel mean (untrained)", "const")):
+                for fold in "AB":
+                    rows.append("%s & %s & %s & -- & -- \\\\" % (name, held[fold], fmt(diag[fold]["baseline"][key], 2)))
+        return tabular("llrrr", "Model & Test windows & " + HEAD + "\\\\", rows)
+
+    def latex_per_scene_en(d):
+        s, rows = d["scene"], []
+        for sc in SCENES:
+            v = s["per_scene"].get(sc)
+            if v is None:
+                continue
+            diff = None if v["held"] is None else v["held"] - v["random"]
+            rows.append("%s & %s & %s & %s \\\\" % (sc, fmt(v["random"], 2), fmt(v["held"], 2), signed(diff)))
+        if s.get("drop_scene_equal") is not None:
+            rows += ["\\midrule", "Ten-site equal mean & %s & %s & %s \\\\" % (
+                fmt(s["random_scene_equal"], 2), fmt(s["held_scene_equal"], 2), signed(s["held_scene_equal"] - s["random_scene_equal"]))]
+        return tabular("lrrr", "Site & Random split & Held-out site & Difference\\\\", rows)
+
+    def latex_quality_scale_en(q):
+        labels_en = (("chen", "Archive patches~\\cite{chen2026thesis}"), ("mswir_4to1", "M-SWIR-RGB 4:1 windows"), ("mswir_native", "M-SWIR-RGB 1:1 windows"))
+        rows = []
+        for key, label in labels_en:
+            c = q[key]["all"]
+            near = c["ab_within1px_strong_pct"] if key != "mswir_native" else c["ab_within4px_strong_pct"]
+            rows.append("%s & %d & %.3f & %.3f & %.3f & %.3f & %.3f & %.3f & %s \\\\" % (
+                label, int(c["n"]), c["a_lag1_mean"], c["a_psd_mean"], c["b_lag1_mean"], c["b_psd_mean"],
+                c["ab_r0_mean"], c["ab_peak_mean"], fmt(near, 1) + ("" if key != "mswir_native" else "$^{\\dagger}$")))
+        head = ["Window set & Count & \\multicolumn{2}{c}{SWIR input} & \\multicolumn{2}{c}{RGB target} & \\multicolumn{3}{c}{Cross-modal greyscale correlation}\\\\",
+                "\\cmidrule(lr){3-4}\\cmidrule(lr){5-6}\\cmidrule(lr){7-9}",
+                " & & lag-1 & PSD centroid & lag-1 & PSD centroid & Zero-shift & Peak ($\\pm$16 px) & Peak in zone$^{*}$/\\%\\\\"]
+        return "\n".join(["\\begin{tabular}{@{}lrrrrrrrr@{}}", "\\toprule", *head, "\\midrule", *rows, "\\bottomrule",
+                          "\\end{tabular}"]) + "\n"
+
+    def latex_quality_scene_en(q):
+        rows = ["%s & %d & %.1f & %.0f & %s & %s & %.2f & %.1f & %.1f \\\\" % (
+            sc, v["windows"], v["b1_sat"], v["rgb_luma"], triple(v["rgb_sat"]), triple(v["rgb0"]),
+            v["ab_r0_med"], v["weak"], v["within1"]) for sc, v in q.items()]
+        head = ["Site & Windows & B1=255/\\% & RGB mean & RGB=255/\\% & RGB=0/\\% & Median $r_0$ & Weak peak/\\% & Peak in $3\\times 3^{*}$/\\%\\\\"]
+        return "\n".join(["\\begin{tabular}{@{}lrrrrrrrr@{}}", "\\toprule", *head, "\\midrule", *rows, "\\bottomrule",
+                          "\\end{tabular}"]) + "\n"
+
+    def latex_quality_corr_en(groups):
+        rows = ["B%s--B%s & %.3f & %.3f & %.3f \\\\" % (k[1], k[2], p["min"], p["median"], p["max"]) for k, p in groups["pairs"].items()]
+        return tabular("lrrr", "Band pair & Site min & Median & Max\\\\", rows)
+
+    def latex_quality_bands_en(q):
+        rows = ["%s & %s & %s & %s & %.2f & %.1f & %s & %s \\\\" % (
+            b, BANDS[b], rng(v["mean_min"], v["mean_max"], 0), rng(v["std_min"], v["std_max"], 1), v["sat"], v["sat_max"],
+            rng(v["corr_min"], v["corr_max"], 3), rng(v["luma_min"], v["luma_max"], 2)) for b, v in q.items()]
+        head = ["Band & Nominal passband/nm & Site mean & Site SD & \\multicolumn{2}{c}{DN=255 share/\\%} & Inter-band & vs. RGB luma\\\\",
+                "\\cmidrule(lr){5-6}", " & & range & range & Pooled & Max site & corr. range & corr. range\\\\"]
+        return "\n".join(["\\begin{tabular}{@{}lrrrrrrr@{}}", "\\toprule", *head, "\\midrule", *rows, "\\bottomrule",
+                          "\\end{tabular}"]) + "\n"
+
+    macros_en = latex_macros(d)
+    macros_en = macros_en.replace("、", ", ").replace("{蓝}", "{blue}").replace("{红}", "{red}").replace("{绿}", "{green}")
+    suf = "_20261124_en.tex"
+    return {
+        "bench_main" + suf: latex_main_en(d), "bench_scene_seeds" + suf: latex_scene_seeds_en(d),
+        "bench_band" + suf: latex_band_en(d), "bench_budget" + suf: latex_budget_en(d),
+        "bench_scene" + suf: latex_scene_en(d), "bench_per_scene" + suf: latex_per_scene_en(d),
+        "bench_quality_scale" + suf: latex_quality_scale_en(d["quality"]),
+        "bench_quality_bands" + suf: latex_quality_bands_en(d["quality_bands"]),
+        "bench_quality_scene" + suf: latex_quality_scene_en(d["quality_scene"]),
+        "bench_quality_corr" + suf: latex_quality_corr_en(d["quality_corr"]),
+        "bench_macros" + suf: macros_en,
+    }
 
 
 def check_tables():
@@ -568,8 +890,11 @@ def main():
     d = json.loads(SRC.read_text(encoding="utf-8"))
     for name, body in tables(d).items():
         (GEN / name).write_text(body, encoding="utf-8")
+    for name, body in tables_en(d).items():
+        (GEN / name).write_text(body, encoding="utf-8")
     figures(d, FIG)
-    print("wrote %d tables and figures from %s" % (len(tables(d)), SRC))
+    figures_en(d, ROOT / "figures/en/results_20261124")
+    print("wrote %d zh + %d en tables and figures from %s" % (len(tables(d)), len(tables_en(d)), SRC))
 
 
 if __name__ == "__main__":

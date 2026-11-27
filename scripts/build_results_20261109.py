@@ -281,6 +281,131 @@ def generate(d):
     save(fig,'validation_curves')
 
 
+def generate_en(d):
+    import matplotlib
+    matplotlib.use('Agg')
+    import matplotlib.pyplot as plt
+    from pypdf import PdfReader
+    from PIL import Image
+    plt.rcParams.update({'font.family': ['Arial', 'DejaVu Sans'], 'font.size': 9,
+                         'axes.unicode_minus': False, 'pdf.fonttype': 42, 'ps.fonttype': 42,
+                         'svg.fonttype': 'none', 'axes.spines.top': False, 'axes.spines.right': False,
+                         'axes.linewidth': 0.7, 'lines.linewidth': 1.3, 'savefig.facecolor': 'white'})
+    out_en = ROOT / 'figures/en/results_20261109'
+    out_en.mkdir(parents=True, exist_ok=True)
+    def save_en(fig, name):
+        for ext in ['pdf', 'svg', 'png']:
+            fig.savefig(out_en / f'{name}.{ext}', dpi=240)
+        plt.close(fig)
+
+    palette = ['#326A91', '#9A5277', '#338373']
+    stats, sm = d['stats'], d['selected_mean']
+    macros_text = (GEN / 'results_20261109_macros_zh.tex').read_text(encoding='utf-8')
+    (GEN / 'results_20261109_macros_en.tex').write_text(macros_text, encoding='utf-8')
+
+    rows = []
+    for m in MODELS:
+        for g, name in [('single', 'Val.-selected single band'), ('triple', 'Val.-selected 3-band')]:
+            rows.append([NAMES[m], name] + [f'{sm.loc[(m,g),v]:.3f}' for v in METRICS])
+    tex_table(GEN/'selected_benchmark_20261109_en.tex', ['Model','Input selection','PSNR↑','SSIM↑','LPIPS↓',r'\dE{}↓','MAE↓'], rows, 'llrrrrr')
+
+    rows = []
+    choices = d['selections'].set_index(['model','fold'])
+    for fold in range(1,6):
+        rows.append([fold] + [choices.loc[(m,fold), key] for m in MODELS for key in ['best_single','best_triple']])
+    tex_table(GEN/'band_choices_20261109_en.tex', ['Fold','DRUNet-1','DRUNet-3','pix2pix-1','pix2pix-3','TFD-1','TFD-3'], rows, 'ccccccc')
+
+    calnames = {'cross_rgb':'Training-site affine','target_rgb':'Target-site affine','target_rgb_quad':'Target-site quadratic'}
+    rows = [[calnames[k]] + [f'{d["cal_mean"].loc[k,m]:.3f}' for m in ['psnr','deltaE00']] for k in calnames]
+    tex_table(GEN/'calibration_20261109_en.tex',['Fitting condition','PSNR/dB↑',r'\dE{}↓'],rows,'lrr')
+
+    long = (r'\begin{longtable}{@{}llrrrrr@{}}' + '\n' +
+            r'\caption{Ten-site equal means for all 45 fixed-input conditions (site-disjoint five-fold benchmark). PSNR is in dB.}\label{tab:all-inputs-en}\\' + '\n')
+    header = r'\toprule Model & Input & PSNR↑ & SSIM↑ & LPIPS↓ & \dE{}↓ & MAE↓\\\midrule' + '\n'
+    contlabel = r'\multicolumn{7}{r}{\small Continued \thetable}\\' + '\n'
+    long += header + r'\endfirsthead' + '\n' + contlabel + header + r'\endhead' + '\n'
+    long += r'\midrule\multicolumn{7}{r}{Continued on next page}\\\endfoot\bottomrule\endlastfoot' + '\n'
+    for m in MODELS:
+        for i,r in d['recomputed'].loc[m].iterrows():
+            long += ' & '.join([NAMES[m],i] + [f'{r[v]:.3f}' for v in METRICS]) + '\\\\\n'
+    long += r'\end{longtable}' + '\n'
+    (GEN/'all_inputs_20261109_en.tex').write_text(long, encoding='utf-8')
+
+    fig, ax = plt.subplots(1,2, figsize=(183/25.4,91/25.4),gridspec_kw={'width_ratios':[1,1.35]},layout='constrained')
+    for j,m in enumerate(MODELS):
+        ys=[sm.loc[(m,g),'psnr'] for g in ['single','triple']]
+        ax[0].plot([0,1],ys,'o-',color=palette[j],label=NAMES[m])
+        for x,y in enumerate(ys): ax[0].annotate(f'{y:.3f}',(x,y),xytext=(0,7 if j!=1 else -15),textcoords='offset points',ha='center',fontsize=8)
+    ax[0].set(xticks=[0,1],xticklabels=['Val. single band','Val. 3-band'],xlim=(-.2,1.2),ylim=(11.7,14.2),ylabel='Site-equal PSNR / dB',title='a  Mean gain across models')
+    ax[0].legend(frameon=False,fontsize=8,loc='lower right');ax[0].grid(axis='y',alpha=.15)
+    vals=d['gains'][MODELS].T.to_numpy();bound=max(abs(vals.min()),abs(vals.max()))
+    im=ax[1].imshow(vals,cmap='RdBu',vmin=-bound,vmax=bound,aspect='auto')
+    ax[1].set(xticks=range(10),xticklabels=SITES,yticks=range(3),yticklabels=[NAMES[m] for m in MODELS],title='b  Three-band minus single-band: per-site PSNR')
+    ax[1].tick_params(axis='x',labelsize=7)
+    for y,x in itertools.product(range(3),range(10)):
+        ax[1].text(x,y,f'{vals[y,x]:+.1f}',ha='center',va='center',fontsize=7,color='white' if abs(vals[y,x])>bound*.65 else '#202020')
+    fig.colorbar(im,ax=ax[1],orientation='horizontal',shrink=.8,pad=.12,label='PSNR difference / dB (positive favours 3-band)')
+    save_en(fig,'band_selection')
+
+    fig,ax=plt.subplots(1,2,figsize=(183/25.4,83/25.4),layout='constrained')
+    ps=d['protocol_site'];x=np.arange(10)
+    ax[0].vlines(x,ps.site_isolated_psnr,ps.random_psnr,color='#BBBBBB',lw=2)
+    ax[0].scatter(x,ps.site_isolated_psnr,color=palette[0],label='Site-disjoint',s=24)
+    ax[0].scatter(x,ps.random_psnr,color=palette[2],label='Random window',s=24)
+    ax[0].set(xticks=x,xticklabels=SITES,ylabel='Shared-region PSNR / dB',title='a  Paired rescoring on identical test regions')
+    ax[0].legend(frameon=False,fontsize=8);ax[0].grid(axis='y',alpha=.15)
+    ov=d['overlap'].groupby('site').coverage_pct.mean().reindex(SITES)
+    ax[1].bar(x,ov,color=palette[0],width=.6)
+    ax[1].set(xticks=x,xticklabels=SITES,ylim=(0,105),ylabel='Test pixels covered by train windows / %',title='b  Spatial overlap in random splits')
+    for i,v in enumerate(ov):ax[1].text(i,v+1,f'{v:.1f}',ha='center',fontsize=6.7)
+    for a in ax:a.tick_params(axis='x',labelsize=7)
+    save_en(fig,'protocol_sensitivity')
+
+    fig,ax=plt.subplots(1,2,figsize=(183/25.4,89/25.4),layout='constrained')
+    for a,frame,order,labels in [(ax[0],d['cal'].pivot(index='site',columns='method',values='psnr'),list(calnames),['Train-site\naffine','Target-site\naffine','Target-site\nquadratic']),
+                               (ax[1],d['half_site'].psnr.unstack('method'),['within','global','cross'],['Same half','Full mosaic','Opposite half'])]:
+        values=frame.reindex(SITES)[order].to_numpy()
+        for i in range(10):a.plot(range(3),values[i],'-o',color='#B3BBC2',alpha=.65,lw=.75,ms=2)
+        means=values.mean(axis=0);a.plot(range(3),means,'o-',color=palette[0],lw=2,ms=5,label='Ten-site mean')
+        for i,v in enumerate(means):a.annotate(f'{v:.3f}',(i,v),xytext=(0,8),textcoords='offset points',ha='center',fontsize=8,color=palette[0])
+        a.set(xticks=range(3),xticklabels=labels,xlim=(-.2,2.2),ylim=(8,24.5),ylabel='PSNR / dB');a.grid(axis='y',alpha=.15)
+    ax[0].set_title('a  Paired calibration on held-out target pixels')
+    ax[1].set_title('b  Half-mosaic transfer of quadratic map')
+    ax[0].legend(frameon=False,fontsize=8,loc='upper left')
+    save_en(fig,'paired_calibration')
+
+    fig,ax=plt.subplots(3,3,figsize=(183/25.4,173/25.4),layout='constrained')
+    roi_manifest=json.loads((SRC/'figure_selection_manifest.json').read_text())
+    for row,site in enumerate(['C1','C5','C8']):
+        p=SRC/f'plates/planned_F2_validation_selected_drunet_{site}.pdf'
+        images=PdfReader(p).pages[0].images
+        assert len(images)>=3
+        selection=d['selected'][(d['selected'].model=='drunet')&(d['selected'].site==site)].set_index('group')
+        roi=next(r for r in roi_manifest['rois'] if r['site']==site)
+        for col,title in enumerate(['RGB target',f"Single band {selection.loc['single','input_id']}",f"Three-band {selection.loc['triple','input_id']}"]):
+            im=Image.open(io.BytesIO(images[col].data)).convert('RGB')
+            assert im.width==im.height==452
+            ax[row,col].imshow(im,interpolation='nearest');ax[row,col].set_title(title,fontsize=9)
+            ax[row,col].set(xticks=[],yticks=[])
+            for spine in ax[row,col].spines.values():spine.set_visible(False)
+            if col==0:
+                ax[row,col].set_ylabel(f'{site}\n({roi["x"]}, {roi["y"]})',fontsize=9)
+                ax[row,col].plot([.68,.93],[.91,.91],transform=ax[row,col].transAxes,color='white',lw=2)
+                ax[row,col].text(.8,.86,'32 px',transform=ax[row,col].transAxes,color='white',ha='center',fontsize=7,bbox={'facecolor':'black','alpha':.35,'edgecolor':'none','pad':1})
+    save_en(fig,'validation_selected_examples')
+
+    fig,ax=plt.subplots(1,3,figsize=(183/25.4,68/25.4),sharey=True,layout='constrained')
+    colors=['#326A91','#A65775','#338373','#B17A32','#7664A5']
+    for a,m in zip(ax,MODELS):
+        for fold in range(1,6):
+            c=d['curves'][(d['curves'].model==m)&(d['curves'].fold==fold)]
+            a.plot(c['update']/1000,c.site_equal_psnr,label=f'Fold {fold}',color=colors[fold-1],lw=1)
+            r=c.loc[c.site_equal_psnr.idxmax()];a.scatter(r['update']/1000,r.site_equal_psnr,s=15,color=colors[fold-1],zorder=3)
+        a.set(title=NAMES[m],xlabel='Updates / thousands',xticks=[0,5,10,15]);a.grid(alpha=.15)
+    ax[0].set_ylabel('Validation site-equal PSNR / dB');ax[2].legend(fontsize=6,frameon=False,ncol=2,loc='lower right')
+    save_en(fig,'validation_curves')
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--check',action='store_true')
@@ -292,6 +417,7 @@ def main():
         print('PASS: source hashes, 270 completed tasks, validation-only selections, paired supports and manuscript summaries.')
     else:
         generate(d)
+        generate_en(d)
         print(json.dumps(d['stats'],ensure_ascii=False,indent=2))
 
 

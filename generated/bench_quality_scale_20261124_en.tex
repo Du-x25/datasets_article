@@ -1,0 +1,11 @@
+\begin{tabular}{@{}lrrrrrrrr@{}}
+\toprule
+Window set & Count & \multicolumn{2}{c}{SWIR input} & \multicolumn{2}{c}{RGB target} & \multicolumn{3}{c}{Cross-modal greyscale correlation}\\
+\cmidrule(lr){3-4}\cmidrule(lr){5-6}\cmidrule(lr){7-9}
+ & & lag-1 & PSD centroid & lag-1 & PSD centroid & Zero-shift & Peak ($\pm$16 px) & Peak in zone$^{*}$/\%\\
+\midrule
+Archive patches~\cite{chen2026thesis} & 3715 & 0.961 & 0.037 & 0.923 & 0.054 & 0.544 & 0.599 & 76.1 \\
+M-SWIR-RGB 4:1 windows & 3552 & 0.963 & 0.035 & 0.936 & 0.047 & 0.499 & 0.548 & 76.6 \\
+M-SWIR-RGB 1:1 windows & 3886 & 0.992 & 0.018 & 0.974 & 0.031 & 0.585 & 0.654 & 71.4$^{\dagger}$ \\
+\bottomrule
+\end{tabular}

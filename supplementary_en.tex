@@ -1,0 +1,170 @@
+% !TEX program = xelatex
+\documentclass[a4paper,10pt]{article}
+\usepackage[margin=2.05cm]{geometry}
+\usepackage{fontspec}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{amsmath}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{caption}
+\usepackage{float}
+\usepackage[section]{placeins}
+\usepackage[numbers,sort&compress]{natbib}
+\graphicspath{{figures/}}
+\input{generated/dataset_macros.tex}
+\input{generated/geom_macros.tex}
+\input{generated/geom_15pair_macros.tex}
+\input{generated/trackc_drunet_macros.tex}
+\input{generated/results_20261109_macros_en.tex}
+\input{generated/bench_macros_20261124_en.tex}
+\hypersetup{colorlinks=true,linkcolor=black,citecolor=black,urlcolor=blue}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.45em}
+\setlength{\emergencystretch}{2em}
+\captionsetup{font=small,labelfont=bf}
+\renewcommand{\arraystretch}{1.15}
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\thefigure}{S\arabic{figure}}
+\newcommand{\dE}{\ensuremath{\Delta E_{00}}}
+
+\title{\textbf{Supplementary Information}\\[0.35em]\large M-SWIR-RGB: Scene-Level Paired RGB and Five-Band Short-Wave Infrared Dataset for Cross-Spectral Synthesis}
+\author{Hu Du$^{1,2,*}$, Xiao Liu$^{2,3,\dagger}$, Lili Du$^{2,3}$, and Hu Cui$^{2}$\\[0.3em]
+\small $^{1}$University of Science and Technology of China, Hefei 230026, China\\
+\small $^{2}$Hefei Institutes of Physical Science, Chinese Academy of Sciences, Hefei 230031, China\\
+\small $^{3}$Key Laboratory of Optical Calibration and Characterization,\\
+\small Anhui Institute of Optics and Fine Mechanics, Chinese Academy of Sciences, Hefei 230031, China}
+\date{}
+
+\begin{document}\maketitle
+
+This Supplementary Information provides complete per-site quality diagnostics, inter-band correlation matrices, Track A training budgets and ablation breakdowns, Track B site-disjoint fold assignments and 45-condition tables, evaluation support metrics, and validation curves accompanying the M-SWIR-RGB Data Descriptor \cite{du2026mswirrgb_data}.
+
+\section*{Supplementary Section 1: Per-Site Quality, Clipping, and Inter-Band Correlations}
+
+\begin{table}[htbp]\centering\footnotesize\setlength{\tabcolsep}{3pt}
+\caption{Per-site clipping shares and cross-modal greyscale alignment (4:1 windows).}\label{tab:s-quality-scene}
+\vspace{1pt}{\footnotesize\noindent B1=255 shares use valid mosaic samples; other columns summarize 4:1 windows (R/G/B triples for RGB). $^{*}$Denominator is judgeable windows ($r_{\mathrm{p}}\ge 0.2$).\par}
+\input{generated/bench_quality_scene_20261124_en.tex}
+\end{table}
+
+\begin{table}[htbp]\centering\small
+\caption{Pairwise SWIR inter-band Pearson correlation ranges across ten sites.}\label{tab:s-quality-corr}
+\input{generated/bench_quality_corr_20261124_en.tex}
+\end{table}
+
+\clearpage
+\section*{Supplementary Section 2: Track A Budgets, Per-Site Seeds, Architecture Compatibility, and Ablations}
+
+\begin{table}[htbp]\centering\small
+\caption{Track A data splits and parameter update budgets.}\label{tab:s-bench-protocol}
+\begin{tabular}{@{}llrrl@{}}\toprule
+Experiment & Training set & Train windows & Test windows & Updates\\\midrule
+Same-config comparison & M-SWIR-RGB & 2,842 & 710 & 71,000 / 142,000\\
+Same-config comparison & Seven-scene archive \cite{chen2026thesis} & 2,972 & 743 & 74,300 / 148,600\\
+Band ablation & M-SWIR-RGB (15 inputs) & 2,842 & 710 & 71,000\\
+Data fraction & 25\%/50\%/75\% subsets & 710/1,422/2,132 & 710 & 70,800/71,000/69,290\\
+Window scale & M-SWIR-RGB 1:1 & 3,109 & 777 & 77,700 / 155,400\\
+Scene split A/B & C1--C5 / C6--C10 & 1,558/1,284 & 1,618/1,934 & 70,020 / 70,620\\\bottomrule
+\end{tabular}\end{table}
+
+\begin{table}[htbp]\centering\small
+\caption{Per-site 4:1 random-split TFD-GAN results on M-SWIR-RGB (100 epochs, 3 runs).}\label{tab:s-bench-scene-seeds}
+\input{generated/bench_scene_seeds_20261124_en.tex}
+\end{table}
+
+\begin{table}[htbp]\centering\small
+\caption{Three-architecture compatibility on identical 4:1 data and splits (200 epochs, seed 11).}\label{tab:s-three-model}
+\input{generated/three_model_20261112_en.tex}
+\end{table}
+
+\begin{table}[htbp]\centering\small
+\caption{Track A input-band ablation (100 epochs, 4:1 random window split).}\label{tab:s-bench-band}
+\input{generated/bench_band_20261124_en.tex}
+\end{table}
+
+\begin{table}[htbp]\centering\small
+\caption{Training-set fraction comparison at matched $\approx$71,000 parameter updates (4:1 windows).}\label{tab:s-bench-budget}
+\input{generated/bench_budget_20261124_en.tex}
+\end{table}
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=.66\textwidth]{figures/en/results_20261124/budget_curve_en.pdf}
+\caption{Test PSNR under matched parameter-update budgets across 25\%, 50\%, 75\%, and 100\% training subsets (4:1 windows).\label{fig:s-budget-curve}}
+\end{figure}
+
+\begin{table}[htbp]\centering\small
+\caption{Per-site PSNR (dB) under 4:1 random split vs.\ two-fold held-out evaluation.}\label{tab:s-bench-per-scene}
+\input{generated/bench_per_scene_20261124_en.tex}
+\end{table}
+
+\begin{figure}[tbp]\centering
+\includegraphics[width=.96\textwidth,height=.74\textheight,keepaspectratio]{figures/en/results_20261124/qualitative_en.pdf}
+\caption{Track A (4:1 within-scene random split) TFD-GAN predictions across all ten sites (200 epochs; PSNR \QualPsnrMin--\QualPsnrMax\,dB).\label{fig:s-qualitative}}
+\end{figure}
+
+\clearpage
+\section*{Supplementary Section 3: Track B Fold Protocol, All 45 Fixed Inputs, Support Statistics, and Validation Curves}
+
+\begin{table}[htbp]\centering\small
+\caption{Site-disjoint five-fold assignment.}\label{tab:s-protocol}
+\begin{tabular}{@{}clll@{}}\toprule
+Fold & Training sites (6) & Validation sites (2) & Test sites (2)\\\midrule
+1 & C3,C4,C5,C6,C7,C10 & C2,C9 & C1,C8\\
+2 & C1,C3,C4,C6,C7,C8 & C5,C10 & C2,C9\\
+3 & C1,C2,C4,C7,C8,C9 & C3,C6 & C5,C10\\
+4 & C1,C2,C5,C8,C9,C10 & C4,C7 & C3,C6\\
+5 & C2,C3,C5,C6,C9,C10 & C1,C8 & C4,C7\\\bottomrule
+\end{tabular}\end{table}
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=\textwidth,height=.44\textheight,keepaspectratio]{figures/en/results_20261109/protocol_sensitivity.pdf}
+\caption{Protocol sensitivity on identical $256\times256$ stride-128 windows (pix2pix, 45 random-split runs vs.\ site-disjoint evaluation; mean inflation +\ProtocolGain\,dB).\label{fig:s-protocol-sensitivity}}
+\end{figure}
+
+\begin{table}[htbp]\centering\small
+\caption{Validation-selected single-band and three-band inputs per fold.}\label{tab:s-choices}
+\input{generated/band_choices_20261109_en.tex}
+\end{table}
+
+\begingroup\small
+\input{generated/all_inputs_20261109_en.tex}
+\endgroup
+
+\begin{table}[htbp]\centering\footnotesize
+\caption{Per-site evaluation support in Track B (LPIPS coverage uses common valid pixels as denominator).}\label{tab:s-support}
+\input{generated/support_statistics_en.tex}
+\end{table}
+
+\begin{table}[htbp]\centering\footnotesize
+\caption{Per-site and per-modality percentages at $\mathrm{DN}=0$ and $\mathrm{DN}\ge 250$.}\label{tab:s-dynamic}
+\input{generated/support_dynamic_range_en.tex}
+\end{table}
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=\textwidth,height=.4\textheight,keepaspectratio]{figures/en/results_20261109/validation_curves.pdf}
+\caption{Five-fold validation PSNR trajectories for fixed T124 inputs (510 checkpoints across three architectures).\label{fig:s-training-monitor}}
+\end{figure}
+
+\clearpage
+\section*{Supplementary Section 4: Full 15-Modality-Pair Non-SIFT Geometric Audit and Track C Neural Fine-Tuning}
+
+\begin{table}[htbp]\centering\small
+\caption{Independent non-SIFT Sobel-gradient DFT sub-pixel phase-correlation audit across all 15 modality pairs (432 valid $256\times256$ tiles, $10\times$ upsampling, $r_{\mathrm{grad}}\ge 0.25$).}\label{tab:s-geom-15pair}
+\input{generated/geom_15pair_en.tex}
+\end{table}
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=\textwidth]{figures/en/trackc_drunet_en.pdf}
+\caption{Per-site Track C comparison on identical 500,000 held-out pixels (fixed B1/B3/B4): DRUNet zero-shot, target-site quadratic calibration, DRUNet scratch (10 patches), and DRUNet fine-tuned (10 patches).\label{fig:s-trackc-drunet}}
+\end{figure}
+
+\renewcommand{\bibfont}{\small}
+\setlength{\bibsep}{2pt}
+\bibliographystyle{unsrtnat}
+\bibliography{refs}
+\end{document}

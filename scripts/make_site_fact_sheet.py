@@ -146,24 +146,28 @@ def main():
     }
     lines = []
     lines.append("% auto-generated; do not edit by hand")
-    lines.append("\\begin{tabularx}{\\textwidth}{@{}llrrlr>{\\raggedright\\arraybackslash}X@{}}")
+    lines.append("\\begin{tabularx}{\\textwidth}{@{}llrrrlr>{\\raggedright\\arraybackslash}X@{}}")
     lines.append("\\toprule")
-    lines.append("Site & Date & Views & Archive RGB & Canvas (W$\\times$H) & Windows & Scene content \\\\")
+    lines.append("Site & Date & Views & RGB frames & SWIR frames & Canvas (W$\\times$H) & Windows & Scene content \\\\")
     lines.append("\\midrule")
     for r in rows:
-        note = f" ({r['rgb_per_pos']} frames per view)" if r["rgb_per_pos"] != "1" else ""
+        note = f" ({r['rgb_per_pos']} frames/view)" if r["rgb_per_pos"] != "1" else ""
         lines.append(
-            f"{r['scene']} & {r['date']} & {r['positions']} & {r['rgb_frames']} & "
+            f"{r['scene']} & {r['date']} & {r['positions']} & {r['rgb_frames']} & {5 * r['positions']} & "
             f"{r['width']}$\\times${r['height']} & {r['windows']} & {CONTENT_EN[r['scene']]}{note} \\\\"
         )
     lines.append("\\midrule")
-    lines.append(f"Total & --- & {tot_pos} & {tot_rgb} & ten distinct sizes & {tot_win} & --- \\\\")
+    lines.append(f"Total & --- & {tot_pos} & {tot_rgb} & {5 * tot_pos} & ten distinct sizes & {tot_win} & --- \\\\")
     lines.append("\\bottomrule")
     lines.append("\\end{tabularx}")
     io.open(en, "w", encoding="utf-8").write("\n".join(lines) + "\n")
 
-    # --- 事实核查说明（供作者确认） ---
-    md = Path("D:/USTC/Gen/outputs/paper_writing_advice_20261014/地点事实表_已确认_20261015.md")
+    # --- 事实核查说明（仅在显式请求时写入外部目录） ---
+    import sys
+    if "--write-external" in sys.argv:
+        md = Path("D:/USTC/Gen/outputs/paper_writing_advice_20261014/地点事实表_已确认_20261015.md")
+    else:
+        md = None
     mlines = [
         "# 逐地点事实表 · 已确认",
         "",
@@ -267,11 +271,12 @@ def main():
         "",
         "改完画面构成列后重跑脚本即可，LaTeX 会同步更新。",
     ]
-    md.parent.mkdir(parents=True, exist_ok=True)
-    io.open(md, "w", encoding="utf-8").write("\n".join(mlines) + "\n")
+    if md is not None:
+        md.parent.mkdir(parents=True, exist_ok=True)
+        io.open(md, "w", encoding="utf-8").write("\n".join(mlines) + "\n")
 
     print("已生成：")
-    for p in (csv_path, zh, en, md):
+    for p in (csv_path, zh, en):
         print("  ", p)
     print()
     print(f"合计：{tot_pos} 视野 / {tot_rgb} RGB / {tot_win} 窗口")

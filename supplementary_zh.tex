@@ -1,0 +1,174 @@
+% !TEX program = xelatex
+\documentclass[UTF8,a4paper,10pt]{ctexart}
+\usepackage[margin=2.05cm]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{amsmath}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{caption}
+\usepackage{float}
+\usepackage[section]{placeins}
+\usepackage[numbers,sort&compress]{natbib}
+\graphicspath{{figures/}}
+\input{generated/dataset_macros.tex}
+\input{generated/geom_macros.tex}
+\input{generated/geom_15pair_macros.tex}
+\input{generated/trackc_drunet_macros.tex}
+\input{generated/results_20261109_macros_zh.tex}
+\input{generated/bench_macros_20261124_zh.tex}
+\hypersetup{colorlinks=true,linkcolor=black,citecolor=black,urlcolor=blue}
+\setlength{\parindent}{2em}
+\setlength{\parskip}{0.25em}
+\setlength{\emergencystretch}{2em}
+\captionsetup{font=small,labelfont=bf}
+\renewcommand{\arraystretch}{1.15}
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\thefigure}{S\arabic{figure}}
+\newcommand{\dE}{\ensuremath{\Delta E_{00}}}
+
+\title{\textbf{补充材料（Supplementary Information）}\\[0.35em]\large M-SWIR-RGB：面向跨光谱图像生成的场景级RGB与五波段短波红外配对数据集}
+\author{杜虎$^{1,2,*}$，刘晓$^{2,3,\dagger}$，杜丽丽$^{2,3}$，崔虎$^{2}$\\[0.3em]
+\small $^{1}$中国科学技术大学，合肥 230026，中国\\
+\small $^{2}$中国科学院合肥物质科学研究院，合肥 230031，中国\\
+\small $^{3}$中国科学院安徽光学精密机械研究所光学定标与表征重点实验室，合肥 230031，中国}
+\date{}
+
+\begin{document}\maketitle
+
+本补充材料提供M-SWIR-RGB数据描述符\cite{du2026mswirrgb_data}配套的逐地点质量诊断与波段两两相关矩阵、轨道A更新预算与消融明细、轨道B地点隔离五折划分与45种固定输入全表、评价支持度统计以及验证轨迹曲线，与英文版补充材料严格一一对应。
+
+\section*{补充节 1：逐地点质量裁剪、窗口对齐与波段两两相关性}
+
+\begin{table}[htbp]\centering\footnotesize\setlength{\tabcolsep}{3pt}
+\caption{逐地点的像素裁剪比例与模态间灰度对齐统计（4:1窗口）。}\label{tab:s-quality-scene-zh}
+\vspace{1pt}{\footnotesize\noindent B1取255比例按成图几何有效区域内每隔7像素抽样统计；其余各列按4:1窗口计，RGB取255与取0两列依次为R/G/B三通道，零位移相关取窗口中位数。$^{*}$末列分母为该地点峰值相关$r_{\mathrm{p}}\geq0.2$的可判定窗口。\par}
+\input{generated/bench_quality_scene_20261124_zh.tex}
+\end{table}
+
+\begin{table}[htbp]\centering\small
+\caption{五个SWIR波段两两Pearson相关系数在十个地点上的分布。}\label{tab:s-quality-corr-zh}
+\vspace{1pt}{\footnotesize\noindent 在每个地点成图几何有效区域内每隔7个有效像素抽样计算Pearson系数，汇总十地点的最小值、中位数与最大值。\par}
+\input{generated/bench_quality_corr_20261124_zh.tex}
+\end{table}
+
+\clearpage
+\section*{补充节 2：轨道A预算、逐场景种子结果、三架构兼容与消融明细}
+
+\begin{table}[htbp]\centering\small
+\caption{轨道A窗口级基准的数据规模与参数更新预算。}\label{tab:s-bench-protocol-zh}
+\vspace{1pt}{\footnotesize\noindent 除“窗口尺度”一行外均使用4:1窗口；对照归档使用现成图块。更新次数为每轮实际批次数与epoch数之积。\par}
+\begin{tabular}{@{}llrrl@{}}\toprule
+实验 & 训练集 & 训练窗口 & 测试窗口 & 更新次数\\\midrule
+同配置对照 & M-SWIR-RGB & 2{,}842 & 710 & 71{,}000 / 142{,}000\\
+同配置对照 & 七场景对照归档\cite{chen2026thesis} & 2{,}972 & 743 & 74{,}300 / 148{,}600\\
+输入波段消融 & M-SWIR-RGB，15种输入 & 2{,}842 & 710 & 71{,}000\\
+训练数据量 & M-SWIR-RGB 25\%/50\%/75\% & 710/1{,}422/2{,}132 & 710 & 70{,}800/71{,}000/69{,}290\\
+窗口尺度 & M-SWIR-RGB 1:1窗口 & 3{,}109 & 777 & 77{,}700 / 155{,}400\\
+场景划分A/B & C1--C5 / C6--C10 & 1{,}558/1{,}284 & 1{,}618/1{,}934 & 70{,}020 / 70{,}620\\\bottomrule
+\end{tabular}\end{table}
+
+\begin{table}[htbp]\centering\small
+\caption{M-SWIR-RGB逐场景的同配置窗口级结果（100 epoch）。}\label{tab:s-bench-scene-seeds-zh}
+\vspace{1pt}{\footnotesize\noindent 测试窗口算术平均；PSNR列给出三次独立训练的均值$\pm$样本标准差。\par}
+\input{generated/bench_scene_seeds_20261124_zh.tex}
+\end{table}
+
+\begin{table}[htbp]\centering\small
+\caption{同4:1数据与划分下的三类生成架构对比（200 epoch，256整块输入）。}\label{tab:s-three-model-zh}
+\vspace{1pt}{\footnotesize\noindent 固定训练种子11，批大小为唯一变量。\par}
+\input{generated/three_model_20261112_zh.tex}
+\end{table}
+
+\begin{table}[htbp]\centering\small
+\caption{轨道A输入波段消融（100 epoch，4:1随机窗口划分）。}\label{tab:s-bench-band-zh}
+\vspace{1pt}{\footnotesize\noindent 单波段复制为三通道，三波段按波段号升序堆叠。$\Delta$PSNR为相对B123三次平均的逐窗口差值均值，括号内为按场景整群bootstrap的95\%置信区间。\par}
+\input{generated/bench_band_20261124_zh.tex}
+\end{table}
+
+\begin{table}[htbp]\centering\small
+\caption{匹配更新预算下的训练数据量对照（4:1窗口，固定710个测试窗口）。}\label{tab:s-bench-budget-zh}
+\vspace{1pt}{\footnotesize\noindent 各子集按场景分层抽取，更新次数对齐69{,}290--71{,}000；100\%一行为3次训练均值$\pm$标准差。\par}
+\input{generated/bench_budget_20261124_zh.tex}
+\end{table}
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=.66\textwidth]{figures/zh/results_20261124/budget_curve_zh.pdf}
+\caption{匹配更新预算下的训练数据量对比（4:1窗口，虚线标记全量100 epoch预算71{,}000次更新）。\label{fig:s-budget-curve-zh}}
+\end{figure}
+
+\begin{table}[htbp]\centering\small
+\caption{逐场景在4:1随机窗口划分与两折留出场景下的PSNR对照（dB）。}\label{tab:s-bench-per-scene-zh}
+\vspace{1pt}{\footnotesize\noindent 随机窗口为3次训练均值；留出场景为该场景不参与训练时的测试表现；差值为留出减随机。\par}
+\input{generated/bench_per_scene_20261124_zh.tex}
+\end{table}
+
+\begin{figure}[tbp]\centering
+\includegraphics[width=.96\textwidth,height=.74\textheight,keepaspectratio]{figures/zh/results_20261124/qualitative_zh.pdf}
+\caption{轨道A（4:1同地点随机窗口划分）下十个场景的SWIR输入、TFD-GAN输出与RGB真值示例（200 epoch，PSNR \QualPsnrMin--\QualPsnrMax\,dB）。\label{fig:s-qualitative-zh}}
+\end{figure}
+
+\clearpage
+\section*{补充节 3：轨道B五折划分、45种固定输入全表、评价支持度与验证轨迹}
+
+\begin{table}[htbp]\centering\small
+\caption{地点隔离的五折交叉验证地点划分方案。}\label{tab:s-protocol-zh}
+\begin{tabular}{@{}clll@{}}\toprule
+折 & 训练地点（6个） & 验证地点（2个） & 测试地点（2个）\\\midrule
+1 & C3,C4,C5,C6,C7,C10 & C2,C9 & C1,C8\\
+2 & C1,C3,C4,C6,C7,C8 & C5,C10 & C2,C9\\
+3 & C1,C2,C4,C7,C8,C9 & C3,C6 & C5,C10\\
+4 & C1,C2,C5,C8,C9,C10 & C4,C7 & C3,C6\\
+5 & C2,C3,C5,C6,C9,C10 & C1,C8 & C4,C7\\\bottomrule
+\end{tabular}\end{table}
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=\textwidth,height=.44\textheight,keepaspectratio]{figures/zh/results_20261109/protocol_sensitivity.pdf}
+\caption{完全相同$256\times256$步长128窗口上的协议敏感性对照（pix2pix，45次随机划分与地点隔离配对重评分；平均偏高+\ProtocolGain\,dB）。\label{fig:s-protocol-sensitivity-zh}}
+\end{figure}
+
+\begin{table}[htbp]\centering\small
+\caption{各折验证集选择的单波段与三波段输入。}\label{tab:s-choices-zh}
+\input{generated/band_choices_20261109_zh.tex}
+\end{table}
+
+\begingroup\small
+\input{generated/all_inputs_20261109_zh.tex}
+\endgroup
+
+\begin{table}[htbp]\centering\footnotesize
+\caption{地点隔离主基准的逐地点评价支持（LPIPS去重覆盖比例以共同有效像素为分母）。}\label{tab:s-support-zh}
+\input{generated/support_statistics_zh.tex}
+\end{table}
+
+\begin{table}[htbp]\centering\footnotesize
+\caption{各地点各模态触及$\mathrm{DN}=0$与$\mathrm{DN}\geq250$数字量阈值的像素比例。}\label{tab:s-dynamic-zh}
+\input{generated/support_dynamic_range_zh.tex}
+\end{table}
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=\textwidth,height=.4\textheight,keepaspectratio]{figures/zh/results_20261109/validation_curves.pdf}
+\caption{T124固定输入的五折验证轨迹（三模型五折共510个保存验证检查点）。\label{fig:s-training-monitor-zh}}
+\end{figure}
+
+\clearpage
+\section*{补充节 4：全15对模态非SIFT几何审计明细与轨道C神经网络少样本微调}
+
+\begin{table}[htbp]\centering\small
+\caption{独立非SIFT梯度相位相关审计在全部15对模态上的汇总统计（432个有效$256\times256$图块，10倍亚像素上采样，$r_{\mathrm{grad}}\ge0.25$）。}\label{tab:s-geom-15pair-zh}
+\input{generated/geom_15pair_zh.tex}
+\end{table}
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=\textwidth]{figures/zh/trackc_drunet_zh.pdf}
+\caption{轨道C十个地点的目标10图块少样本适应逐地点对比（固定B1/B3/B4输入、同一50万保留像素）：DRUNet零样本、目标二次映射、DRUNet目标10块从头训练与DRUNet 10块少样本微调。\label{fig:s-trackc-drunet-zh}}
+\end{figure}
+
+\renewcommand{\bibfont}{\small}
+\setlength{\bibsep}{2pt}
+\bibliographystyle{unsrtnat}
+\bibliography{refs}
+\end{document}

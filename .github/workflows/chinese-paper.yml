@@ -14,7 +14,7 @@ defaults:
 
 jobs:
   compile:
-    name: Compile and check Chinese paper
+    name: Compile and check bilingual Data Descriptor PDFs
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     env:
@@ -52,25 +52,39 @@ jobs:
           python scripts/check_repository.py
           python scripts/check_tex_structure.py
 
-      - name: Compile with XeLaTeX and BibTeX
+      - name: Compile Chinese, English, and Supplementary PDFs
         run: |
-          mkdir -p build/zh
+          mkdir -p build/zh build/en
           latexmk -norc -xelatex -bibtex -interaction=nonstopmode \
             -halt-on-error -file-line-error -outdir=build/zh main_zh.tex \
-            2>&1 | tee build/zh/latexmk.log
+            2>&1 | tee build/zh/latexmk_main.log
+          latexmk -norc -xelatex -bibtex -interaction=nonstopmode \
+            -halt-on-error -file-line-error -outdir=build/zh supplementary_zh.tex \
+            2>&1 | tee build/zh/latexmk_supp.log
+          latexmk -norc -xelatex -bibtex -interaction=nonstopmode \
+            -halt-on-error -file-line-error -outdir=build/en main_en.tex \
+            2>&1 | tee build/en/latexmk_main.log
+          latexmk -norc -xelatex -bibtex -interaction=nonstopmode \
+            -halt-on-error -file-line-error -outdir=build/en supplementary_en.tex \
+            2>&1 | tee build/en/latexmk_supp.log
 
-      - name: Check references, layout and evidence
+      - name: Check references, layout, Scientific Data limits, and evidence
         run: |
           python scripts/qa_manuscripts.py --language zh | tee build/zh/checks.json
+          python scripts/qa_manuscripts.py --language en | tee build/en/checks.json
 
-      - name: Upload checked PDF
+      - name: Upload checked PDFs
         id: pdf
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: chinese-paper-${{ github.sha }}
+          name: manuscript-pdfs-${{ github.sha }}
           path: |
             build/zh/main_zh.pdf
+            build/zh/supplementary_zh.pdf
             build/zh/checks.json
+            build/en/main_en.pdf
+            build/en/supplementary_en.pdf
+            build/en/checks.json
           if-no-files-found: error
           retention-days: 30
 
@@ -81,22 +95,29 @@ jobs:
           python - <<'PY'
           import json, os
           from pathlib import Path
-          report = json.loads(Path('build/zh/checks.json').read_text())
+          zh = json.loads(Path('build/zh/checks.json').read_text())
+          en = json.loads(Path('build/en/checks.json').read_text())
+          sd = en.get('scientific_data_limits', {})
+          zh_si = zh.get('supplementary_information', {})
+          en_si = en.get('supplementary_information', {})
           with open(os.environ['GITHUB_STEP_SUMMARY'], 'a', encoding='utf-8') as summary:
-              summary.write('## Chinese paper PDF\n\n')
-              summary.write(f"[Download the checked PDF]({os.environ['PDF_ARTIFACT_URL']})\n\n")
-              summary.write(f"Pages: {report['pages']}; undefined references: 0; oversized floats: 0; overfull boxes: 0.\n\n")
-              summary.write('The artifact includes main_zh.pdf and checks.json and is retained for 30 days.\n')
+              summary.write('## Bilingual Data Descriptor PDFs\n\n')
+              summary.write(f"[Download the checked PDFs]({os.environ['PDF_ARTIFACT_URL']})\n\n")
+              summary.write(f"- **Chinese (`main_zh.pdf` + `supplementary_zh.pdf`):** {zh['pages']} + {zh_si.get('pages')} pages; 0 log/box issues.\n")
+              summary.write(f"- **English (`main_en.pdf` + `supplementary_en.pdf`):** {en['pages']} + {en_si.get('pages')} pages; title {sd.get('title_chars')} chars (<=110); abstract {sd.get('abstract_words')} words (<=170).\n")
           PY
 
       - name: Upload build diagnostics
         if: ${{ always() }}
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: chinese-paper-diagnostics-${{ github.run_id }}-${{ github.run_attempt }}
+          name: manuscript-diagnostics-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
             build/zh/*.log
             build/zh/*.blg
             build/zh/checks.json
+            build/en/*.log
+            build/en/*.blg
+            build/en/checks.json
           if-no-files-found: ignore
           retention-days: 14
